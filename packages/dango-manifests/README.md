@@ -66,6 +66,43 @@ const danmaku = await runner.runDanmaku({
 })
 ```
 
+## CDN consumption
+
+A host can discover and fetch manifests over a CDN without bundling this package at build time. jsDelivr and unpkg serve the published package files, so a host reads `catalog.json` for the index, then fetches each entry's `file` path.
+
+```
+https://cdn.jsdelivr.net/npm/@mr-quin/dango-manifests@<version>/catalog.json
+https://cdn.jsdelivr.net/npm/@mr-quin/dango-manifests@<version>/<file>
+```
+
+`catalog.json` is generated from the manifests on disk and ships with the package:
+
+```jsonc
+{
+  "packageVersion": "0.2.0",
+  "manifests": [
+    {
+      "id": "builtin:bilibili",
+      "name": "Bilibili",
+      "version": "0.2.0",
+      "apiVersion": 1,
+      "file": "src/manifests/builtin-bilibili.json",
+    },
+    // ...
+  ],
+}
+```
+
+Each `file` is the in-package path to fetch, e.g.:
+
+```
+https://cdn.jsdelivr.net/npm/@mr-quin/dango-manifests@0.2.0/src/manifests/builtin-bilibili.json
+```
+
+unpkg works the same way (`https://unpkg.com/@mr-quin/dango-manifests@<version>/...`). Pin a `<version>` for reproducibility; omit it to track the latest published release.
+
+`catalog.json` is regenerated as part of `bun run build`; `bun run check` fails if the committed copy is stale (run `bun run catalog` and commit the result).
+
 ## Routing notes
 
 **DanDanPlay** (`builtin:dandanplay`) is one manifest for every DDP endpoint over the `/api/v2` paths. `baseUrl` (config) defaults to the official `api.dandanplay.net`; point it at a proxy or self-hosted server to override. Auth is picked by config: `appId` + `appSecret` sign each request (`X-Signature: Base64(SHA256(appId + timestamp + path + appSecret))`, secret never sent); else `auth.enabled` + `auth.headers` attach custom headers; else no auth (for a proxy that signs server-side). The official API is just the case with no `baseUrl` and credentials set.
@@ -107,5 +144,5 @@ Manifests in this package are vetted at PR review time and shipped as built-ins.
 | `bun test`               | bun test, fixture-backed pipeline tests                        |
 | `bun run smoke <source>` | Live end-to-end test against the real API (manual, **not CI**) |
 | `bun run type-check`     | tsc --noEmit                                                   |
-| `bun run lint`           | oxlint                                                         |
-| `bun run build`          | Compile with tsc                                               |
+| `bun run catalog`        | Regenerate `catalog.json` from the manifests on disk           |
+| `bun run catalog:check`  | Fail if the committed `catalog.json` is stale                  |

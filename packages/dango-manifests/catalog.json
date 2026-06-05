@@ -1,0 +1,96 @@
+{
+  "packageVersion": "0.2.0",
+  "manifests": [
+    {
+      "id": "builtin:aiyifan",
+      "name": "Aiyifan",
+      "version": "0.2.0",
+      "apiVersion": 1,
+      "file": "src/manifests/builtin-aiyifan.json"
+    },
+    {
+      "id": "builtin:bahamut",
+      "name": "Bahamut",
+      "version": "0.2.0",
+      "apiVersion": 1,
+      "file": "src/manifests/builtin-bahamut.json"
+    },
+    {
+      "id": "builtin:bilibili",
+      "name": "Bilibili",
+      "version": "0.2.0",
+      "apiVersion": 1,
+      "file": "src/manifests/builtin-bilibili.json"
+    },
+    {
+      "id": "builtin:dandanplay",
+      "name": "DanDanPlay",
+      "version": "0.2.0",
+      "apiVersion": 1,
+      "file": "src/manifests/builtin-dandanplay.json"
+    },
+    {
+      "id": "builtin:hanjutv",
+      "name": "Hanjutv",
+      "version": "0.2.0",
+      "apiVersion": 1,
+      "file": "src/manifests/builtin-hanjutv.json"
+    },
+    {
+      "id": "builtin:iqiyi",
+      "name": "iQIYI",
+      "version": "0.2.0",
+      "apiVersion": 1,
+      "file": "src/manifests/builtin-iqiyi.json"
+    },
+    {
+      "id": "builtin:maiduidui",
+      "name": "Maiduidui",
+      "version": "0.2.0",
+      "apiVersion": 1,
+      "file": "src/manifests/builtin-maiduidui.json"
+    },
+    {
+      "id": "builtin:mango",
+      "name": "Mango TV",
+      "version": "0.2.0",
+      "apiVersion": 1,
+      "file": "src/manifests/builtin-mango.json"
+    },
+    {
+      "id": "builtin:migu",
+      "name": "Migu Video",
+      "version": "0.2.0",
+      "apiVersion": 1,
+      "file": "src/manifests/builtin-migu.json"
+    },
+    {
+      "id": "builtin:renren",
+      "name": "Renren",
+      "version": "0.2.0",
+      "apiVersion": 1,
+      "file": "src/manifests/builtin-renren.json"
+    },
+    {
+      "id": "builtin:sohu",
+      "name": "Sohu",
+      "version": "0.2.0",
+      "apiVersion": 1,
+      "file": "src/manifests/builtin-sohu.json"
+    },
+    {
+      "id": "builtin:tencent",
+      "name": "Tencent Video",
+      "version": "0.2.0",
+      "apiVersion": 1,
+      "file": "src/manifests/builtin-tencent.json"
+    },
+    {
+      "id": "builtin:youku",
+      "name": "Youku",
+      "version": "0.2.1",
+      "apiVersion": 1,
+      "file": "src/manifests/builtin-youku.json"
+    }
+  ]
+}

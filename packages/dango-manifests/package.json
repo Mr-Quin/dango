@@ -17,11 +17,14 @@
     "./manifests/*.json": "./src/manifests/*.json"
   },
   "files": [
-    "src/manifests"
+    "src/manifests",
+    "catalog.json"
   ],
   "scripts": {
     "type-check": "tsc -p tsconfig.json",
     "test": "bun test",
+    "catalog": "bun run scripts/gen-catalog.ts",
+    "catalog:check": "bun run scripts/gen-catalog.ts --check",
     "smoke": "bun run scripts/smoke-test.ts"
   },
   "devDependencies": {
