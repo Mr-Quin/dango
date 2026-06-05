@@ -8,13 +8,16 @@ A dango is a stack of items on a skewer, each pipeline is a stack of named steps
 
 ## Trust model
 
-**Manifests are trusted code.** Official ones are vetted by the project; user-installed ones come with explicit user warnings about third-party risk. Dango is not a sandbox: there is no JSONata eval timeout and no regex caps, so a hostile manifest can still burn CPU. It does enforce a set of fixed safety and correctness guards:
+**Manifests are trusted code.** Official ones are vetted by the project; user-installed ones come with explicit user warnings about third-party risk. Dango is not a sandbox, but the caps below are the trust boundary for untrusted manifests: there is still no regex cap, so a pathological regex can burn CPU. It enforces a set of safety and correctness guards:
 
 - auth-header forbid-list (`Cookie`/`Authorization`/etc. rejected in `request.headers`)
 - `rewriteHeaders` allowlist (Origin/Referer/UA only)
 - step-id prototype-pollution rejection
-- hosts allowlist plus private-IP / localhost / `*.local` rejection (at load and request time)
-- response body size cap, and `forEach` input / `$range` output length caps (fixed limits)
+- hosts allowlist plus private-IP / localhost / loopback / link-local / `*.local` rejection (at load and request time)
+- per-expression JSONata evaluation timeout (`DEFAULT_EVAL_TIMEOUT_MS`)
+- bounded LRU compile cache (`DEFAULT_MAX_CACHE_SIZE`)
+- response body size cap (`DEFAULT_MAX_BODY_BYTES` default, `MAX_BODY_BYTES` hard ceiling)
+- `forEach` input length cap (`DEFAULT_MAX_FOR_EACH_ITEMS` default, `MAX_FOR_EACH_ITEMS` hard ceiling) and `$range` output length cap
 
 ## Architecture in a paragraph
 
@@ -25,7 +28,7 @@ A `Manifest` is JSON validated by zod. Each manifest declares up to three `Pipel
 - `src/manifest/schema.ts`: zod schema. Source of truth for what's allowed in a manifest.
 - `src/engine/runner.ts`: pipeline executor. Handles variant selection, step dispatch, concurrency/throttle, abort.
 - `src/engine/ManifestRunner.ts`: public class wrapping a parsed manifest. Builds a `ProtoRegistry` at construction.
-- `src/engine/jsonata-eval.ts`: `JsonataEvaluator` with FIFO-bounded compile cache.
+- `src/engine/jsonata-eval.ts`: `JsonataEvaluator` with an LRU-bounded compile cache and a per-expression evaluation timeout.
 - `src/engine/http.ts`: `FetchLike` type + request builder + response parsing. Enforces hosts allowlist and the forbidden-headers list.
 - `src/engine/proto.ts`: `ProtoRegistry` class. Lazily decodes the base64 `FileDescriptorSet`s a manifest carries under `protoDescriptors`, then decodes wire bytes reflectively via `@bufbuild/protobuf` (eval-free, safe under a strict `unsafe-eval` CSP). No host-injected types required.
 - `src/engine/url-match.ts` for the URL to source resolver (`findManifestForUrl`).
