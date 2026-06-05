@@ -172,6 +172,8 @@ export class ManifestRunner {
       signal: opts?.signal ?? this.options.signal,
       protoRegistry: opts?.protoRegistry ?? this.protoRegistry,
       httpCache: opts?.httpCache ?? this.httpCache,
+      maxForEachItems: opts?.maxForEachItems,
+      maxBodyBytes: opts?.maxBodyBytes,
     }
     return runPipeline(this.manifest, variants, inputs, merged) as Promise<T>
   }

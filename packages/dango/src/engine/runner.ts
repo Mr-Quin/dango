@@ -42,10 +42,30 @@ export interface RunOptions {
    * cache-enabled step then fetches normally).
    */
   httpCache?: HttpStepCache
+  /**
+   * Per-`forEach` input length cap. Defaults to `DEFAULT_MAX_FOR_EACH_ITEMS`
+   * and is clamped to the hard `MAX_FOR_EACH_ITEMS`.
+   */
+  maxForEachItems?: number
+  /**
+   * Per-request response body cap, in bytes. Threaded into each http request;
+   * defaults to the http module's default and is clamped to its hard max.
+   */
+  maxBodyBytes?: number
 }
 
-/** Max elements a `forEach.in` array may yield. A correctness guard. */
+/** Hard ceiling on the elements a `forEach.in` array may yield. */
 export const MAX_FOR_EACH_ITEMS = 10_000
+
+/** Default `forEach.in` length cap when the host does not set one. */
+export const DEFAULT_MAX_FOR_EACH_ITEMS = 1_000
+
+function resolveForEachCap(maxForEachItems: number | undefined): number {
+  if (maxForEachItems === undefined) {
+    return DEFAULT_MAX_FOR_EACH_ITEMS
+  }
+  return Math.min(maxForEachItems, MAX_FOR_EACH_ITEMS)
+}
 
 async function runHttpExtract(
   result: { body: unknown; headers: Record<string, string> },
@@ -163,9 +183,10 @@ async function runStep(
         `forEach.in must evaluate to an array, got ${typeof items}`
       )
     }
-    if (items.length > MAX_FOR_EACH_ITEMS) {
+    const forEachCap = resolveForEachCap(options.maxForEachItems)
+    if (items.length > forEachCap) {
       throw new Error(
-        `forEach.in yielded ${items.length} items, exceeding cap of ${MAX_FOR_EACH_ITEMS}`
+        `forEach.in yielded ${items.length} items, exceeding cap of ${forEachCap}`
       )
     }
     const runIteration = async (element: unknown) => {
@@ -176,6 +197,7 @@ async function runStep(
         allowedHosts: manifest.hosts,
         signal: options.signal,
         protoRegistry: options.protoRegistry,
+        maxBodyBytes: options.maxBodyBytes,
       })
       const extracted = await runHttpExtract(result, step.extract, undefined)
       if (!step.collect) {
@@ -240,6 +262,7 @@ async function runStep(
     allowedHosts: manifest.hosts,
     signal: options.signal,
     protoRegistry: options.protoRegistry,
+    maxBodyBytes: options.maxBodyBytes,
   })
   if (!step.id) {
     return

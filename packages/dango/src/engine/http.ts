@@ -5,8 +5,21 @@ import { isPrivateHost } from './host-policy.js'
 import { evalExpr, evalString } from './jsonata-eval.js'
 import type { ProtoRegistry } from './proto.js'
 
-/** Response body cap, in bytes. A correctness guard against runaway payloads. */
+/**
+ * Hard ceiling on a response body, in bytes. A request may opt into a smaller
+ * cap, but never a larger one: any `maxBodyBytes` option is clamped to this.
+ */
 export const MAX_BODY_BYTES = 20 * 1024 * 1024
+
+/** Default response body cap when the host does not set `maxBodyBytes`. */
+export const DEFAULT_MAX_BODY_BYTES = 5 * 1024 * 1024
+
+function resolveBodyCap(maxBodyBytes: number | undefined): number {
+  if (maxBodyBytes === undefined) {
+    return DEFAULT_MAX_BODY_BYTES
+  }
+  return Math.min(maxBodyBytes, MAX_BODY_BYTES)
+}
 
 export interface HttpResponse {
   status: number
@@ -36,6 +49,11 @@ export interface HttpRunOptions {
   signal?: AbortSignal
   /** Required when any request uses `format: 'proto'`. */
   protoRegistry?: ProtoRegistry
+  /**
+   * Per-request response body cap, in bytes. Defaults to
+   * `DEFAULT_MAX_BODY_BYTES` and is clamped to `MAX_BODY_BYTES`.
+   */
+  maxBodyBytes?: number
 }
 
 function hostMatches(url: string, allowed: string[]): boolean {
@@ -239,12 +257,10 @@ export async function executeRequest(
 
 // UTF-16 length is a cheap lower bound on byte size, so a string whose code-unit
 // count already exceeds the cap is definitely over it.
-function assertWithinCap(body: Uint8Array | string): void {
+function assertWithinCap(body: Uint8Array | string, cap: number): void {
   const size = typeof body === 'string' ? body.length : body.byteLength
-  if (size > MAX_BODY_BYTES) {
-    throw new Error(
-      `response body ${size} bytes exceeds cap of ${MAX_BODY_BYTES} bytes`
-    )
+  if (size > cap) {
+    throw new Error(`response body ${size} bytes exceeds cap of ${cap} bytes`)
   }
 }
 
@@ -263,6 +279,7 @@ async function parseBody(
   res: HttpResponse,
   options: HttpRunOptions
 ): Promise<unknown> {
+  const cap = resolveBodyCap(options.maxBodyBytes)
   if (spec.format === 'proto') {
     if (options.protoRegistry === undefined) {
       throw new Error(
@@ -275,7 +292,7 @@ async function parseBody(
       )
     }
     const bytes = await res.bytes()
-    assertWithinCap(bytes)
+    assertWithinCap(bytes, cap)
     return options.protoRegistry.decode(
       spec.protoSchema,
       spec.protoMessage,
@@ -284,13 +301,13 @@ async function parseBody(
   }
   if (spec.decompress) {
     const bytes = await res.bytes()
-    assertWithinCap(bytes)
+    assertWithinCap(bytes, cap)
     const text = await decompressBytes(bytes, spec.decompress)
-    assertWithinCap(text)
+    assertWithinCap(text, cap)
     return parseTextBody(spec.format, text)
   }
   const text = await res.text()
-  assertWithinCap(text)
+  assertWithinCap(text, cap)
   return parseTextBody(spec.format, text)
 }
 
