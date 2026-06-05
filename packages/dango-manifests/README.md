@@ -41,7 +41,7 @@ src/
     tencent.json
     youku.json
   __tests__/
-    builtin-*.test.ts                   # per-manifest pipeline tests
+    *.test.ts                           # per-manifest pipeline tests
     fixtures/                           # captured representative responses
     mockFetcher.ts                      # shared test fetcher (string + Uint8Array bodies)
 scripts/
