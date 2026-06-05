@@ -1,6 +1,16 @@
-export { AbortedError, type FetchLike, MAX_BODY_BYTES } from './engine/http.js'
+export {
+  AbortedError,
+  DEFAULT_MAX_BODY_BYTES,
+  type FetchLike,
+  MAX_BODY_BYTES,
+} from './engine/http.js'
 export { isPrivateHost, isPrivateHostPattern } from './engine/host-policy.js'
-export { JsonataEvaluator } from './engine/jsonata-eval.js'
+export {
+  DEFAULT_EVAL_TIMEOUT_MS,
+  DEFAULT_MAX_CACHE_SIZE,
+  JsonataEvaluator,
+  JsonataTimeoutError,
+} from './engine/jsonata-eval.js'
 export {
   type ManifestInputs,
   ManifestRunner,
@@ -8,6 +18,7 @@ export {
 } from './engine/ManifestRunner.js'
 export { ProtoRegistry } from './engine/proto.js'
 export {
+  DEFAULT_MAX_FOR_EACH_ITEMS,
   type HttpCacheEntry,
   type HttpStepCache,
   MAX_FOR_EACH_ITEMS,
