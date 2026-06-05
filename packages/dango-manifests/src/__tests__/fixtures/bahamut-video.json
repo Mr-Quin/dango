@@ -1,0 +1,36 @@
+{
+  "data": {
+    "anime": {
+      "episodes": {
+        "0": [
+          {
+            "episode": 1,
+            "videoSn": 38250,
+            "state": 1,
+            "cover": "https://p2.bahamut.com.tw/B/2KU/62/d3f0775eb5741acc9e3b2ad2b01pwtu5.JPG"
+          },
+          {
+            "episode": 2,
+            "videoSn": 38331,
+            "state": 0,
+            "cover": "https://p2.bahamut.com.tw/B/2KU/38/7d64f7df4df43413ac2ff85d1d1pzti5.JPG"
+          }
+        ],
+        "3": [
+          {
+            "episode": 1,
+            "videoSn": 41294,
+            "state": 0,
+            "cover": ""
+          },
+          {
+            "episode": 2,
+            "videoSn": 41295,
+            "state": 0,
+            "cover": ""
+          }
+        ]
+      }
+    }
+  }
+}

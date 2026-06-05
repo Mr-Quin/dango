@@ -1,0 +1,51 @@
+{
+  "data": {
+    "danmu": [
+      {
+        "text": "1",
+        "color": "#FFFFFF",
+        "size": 1,
+        "position": 0,
+        "time": 0,
+        "sn": 39929764,
+        "userid": "andy475713"
+      },
+      {
+        "text": "2025／8／24",
+        "color": "#FF0026",
+        "size": 2,
+        "position": 2,
+        "time": 2,
+        "sn": 46251836,
+        "userid": "FeiFei88"
+      },
+      {
+        "text": "2025/8/12簽",
+        "color": "#FDE53D",
+        "size": 1,
+        "position": 1,
+        "time": 54,
+        "sn": 46084624,
+        "userid": "emu9025"
+      },
+      {
+        "text": "20250802",
+        "color": "#FFFFFF",
+        "size": 1,
+        "position": 0,
+        "time": 4,
+        "sn": 45952197,
+        "userid": "efg130"
+      },
+      {
+        "text": "20240821 我來啦",
+        "color": "#FF9496",
+        "size": 1,
+        "position": 0,
+        "time": 8,
+        "sn": 41361180,
+        "userid": "star112999"
+      }
+    ]
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "ret": 200,
+  "msg": "",
+  "data": {
+    "code": 0,
+    "msg": "",
+    "info": [
+      {
+        "recordcount": 1,
+        "result": [
+          {
+            "atypeName": "电视剧",
+            "postTime": "2024-01-01T00:00:00",
+            "contxt": "WdzDFf5yws5",
+            "title": "庆余年第2季",
+            "imgPath": "https://static.tripdata.app/upload/video/202405161324572424161s.gif"
+          }
+        ],
+        "hasResult": true
+      }
+    ]
+  }
+}

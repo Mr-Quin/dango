@@ -1,0 +1,41 @@
+{
+  "msg": "操作成功",
+  "msgType": 0,
+  "signType": "md5",
+  "status": true,
+  "time": 1780436787316,
+  "data": [
+    {
+      "highlightFields": ["年"],
+      "isExact": 0,
+      "seq": 1,
+      "totalNum": 17,
+      "type": 3,
+      "typeName": "剧集",
+      "vodList": [
+        {
+          "uuid": "35806b2aa5f811eeb2aee43d1ad5fd70",
+          "vodType": 0,
+          "name": "黄金十年",
+          "coverImage": "http://qiniufile.mddcloud.com.cn/prod/image/202312/29/20231229111313012543.png",
+          "isArticleVod": 0,
+          "isVip": 1,
+          "isTimeLimit": 0,
+          "playNum": 274983,
+          "likeNum": 121,
+          "hotValue": 4530774,
+          "commentNum": 65,
+          "cornerImage": "http://qiniufile.mddcloud.com.cn/prod/image/202412/23/20241223141004135877.png",
+          "starring": "张兆辉,刘嘉玲,戚美珍,石修,曾华倩,商天娥",
+          "materialName": "家庭,剧情",
+          "updateNum": 60,
+          "totalNum": 60,
+          "sideImage": "http://qiniufile.mddcloud.com.cn/prod/image/202312/29/20231229111309098974.png",
+          "downImage": "http://qiniufile.mddcloud.com.cn/prod/image/202312/29/20231229111313012543.png",
+          "topNewNum": 60,
+          "showVarietyNumTitle": false
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "msg": "操作成功",
+  "msgType": 0,
+  "sign": "",
+  "signType": "md5",
+  "status": true,
+  "time": 1780436787531,
+  "data": [
+    {
+      "uuid": "d17172a7b09011eeb2aee43d1ad5fd70",
+      "vodUuid": "35806b2aa5f811eeb2aee43d1ad5fd70",
+      "name": "黄金十年01",
+      "duration": 2054,
+      "size": 199594307,
+      "num": 1,
+      "sactionTag": 0,
+      "isVipSaction": 1,
+      "cdnType": 0,
+      "cloudVodType": 3,
+      "specifiedCdnType": 0,
+      "videoType": 1,
+      "isVodVip": 0,
+      "onlyCdn": false,
+      "simpleDesc": "[d17172a7b09011eeb2aee43d1ad5fd70,黄金十年01,1,vod=35806b2aa5f811eeb2aee43d1ad5fd70,isOnlyCdn=null]",
+      "boss": false
+    },
+    {
+      "uuid": "b35653aeb0a311eeb2aee43d1ad5fd70",
+      "vodUuid": "35806b2aa5f811eeb2aee43d1ad5fd70",
+      "name": "黄金十年02",
+      "duration": 2502,
+      "size": 243128048,
+      "num": 2,
+      "sactionTag": 0,
+      "isVipSaction": 1,
+      "cdnType": 0,
+      "cloudVodType": 3,
+      "specifiedCdnType": 0,
+      "videoType": 1,
+      "isVodVip": 0,
+      "onlyCdn": false,
+      "simpleDesc": "[b35653aeb0a311eeb2aee43d1ad5fd70,黄金十年02,2,vod=35806b2aa5f811eeb2aee43d1ad5fd70,isOnlyCdn=null]",
+      "boss": false
+    }
+  ]
+}

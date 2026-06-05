@@ -1,0 +1,42 @@
+{
+  "ret": 200,
+  "msg": "",
+  "data": {
+    "code": 0,
+    "msg": "",
+    "info": [
+      {
+        "pageSize": 50,
+        "playList": [
+          {
+            "id": 986890,
+            "key": "vE7hLqizOD0",
+            "name": "01",
+            "updateDate": "2024-05-16T16:40:00",
+            "isBought": false,
+            "isNew": false,
+            "imgPath": null,
+            "publishdate": "0001-01-01T00:00:00",
+            "sharpness": null,
+            "isLive": false,
+            "isFix": false
+          },
+          {
+            "id": 986901,
+            "key": "L9fhMfZuybD",
+            "name": "02",
+            "updateDate": "2024-05-16T14:57:00",
+            "isBought": false,
+            "isNew": false,
+            "imgPath": null,
+            "publishdate": "0001-01-01T00:00:00",
+            "sharpness": null,
+            "isLive": false,
+            "isFix": false
+          }
+        ],
+        "playListType": "byDefault"
+      }
+    ]
+  }
+}

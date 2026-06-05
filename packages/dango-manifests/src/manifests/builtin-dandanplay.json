@@ -1,0 +1,126 @@
+{
+  "apiVersion": 1,
+  "id": "builtin:dandanplay",
+  "name": "DanDanPlay",
+  "version": "0.2.0",
+  "hosts": ["*"],
+  "configSchema": {
+    "type": "object",
+    "properties": {
+      "baseUrl": {
+        "type": "string",
+        "title": "Base URL",
+        "description": "Root of the DanDanPlay (or compatible) API. Defaults to the official https://api.dandanplay.net. Point this at a proxy or self-hosted server to override."
+      },
+      "appId": {
+        "type": "string",
+        "title": "App ID",
+        "description": "DanDanPlay open-platform App ID. Required for the official API; omit when using a proxy that signs server-side."
+      },
+      "appSecret": {
+        "type": "string",
+        "title": "App Secret",
+        "description": "DanDanPlay open-platform App Secret, used to sign requests. Only feeds the local signature, never sent."
+      },
+      "auth": {
+        "type": "object",
+        "title": "Authentication",
+        "description": "Custom request headers (e.g. a token) sent on every request. Used instead of signing when appId/appSecret are absent, e.g. a self-hosted compatible server.",
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "default": false,
+            "title": "Enable auth headers"
+          },
+          "headers": {
+            "type": "array",
+            "title": "Headers",
+            "items": {
+              "type": "object",
+              "required": ["key", "value"],
+              "properties": {
+                "key": { "type": "string", "title": "Header name" },
+                "value": { "type": "string", "title": "Value" }
+              }
+            }
+          }
+        }
+      },
+      "chConvert": {
+        "type": "integer",
+        "enum": [0, 1, 2],
+        "default": 0,
+        "title": "Chinese conversion",
+        "description": "0 = no conversion, 1 = convert to simplified, 2 = convert to traditional"
+      }
+    }
+  },
+  "search": {
+    "inputs": ["q"],
+    "steps": [
+      {
+        "type": "assign",
+        "id": "prep",
+        "values": {
+          "req": "($base := baseUrl ? $replace(baseUrl, /\\/$/, '') : 'https://api.dandanplay.net'; $p := '/api/v2/search/anime'; $ts := $string($now()); $headers := (appId and appSecret) ? { 'X-AppId': appId, 'X-Timestamp': $ts, 'X-Signature': $sha256Base64(appId & $ts & $p & appSecret) } : ((auth.enabled and auth.headers) ? $merge(auth.headers.{ key: value }) : {}); { 'url': $base & $p, 'headers': $headers })"
+        }
+      },
+      {
+        "type": "http",
+        "id": "search",
+        "request": {
+          "method": "GET",
+          "url": "prep.req.url",
+          "query": "{ 'keyword': q }",
+          "headers": "prep.req.headers"
+        }
+      }
+    ],
+    "output": "[search.animes.{ 'providerIds': { 'animeId': animeId, 'bangumiId': bangumiId }, 'indexedId': $string(animeId), 'title': animeTitle, 'type': type, 'typeDescription': typeDescription, 'imageUrl': imageUrl, 'episodeCount': episodeCount, 'year': startDate and $contains(startDate, '-') ? $number($substringBefore(startDate, '-')) : undefined }]"
+  },
+  "episodes": {
+    "inputs": ["bangumiId"],
+    "steps": [
+      {
+        "type": "assign",
+        "id": "prep",
+        "values": {
+          "req": "($base := baseUrl ? $replace(baseUrl, /\\/$/, '') : 'https://api.dandanplay.net'; $p := '/api/v2/bangumi/' & $string(bangumiId); $ts := $string($now()); $headers := (appId and appSecret) ? { 'X-AppId': appId, 'X-Timestamp': $ts, 'X-Signature': $sha256Base64(appId & $ts & $p & appSecret) } : ((auth.enabled and auth.headers) ? $merge(auth.headers.{ key: value }) : {}); { 'url': $base & $p, 'headers': $headers })"
+        }
+      },
+      {
+        "type": "http",
+        "id": "bangumi",
+        "request": {
+          "method": "GET",
+          "url": "prep.req.url",
+          "headers": "prep.req.headers"
+        }
+      }
+    ],
+    "output": "[bangumi.bangumi.episodes.{ 'providerIds': { 'episodeId': episodeId, 'animeId': %.animeId, 'bangumiId': %.bangumiId }, 'indexedId': $string(episodeId), 'title': episodeTitle, 'episodeNumber': $match(episodeNumber, /^\\d+$/) ? $number(episodeNumber) : episodeNumber }]"
+  },
+  "danmaku": {
+    "inputs": ["episodeId"],
+    "steps": [
+      {
+        "type": "assign",
+        "id": "prep",
+        "values": {
+          "req": "($base := baseUrl ? $replace(baseUrl, /\\/$/, '') : 'https://api.dandanplay.net'; $p := '/api/v2/comment/' & $string(episodeId); $ts := $string($now()); $headers := (appId and appSecret) ? { 'X-AppId': appId, 'X-Timestamp': $ts, 'X-Signature': $sha256Base64(appId & $ts & $p & appSecret) } : ((auth.enabled and auth.headers) ? $merge(auth.headers.{ key: value }) : {}); { 'url': $base & $p, 'headers': $headers })"
+        }
+      },
+      {
+        "type": "http",
+        "id": "comments",
+        "request": {
+          "method": "GET",
+          "url": "prep.req.url",
+          "query": "{ 'withRelated': 'true', 'chConvert': chConvert ? $string(chConvert) : undefined }",
+          "headers": "prep.req.headers"
+        }
+      }
+    ],
+    "output": "[comments.comments]"
+  }
+}

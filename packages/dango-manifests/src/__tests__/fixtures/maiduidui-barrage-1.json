@@ -1,0 +1,54 @@
+{
+  "msg": "操作成功",
+  "msgType": 0,
+  "data": [
+    {
+      "times": 56,
+      "barrageList": [
+        {
+          "color": "#FFFFFF",
+          "memberUuid": "8322d72c454e4b19a0919557ded2ed57",
+          "roleImage": "",
+          "uuid": 71673898,
+          "barrageUuid": 8,
+          "roleUuid": "",
+          "content": "2026年5月26日",
+          "colorList": ["#F6E2BE", "#D5AD6E"],
+          "likeNum": 0,
+          "times": 56,
+          "isBarrageEmoji": 0,
+          "vodUuid": "35806b2aa5f811eeb2aee43d1ad5fd70",
+          "unLikeNum": 0,
+          "roleName": "",
+          "sactionUuid": "d17172a7b09011eeb2aee43d1ad5fd70"
+        }
+      ]
+    },
+    {
+      "times": 64,
+      "barrageList": [
+        {
+          "color": "#ffffff",
+          "memberUuid": "e7b0417bc3b0419d8dbbf6f081553313",
+          "roleImage": "",
+          "uuid": 71684334,
+          "barrageUuid": 1,
+          "roleUuid": "",
+          "content": "2026年5月26日",
+          "colorList": ["#ffffff"],
+          "likeNum": 0,
+          "times": 64,
+          "isBarrageEmoji": 0,
+          "vodUuid": "35806b2aa5f811eeb2aee43d1ad5fd70",
+          "unLikeNum": 0,
+          "roleName": "",
+          "sactionUuid": "d17172a7b09011eeb2aee43d1ad5fd70"
+        }
+      ]
+    }
+  ],
+  "sign": "",
+  "signType": "md5",
+  "time": 1780436787946,
+  "status": true
+}

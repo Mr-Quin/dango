@@ -1,0 +1,16 @@
+{
+  "videos": [
+    {
+      "id": "vid_1",
+      "title": "第1集",
+      "stage": "1",
+      "thumbnail_v2": "https://example.com/1.jpg"
+    },
+    {
+      "id": "vid_2",
+      "title": "第2集",
+      "stage": "2",
+      "thumbnail_v2": "https://example.com/2.jpg"
+    }
+  ]
+}

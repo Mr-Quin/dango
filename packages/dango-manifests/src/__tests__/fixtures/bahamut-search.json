@@ -1,0 +1,42 @@
+{
+  "anime": [
+    {
+      "acg_sn": 133416,
+      "anime_sn": 113513,
+      "video_sn": 38250,
+      "title": "鬼滅之刃 柱訓練篇",
+      "dc_c1": 26514,
+      "dc_c2": 16,
+      "favorite": false,
+      "flag": 0,
+      "cover": "https://p2.bahamut.com.tw/B/ACG/c/16/0000133416.JPG",
+      "info": "年份：2024/05 共 8 集",
+      "score": 4.9,
+      "popular": 6061993,
+      "highlightTag": {
+        "bilingual": true,
+        "edition": "",
+        "vipTime": ""
+      }
+    },
+    {
+      "acg_sn": 122787,
+      "anime_sn": 113254,
+      "video_sn": 33295,
+      "title": "鬼滅之刃 刀匠村篇",
+      "dc_c1": 26514,
+      "dc_c2": 14,
+      "favorite": false,
+      "flag": 0,
+      "cover": "https://p2.bahamut.com.tw/B/ACG/c/87/0000122787.JPG",
+      "info": "年份：2023/04 共 11 集",
+      "score": 4.8,
+      "popular": 8318915,
+      "highlightTag": {
+        "bilingual": true,
+        "edition": "",
+        "vipTime": ""
+      }
+    }
+  ]
+}

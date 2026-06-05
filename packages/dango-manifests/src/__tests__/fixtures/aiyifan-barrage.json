@@ -1,0 +1,58 @@
+{
+  "ret": 200,
+  "msg": "",
+  "data": {
+    "code": 0,
+    "msg": "",
+    "info": [
+      {
+        "contxt": "第三季什么时候出  啊",
+        "color": "#ffffff",
+        "second": 0.0,
+        "position": 0
+      },
+      {
+        "contxt": "第二季改太多，抱月楼这改的特别不好",
+        "color": "",
+        "second": 0.0,
+        "position": 0
+      },
+      {
+        "contxt": "Hgv ",
+        "color": "",
+        "second": 0.0,
+        "position": 0
+      },
+      {
+        "contxt": "等了好久了",
+        "color": "",
+        "second": 0.0,
+        "position": 0
+      },
+      {
+        "contxt": "来了...............",
+        "color": "",
+        "second": 0.0,
+        "position": 0
+      },
+      {
+        "contxt": "1",
+        "color": "#ffffff",
+        "second": 0.204,
+        "position": 0
+      },
+      {
+        "contxt": "来了来了 终于来了",
+        "color": "#fe0000",
+        "second": 2.445,
+        "position": 0
+      },
+      {
+        "contxt": "温馨提醒：为了您的观看体验，请屏蔽关键字 肖战",
+        "color": "#fe0000",
+        "second": 8.194,
+        "position": 1
+      }
+    ]
+  }
+}

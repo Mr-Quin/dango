@@ -1,0 +1,22 @@
+{
+  "pageComponentList": [
+    {
+      "commonData": {
+        "isYouku": 1,
+        "showId": "ya0123abc",
+        "titleDTO": { "displayName": "<em>Frieren</em>" },
+        "feature": "日本 · 动漫 · 2023 · 24集",
+        "posterDTO": { "vThumbUrl": "https://example.com/p.jpg" },
+        "episodeTotal": 28
+      }
+    },
+    {
+      "commonData": {
+        "isYouku": 0,
+        "hasYouku": 0,
+        "showId": "other",
+        "titleDTO": { "displayName": "should filter out" }
+      }
+    }
+  ]
+}

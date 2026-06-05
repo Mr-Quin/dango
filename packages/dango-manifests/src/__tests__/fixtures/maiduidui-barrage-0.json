@@ -1,0 +1,80 @@
+{
+  "msg": "操作成功",
+  "msgType": 0,
+  "data": [
+    {
+      "times": 29,
+      "barrageList": []
+    },
+    {
+      "times": 30,
+      "barrageList": [
+        {
+          "color": "#FFFFFF",
+          "memberUuid": "cd8a186bc7994474a91ebfcde0cdc9f9",
+          "roleImage": "",
+          "uuid": 48889213,
+          "barrageUuid": 9,
+          "roleUuid": "",
+          "content": "超级赞👍🏻",
+          "colorList": ["#49DAFA", "#ED58FF"],
+          "likeNum": 0,
+          "times": 30,
+          "isBarrageEmoji": 0,
+          "vodUuid": "35806b2aa5f811eeb2aee43d1ad5fd70",
+          "unLikeNum": 0,
+          "roleName": "",
+          "sactionUuid": "d17172a7b09011eeb2aee43d1ad5fd70"
+        }
+      ]
+    },
+    {
+      "times": 40,
+      "barrageList": [
+        {
+          "color": "#ffffff",
+          "memberUuid": "88fa1e3befda4e7682fbd24d53526a52",
+          "roleImage": "",
+          "uuid": 52970085,
+          "barrageUuid": 1,
+          "roleUuid": "",
+          "content": "终于上架了啊",
+          "colorList": ["#ffffff"],
+          "likeNum": 1,
+          "times": 40,
+          "isBarrageEmoji": 0,
+          "vodUuid": "35806b2aa5f811eeb2aee43d1ad5fd70",
+          "unLikeNum": 0,
+          "roleName": "",
+          "sactionUuid": "d17172a7b09011eeb2aee43d1ad5fd70"
+        }
+      ]
+    },
+    {
+      "times": 41,
+      "barrageList": [
+        {
+          "color": "#ffffff",
+          "memberUuid": "494ca5b2f8234278aa1aa851c53da7b2",
+          "roleImage": "",
+          "uuid": 71415509,
+          "barrageUuid": 1,
+          "roleUuid": "",
+          "content": "超级赞👍🏻",
+          "colorList": ["#ffffff"],
+          "likeNum": 0,
+          "times": 41,
+          "isBarrageEmoji": 0,
+          "vodUuid": "35806b2aa5f811eeb2aee43d1ad5fd70",
+          "unLikeNum": 0,
+          "roleName": "",
+          "sactionUuid": "d17172a7b09011eeb2aee43d1ad5fd70"
+        }
+      ]
+    }
+  ],
+  "sign": "",
+  "signType": "md5",
+  "time": 1780436787741,
+  "status": true
+}

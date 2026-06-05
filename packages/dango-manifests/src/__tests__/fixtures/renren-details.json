@@ -1,0 +1,177 @@
+{
+  "requestId": "19c99f7cd35549ed930a18e1707156f8",
+  "code": "0000",
+  "msg": "Success",
+  "recordsTotal": null,
+  "data": {
+    "authorityInfo": {
+      "playRestricted": 1,
+      "shareRestricted": false,
+      "commentRestricted": false,
+      "downloadRestricted": false
+    },
+    "watchInfo": {
+      "m3u8": {
+        "url": "https://qn-302-cdn-play.samtory.cn/30ef1eafeff971efbfa74531949c0402/e1557a3d70a542f081268501890adcab-b63504b3087d9697b9cd309b15a18e70-sd.mp4?sign=e448c1c9d746b716bd928aaf46e64b92&t=6a1f881f&clientType=android_qwtv_RRSP&clientVersion=1.2.2&parseUsage=PLAY&uid=0&rk=fd2c28d3749c454f96aeb9bdb81b154b&hevc=false&seasonId=40906",
+        "currentQuality": "HD",
+        "size": "0",
+        "header": null,
+        "cacheSize": 5120,
+        "externalAds": true,
+        "commentRestricted": false,
+        "startingLength": 0,
+        "openingLength": 0,
+        "parseTime": "2026-06-03 05:49:19 +3950",
+        "episodeSid": "297185",
+        "mediaId": 312497,
+        "subtitle": [],
+        "ptype": null,
+        "originalMaskFile": null,
+        "xmIMaskFile": null,
+        "vodClassify": "ALI",
+        "isHaveRawMeat": false,
+        "isHaveCookedMeat": true,
+        "mainDuration": "3203",
+        "aspectRatio": 1.78
+      },
+      "tria4kPlayInfo": null,
+      "newSign": null,
+      "dmSign": null,
+      "sortedItems": [
+        {
+          "qualityDescription": "4K",
+          "qualityCode": "UHD4K",
+          "canPlay": false,
+          "canShowVip": true,
+          "initialQuality": false,
+          "canShowLogin": false
+        },
+        {
+          "qualityDescription": "AI原画",
+          "qualityCode": "AI_OD",
+          "canPlay": false,
+          "canShowVip": true,
+          "initialQuality": false,
+          "canShowLogin": false
+        },
+        {
+          "qualityDescription": "超清",
+          "qualityCode": "HD",
+          "canPlay": true,
+          "canShowVip": false,
+          "initialQuality": false,
+          "canShowLogin": false
+        },
+        {
+          "qualityDescription": "高清",
+          "qualityCode": "SD",
+          "canPlay": true,
+          "canShowVip": false,
+          "initialQuality": true,
+          "canShowLogin": false
+        }
+      ],
+      "privilege": null
+    },
+    "dramaInfo": {
+      "dramaId": 40906,
+      "title": "黑暗荣耀 第二季",
+      "subtitle": "更爽更精彩",
+      "normalTagList": [],
+      "specialTagList": [
+        "复仇爽剧",
+        "姐弟恋"
+      ],
+      "enName": "더 글로리2",
+      "cover": "http://img.duoduoshipin.vip/img/img/20230315/o_e9d4627912bf4f9d8aaa6e751ae0d41b.jpg",
+      "cover3Url": "http://img.duoduoshipin.vip/img/img/20230110/o_190c566674b64531bb8209defa7ad6e2.jpg",
+      "playStatus": "已完结·全8集",
+      "seasonNo": 2,
+      "score": 9.8,
+      "year": 2023,
+      "area": "韩国",
+      "plotType": "剧情",
+      "dramaType": "TV",
+      "feeMode": "free",
+      "hotType": 0,
+      "serialStatus": "END",
+      "enable": true,
+      "seasonType": "KR",
+      "imageList": [
+        {
+          "url": "http://img.duoduoshipin.vip/img/img/20230118/o_0a357f4e90b24be9bc05b372f5f69b5b.png",
+          "width": 722,
+          "height": 399
+        }
+      ],
+      "cornerMark": "4K",
+      "limitAge": 18,
+      "trialDuration": 300,
+      "aspectRatio": 1.78
+    },
+    "dramaCompliance": {
+      "approvalNumber": "",
+      "registrationNumber": "",
+      "durationTime": 5000
+    },
+    "episodeList": [
+      {
+        "id": 297185,
+        "sid": "297185",
+        "episodeNo": 1,
+        "text": "",
+        "feeMode": "free",
+        "title": ""
+      },
+      {
+        "id": 297188,
+        "sid": "297188",
+        "episodeNo": 2,
+        "text": "",
+        "feeMode": "vip",
+        "title": ""
+      }
+    ],
+    "trailerList": null,
+    "fiveMinutePlayInfo": null,
+    "sortedItems": [
+      {
+        "qualityDescription": "高清",
+        "qualityCode": "SD",
+        "canPlay": true,
+        "canShowVip": false,
+        "initialQuality": true,
+        "canShowLogin": false
+      },
+      {
+        "qualityDescription": "超清",
+        "qualityCode": "HD",
+        "canPlay": true,
+        "canShowVip": false,
+        "initialQuality": false,
+        "canShowLogin": false
+      },
+      {
+        "qualityDescription": "AI原画",
+        "qualityCode": "AI_OD",
+        "canPlay": false,
+        "canShowVip": true,
+        "initialQuality": false,
+        "canShowLogin": false
+      },
+      {
+        "qualityDescription": "4K",
+        "qualityCode": "UHD4K",
+        "canPlay": false,
+        "canShowVip": true,
+        "initialQuality": false,
+        "canShowLogin": false
+      }
+    ],
+    "tria4kPlayInfo": null,
+    "newSign": null,
+    "dmSign": "",
+    "privilege": null,
+    "appDownloadUrl": "http://img.duoduoshipin.vip/friday/section/20241122/o_6a719de867584c06bad83d4bc94dd3b6.plusandroidburiedpointshowid=10026"
+  }
+}

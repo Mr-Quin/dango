@@ -1,0 +1,30 @@
+name: Release
+
+# Publishes both packages to npm on a version tag (e.g. v0.1.0).
+# Bump versions in the package.json files, tag, and push.
+# Requires the NPM_TOKEN secret (an npm automation token for the @mr-quin scope).
+
+on:
+  push:
+    tags: ['v*']
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - run: bun install --frozen-lockfile
+      - run: bun run build
+      - run: bun run type-check
+      - run: bun test
+      # Publish the engine before the manifests. bun reads NPM_CONFIG_TOKEN
+      # directly; use an npm automation token so no OTP is required.
+      - run: cd packages/dango && bun publish --access public
+        env:
+          NPM_CONFIG_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - run: cd packages/dango-manifests && bun publish --access public
+        env:
+          NPM_CONFIG_TOKEN: ${{ secrets.NPM_TOKEN }}

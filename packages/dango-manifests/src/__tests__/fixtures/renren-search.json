@@ -1,0 +1,83 @@
+{
+  "requestId": "46757933b3564cbea3ad775587b03a46",
+  "code": "0000",
+  "msg": "Success",
+  "recordsTotal": null,
+  "data": [
+    {
+      "id": "40906",
+      "title": "黑暗荣耀 第二季",
+      "subtitle": "更爽更精彩",
+      "name": "黑暗荣耀",
+      "cat": "剧情",
+      "classify": "电视剧",
+      "cover": "http://img.duoduoshipin.vip/img/img/20230315/o_e9d4627912bf4f9d8aaa6e751ae0d41b.jpg",
+      "cover3": "http://img.duoduoshipin.vip/img/img/20230110/o_190c566674b64531bb8209defa7ad6e2.jpg",
+      "area": "韩国",
+      "year": "2023",
+      "score": "9.9",
+      "director": "",
+      "actor": "宋慧乔/李到晛/林智妍/郑成日/廉慧兰/朴成焄/辛睿恩",
+      "feeMode": null,
+      "external_vip": null,
+      "brief": "梦想成为一名建筑师的文东恩（宋慧乔 饰），高中时期因遭受校园暴力而不得不退学，随后等到加害主谋结婚，其孩子升入小学之后。她担任那个孩子的班主任，并开始向加害者和旁观者进行彻底而凄惨的报复的故事。",
+      "search_after": "1242.6628,40906",
+      "highlights": {
+        "title": "<em>黑暗荣耀</em> 第二季"
+      },
+      "cornerMark": null,
+      "tag_special": [
+        {
+          "id": 2662,
+          "name": "复仇爽剧",
+          "special": true
+        },
+        {
+          "id": 1596,
+          "name": "姐弟恋",
+          "special": true
+        }
+      ]
+    },
+    {
+      "id": "40681",
+      "title": "黑暗荣耀 第一季",
+      "subtitle": "宋慧乔大女主复仇",
+      "name": "黑暗荣耀",
+      "cat": "剧情",
+      "classify": "电视剧",
+      "cover": "http://img.duoduoshipin.vip/img/img/20230308/o_5281e0efff0d41158c2ab7744dc7308c.jpg",
+      "cover3": "http://img.duoduoshipin.vip/friday/drama/20241218/o_76788e97a52e47d4a3a69252228e9f42.jpg",
+      "area": "韩国",
+      "year": "2022",
+      "score": "9.7",
+      "director": "",
+      "actor": "宋慧乔/李到晛/林智妍/廉慧兰/朴成焄",
+      "feeMode": null,
+      "external_vip": null,
+      "brief": "本剧由宋慧乔、李到晛主演，《秘密森林》、《阿尔罕布拉宫的回忆》的安吉镐导演执导，《太阳的后裔》、《孤单又灿烂的神－鬼怪》的金银淑作家执笔。一位女子在痛苦与暴力的阴影下长大成人，随后展开精心策划的复仇大计。",
+      "search_after": "1240.0931,40681",
+      "highlights": {
+        "title": "<em>黑暗荣耀</em> 第一季"
+      },
+      "cornerMark": null,
+      "tag_special": [
+        {
+          "id": 2662,
+          "name": "复仇爽剧",
+          "special": true
+        },
+        {
+          "id": 3493,
+          "name": "校园霸凌",
+          "special": true
+        },
+        {
+          "id": 1596,
+          "name": "姐弟恋",
+          "special": true
+        }
+      ]
+    }
+  ]
+}
