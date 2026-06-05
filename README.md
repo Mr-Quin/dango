@@ -21,7 +21,7 @@ bun run check      # build + type-check + lint + format:check + test
 
 ```ts
 import { ManifestRunner, zManifest } from '@mr-quin/dango'
-import bilibili from '@mr-quin/dango-manifests/manifests/builtin-bilibili.json' with { type: 'json' }
+import bilibili from '@mr-quin/dango-manifests/manifests/bilibili.json' with { type: 'json' }
 
 const runner = new ManifestRunner(zManifest.parse(bilibili))
 const seasons = await runner.runSearch({ q: 'frieren' })

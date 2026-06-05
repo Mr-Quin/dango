@@ -27,19 +27,19 @@ This package is data, not code. There is no `index.ts`: consumers import each ma
 ```
 src/
   manifests/
-    builtin-aiyifan.json
-    builtin-bahamut.json
-    builtin-bilibili.json
-    builtin-dandanplay.json
-    builtin-hanjutv.json
-    builtin-iqiyi.json
-    builtin-maiduidui.json
-    builtin-mango.json
-    builtin-migu.json
-    builtin-renren.json
-    builtin-sohu.json
-    builtin-tencent.json
-    builtin-youku.json
+    aiyifan.json
+    bahamut.json
+    bilibili.json
+    dandanplay.json
+    hanjutv.json
+    iqiyi.json
+    maiduidui.json
+    mango.json
+    migu.json
+    renren.json
+    sohu.json
+    tencent.json
+    youku.json
   __tests__/
     builtin-*.test.ts                   # per-manifest pipeline tests
     fixtures/                           # captured representative responses
@@ -52,7 +52,7 @@ scripts/
 
 ```ts
 import { ManifestRunner, zManifest } from '@mr-quin/dango'
-import builtinDandanplay from '@mr-quin/dango-manifests/manifests/builtin-dandanplay.json' with { type: 'json' }
+import builtinDandanplay from '@mr-quin/dango-manifests/manifests/dandanplay.json' with { type: 'json' }
 
 const manifest = zManifest.parse(builtinDandanplay)
 const runner = new ManifestRunner(manifest, { fetcher })
@@ -86,7 +86,7 @@ https://cdn.jsdelivr.net/npm/@mr-quin/dango-manifests@<version>/<file>
       "name": "Bilibili",
       "version": "0.3.0",
       "apiVersion": 1,
-      "file": "src/manifests/builtin-bilibili.json",
+      "file": "src/manifests/bilibili.json",
     },
     // ...
   ],
@@ -96,7 +96,7 @@ https://cdn.jsdelivr.net/npm/@mr-quin/dango-manifests@<version>/<file>
 Each `file` is the in-package path to fetch, e.g.:
 
 ```
-https://cdn.jsdelivr.net/npm/@mr-quin/dango-manifests@0.3.0/src/manifests/builtin-bilibili.json
+https://cdn.jsdelivr.net/npm/@mr-quin/dango-manifests@0.3.0/src/manifests/bilibili.json
 ```
 
 unpkg works the same way (`https://unpkg.com/@mr-quin/dango-manifests@<version>/...`). Pin a `<version>` for reproducibility; omit it to track the latest published release.

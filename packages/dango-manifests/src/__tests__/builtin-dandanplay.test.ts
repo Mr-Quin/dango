@@ -7,7 +7,7 @@ import {
   it,
   setSystemTime,
 } from 'bun:test'
-import builtinDandanplay from '../manifests/builtin-dandanplay.json' with { type: 'json' }
+import builtinDandanplay from '../manifests/dandanplay.json' with { type: 'json' }
 import bangumiFixture from './fixtures/ddp-bangumi.json' with { type: 'json' }
 import commentsFixture from './fixtures/ddp-comments.json' with { type: 'json' }
 import searchFixture from './fixtures/ddp-search.json' with { type: 'json' }

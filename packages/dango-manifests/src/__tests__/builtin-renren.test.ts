@@ -1,6 +1,6 @@
 import { ManifestRunner, zManifest } from '@mr-quin/dango'
 import { describe, expect, it } from 'bun:test'
-import builtinRenren from '../manifests/builtin-renren.json' with { type: 'json' }
+import builtinRenren from '../manifests/renren.json' with { type: 'json' }
 import searchFixture from './fixtures/renren-search.json' with { type: 'json' }
 import detailsFixture from './fixtures/renren-details.json' with { type: 'json' }
 import danmuFixture from './fixtures/renren-danmu.json' with { type: 'json' }

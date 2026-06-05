@@ -1,6 +1,6 @@
 import { ManifestRunner, zManifest } from '@mr-quin/dango'
 import { describe, expect, it } from 'bun:test'
-import builtinMaiduidui from '../manifests/builtin-maiduidui.json' with { type: 'json' }
+import builtinMaiduidui from '../manifests/maiduidui.json' with { type: 'json' }
 import searchFixture from './fixtures/maiduidui-search.json' with { type: 'json' }
 import sactionsFixture from './fixtures/maiduidui-sactions.json' with { type: 'json' }
 import barrage0 from './fixtures/maiduidui-barrage-0.json' with { type: 'json' }

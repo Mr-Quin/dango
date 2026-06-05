@@ -1,7 +1,7 @@
 import type { FetchLike } from '@mr-quin/dango'
 import { ManifestRunner, zManifest } from '@mr-quin/dango'
 import { describe, expect, it } from 'bun:test'
-import builtinTencent from '../manifests/builtin-tencent.json' with { type: 'json' }
+import builtinTencent from '../manifests/tencent.json' with { type: 'json' }
 
 interface MockResponse {
   status?: number

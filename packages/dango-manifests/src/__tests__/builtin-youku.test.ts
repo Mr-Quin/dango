@@ -1,6 +1,6 @@
 import { ManifestRunner, zManifest } from '@mr-quin/dango'
 import { describe, expect, it } from 'bun:test'
-import builtinYouku from '../manifests/builtin-youku.json' with { type: 'json' }
+import builtinYouku from '../manifests/youku.json' with { type: 'json' }
 import searchFixture from './fixtures/youku-search.json' with { type: 'json' }
 import episodesFixture from './fixtures/youku-episodes.json' with { type: 'json' }
 import videoInfo from './fixtures/youku-video-info.json' with { type: 'json' }

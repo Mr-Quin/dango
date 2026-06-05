@@ -1,6 +1,6 @@
 import { ManifestRunner, zManifest } from '@mr-quin/dango'
 import { describe, expect, it } from 'bun:test'
-import builtinBahamut from '../manifests/builtin-bahamut.json' with { type: 'json' }
+import builtinBahamut from '../manifests/bahamut.json' with { type: 'json' }
 import searchFixture from './fixtures/bahamut-search.json' with { type: 'json' }
 import videoFixture from './fixtures/bahamut-video.json' with { type: 'json' }
 import danmuFixture from './fixtures/bahamut-danmu.json' with { type: 'json' }

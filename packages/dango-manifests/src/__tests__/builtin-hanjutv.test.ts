@@ -1,7 +1,7 @@
 import type { FetchLike } from '@mr-quin/dango'
 import { ManifestRunner, zManifest } from '@mr-quin/dango'
 import { describe, expect, it } from 'bun:test'
-import builtinHanjutv from '../manifests/builtin-hanjutv.json' with { type: 'json' }
+import builtinHanjutv from '../manifests/hanjutv.json' with { type: 'json' }
 import danmuFixture from './fixtures/hanjutv-danmu.json' with { type: 'json' }
 import detailFixture from './fixtures/hanjutv-detail.json' with { type: 'json' }
 import searchFixture from './fixtures/hanjutv-search.json' with { type: 'json' }

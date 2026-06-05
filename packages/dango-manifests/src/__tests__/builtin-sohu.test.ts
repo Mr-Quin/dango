@@ -1,6 +1,6 @@
 import { ManifestRunner, zManifest } from '@mr-quin/dango'
 import { describe, expect, it } from 'bun:test'
-import builtinSohu from '../manifests/builtin-sohu.json' with { type: 'json' }
+import builtinSohu from '../manifests/sohu.json' with { type: 'json' }
 import searchFixture from './fixtures/sohu-search.json' with { type: 'json' }
 import albumFixture from './fixtures/sohu-album.json' with { type: 'json' }
 import dmList0 from './fixtures/sohu-dmlist-0.json' with { type: 'json' }

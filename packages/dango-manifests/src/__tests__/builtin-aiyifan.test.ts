@@ -1,6 +1,6 @@
 import { ManifestRunner, zManifest } from '@mr-quin/dango'
 import { describe, expect, it } from 'bun:test'
-import builtinAiyifan from '../manifests/builtin-aiyifan.json' with { type: 'json' }
+import builtinAiyifan from '../manifests/aiyifan.json' with { type: 'json' }
 import searchFixture from './fixtures/aiyifan-search.json' with { type: 'json' }
 import playlistFixture from './fixtures/aiyifan-playlist.json' with { type: 'json' }
 import playFixture from './fixtures/aiyifan-play.json' with { type: 'json' }

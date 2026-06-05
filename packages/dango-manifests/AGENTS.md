@@ -6,7 +6,7 @@ Ships the JSON manifests that drive [@mr-quin/dango](../dango/AGENTS.md). One ma
 
 ## Layout
 
-- `src/manifests/*.json`: the manifests. Filenames are `builtin-<source>.json`; the manifest `id` is the bare `<source>`.
+- `src/manifests/*.json`: the manifests. Filenames mirror the manifest `id`, the bare `<source>` (`<source>.json`).
 - `src/__tests__/<manifest>.test.ts`: per-manifest pipeline tests.
 - `src/__tests__/fixtures/<source>-*.json`: captured representative responses. Each manifest owns its fixtures.
 - `scripts/smoke-test.ts`: manual end-to-end test against the real source APIs. Not in CI.
@@ -16,7 +16,7 @@ Ships the JSON manifests that drive [@mr-quin/dango](../dango/AGENTS.md). One ma
 There is no `index.ts`. Consumers import each manifest JSON directly via the package's `./manifests/*` subpath export:
 
 ```ts
-import ddp from '@mr-quin/dango-manifests/manifests/builtin-dandanplay.json' with { type: 'json' }
+import ddp from '@mr-quin/dango-manifests/manifests/dandanplay.json' with { type: 'json' }
 ```
 
 Adding an aggregate index is a footgun: it forces every consumer to load every manifest even when they need one, and it makes bundlers think this package has a single runtime entry point when it actually has none.

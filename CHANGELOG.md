@@ -37,8 +37,12 @@ breaking manifest-id rename.
   `bilibili`, and likewise for every source). Consumers that reference a manifest
   by id must migrate `builtin:X` to `X`. New ids: `aiyifan`, `bahamut`,
   `bilibili`, `dandanplay`, `hanjutv`, `iqiyi`, `maiduidui`, `mango`, `migu`,
-  `renren`, `sohu`, `tencent`, `youku`. The on-disk filenames stay
-  `builtin-<source>.json`, so manifest subpath imports are unchanged.
+  `renren`, `sohu`, `tencent`, `youku`.
+- **BREAKING:** manifest filenames drop the `builtin-` prefix to match the bare
+  ids: `src/manifests/builtin-<source>.json` becomes `src/manifests/<source>.json`.
+  Consumers importing a manifest via the `./manifests/*` subpath must migrate the
+  path (e.g. `.../manifests/builtin-bilibili.json` to `.../manifests/bilibili.json`).
+  The package `exports` glob is unchanged and resolves the bare names.
 
 ### Added
 

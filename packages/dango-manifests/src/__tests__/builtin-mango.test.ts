@@ -1,6 +1,6 @@
 import { ManifestRunner, zManifest } from '@mr-quin/dango'
 import { describe, expect, it } from 'bun:test'
-import builtinMango from '../manifests/builtin-mango.json' with { type: 'json' }
+import builtinMango from '../manifests/mango.json' with { type: 'json' }
 import searchFixture from './fixtures/mango-search.json' with { type: 'json' }
 import showlistBootstrap from './fixtures/mango-showlist-bootstrap.json' with { type: 'json' }
 import showlistMonth from './fixtures/mango-showlist-month.json' with { type: 'json' }

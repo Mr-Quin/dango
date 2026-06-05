@@ -1,6 +1,6 @@
 import { ManifestRunner, zManifest } from '@mr-quin/dango'
 import { describe, expect, it } from 'bun:test'
-import builtinIqiyi from '../manifests/builtin-iqiyi.json' with { type: 'json' }
+import builtinIqiyi from '../manifests/iqiyi.json' with { type: 'json' }
 import searchFixture from './fixtures/iqiyi-search.json' with { type: 'json' }
 import decodeFixture from './fixtures/iqiyi-decode.json' with { type: 'json' }
 import episodesFixture from './fixtures/iqiyi-episodes.json' with { type: 'json' }
