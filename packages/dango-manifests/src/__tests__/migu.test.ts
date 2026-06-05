@@ -1,7 +1,7 @@
 import type { FetchLike } from '@mr-quin/dango'
 import { ManifestRunner, zManifest } from '@mr-quin/dango'
 import { describe, expect, it } from 'bun:test'
-import builtinMigu from '../manifests/builtin-migu.json' with { type: 'json' }
+import builtinMigu from '../manifests/migu.json' with { type: 'json' }
 import contentInfoFixture from './fixtures/migu-content-info.json' with { type: 'json' }
 import danmakuSegments from './fixtures/migu-danmaku-segments.json' with { type: 'json' }
 import episodesFixture from './fixtures/migu-episodes.json' with { type: 'json' }
@@ -46,7 +46,7 @@ function mockFetcher(handlers: Record<string, MockResponse>): {
   return { fetcher, calls }
 }
 
-describe('builtin:migu manifest', () => {
+describe('migu manifest', () => {
   it('search: maps long-content matches to canonical shape and drops shorts', async () => {
     const { fetcher, calls } = mockFetcher({
       'https://jadeite.migu.cn/search/v3/open-search': {

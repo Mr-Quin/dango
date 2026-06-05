@@ -1,96 +1,96 @@
 {
-  "packageVersion": "0.2.0",
+  "packageVersion": "0.3.0",
   "manifests": [
     {
-      "id": "builtin:aiyifan",
+      "id": "aiyifan",
       "name": "Aiyifan",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "apiVersion": 1,
-      "file": "src/manifests/builtin-aiyifan.json"
+      "file": "src/manifests/aiyifan.json"
     },
     {
-      "id": "builtin:bahamut",
+      "id": "bahamut",
       "name": "Bahamut",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "apiVersion": 1,
-      "file": "src/manifests/builtin-bahamut.json"
+      "file": "src/manifests/bahamut.json"
     },
     {
-      "id": "builtin:bilibili",
+      "id": "bilibili",
       "name": "Bilibili",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "apiVersion": 1,
-      "file": "src/manifests/builtin-bilibili.json"
+      "file": "src/manifests/bilibili.json"
     },
     {
-      "id": "builtin:dandanplay",
+      "id": "dandanplay",
       "name": "DanDanPlay",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "apiVersion": 1,
-      "file": "src/manifests/builtin-dandanplay.json"
+      "file": "src/manifests/dandanplay.json"
     },
     {
-      "id": "builtin:hanjutv",
+      "id": "hanjutv",
       "name": "Hanjutv",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "apiVersion": 1,
-      "file": "src/manifests/builtin-hanjutv.json"
+      "file": "src/manifests/hanjutv.json"
     },
     {
-      "id": "builtin:iqiyi",
+      "id": "iqiyi",
       "name": "iQIYI",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "apiVersion": 1,
-      "file": "src/manifests/builtin-iqiyi.json"
+      "file": "src/manifests/iqiyi.json"
     },
     {
-      "id": "builtin:maiduidui",
+      "id": "maiduidui",
       "name": "Maiduidui",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "apiVersion": 1,
-      "file": "src/manifests/builtin-maiduidui.json"
+      "file": "src/manifests/maiduidui.json"
     },
     {
-      "id": "builtin:mango",
+      "id": "mango",
       "name": "Mango TV",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "apiVersion": 1,
-      "file": "src/manifests/builtin-mango.json"
+      "file": "src/manifests/mango.json"
     },
     {
-      "id": "builtin:migu",
+      "id": "migu",
       "name": "Migu Video",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "apiVersion": 1,
-      "file": "src/manifests/builtin-migu.json"
+      "file": "src/manifests/migu.json"
     },
     {
-      "id": "builtin:renren",
+      "id": "renren",
       "name": "Renren",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "apiVersion": 1,
-      "file": "src/manifests/builtin-renren.json"
+      "file": "src/manifests/renren.json"
     },
     {
-      "id": "builtin:sohu",
+      "id": "sohu",
       "name": "Sohu",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "apiVersion": 1,
-      "file": "src/manifests/builtin-sohu.json"
+      "file": "src/manifests/sohu.json"
     },
     {
-      "id": "builtin:tencent",
+      "id": "tencent",
       "name": "Tencent Video",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "apiVersion": 1,
-      "file": "src/manifests/builtin-tencent.json"
+      "file": "src/manifests/tencent.json"
     },
     {
-      "id": "builtin:youku",
+      "id": "youku",
       "name": "Youku",
-      "version": "0.2.1",
+      "version": "0.3.0",
       "apiVersion": 1,
-      "file": "src/manifests/builtin-youku.json"
+      "file": "src/manifests/youku.json"
     }
   ]
 }

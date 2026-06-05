@@ -13,9 +13,9 @@
  * when an upstream changes things.
  */
 import { ManifestRunner, zManifest } from '@mr-quin/dango'
-import builtinBilibili from '../src/manifests/builtin-bilibili.json' with { type: 'json' }
-import builtinDandanplay from '../src/manifests/builtin-dandanplay.json' with { type: 'json' }
-import builtinTencent from '../src/manifests/builtin-tencent.json' with { type: 'json' }
+import builtinBilibili from '../src/manifests/bilibili.json' with { type: 'json' }
+import builtinDandanplay from '../src/manifests/dandanplay.json' with { type: 'json' }
+import builtinTencent from '../src/manifests/tencent.json' with { type: 'json' }
 
 const source = process.argv[2]
 const keyword = process.argv[3] ?? 'Frieren'

@@ -1,6 +1,6 @@
 import { ManifestRunner, zManifest } from '@mr-quin/dango'
 import { describe, expect, it } from 'bun:test'
-import builtinSohu from '../manifests/builtin-sohu.json' with { type: 'json' }
+import builtinSohu from '../manifests/sohu.json' with { type: 'json' }
 import searchFixture from './fixtures/sohu-search.json' with { type: 'json' }
 import albumFixture from './fixtures/sohu-album.json' with { type: 'json' }
 import dmList0 from './fixtures/sohu-dmlist-0.json' with { type: 'json' }
@@ -8,7 +8,7 @@ import dmList1 from './fixtures/sohu-dmlist-1.json' with { type: 'json' }
 import { mockFetcher } from './mockFetcher.js'
 
 /**
- * Pins the builtin:sohu reference manifest end-to-end against captured
+ * Pins the sohu reference manifest end-to-end against captured
  * fixtures. search filters to site=1 album results, strips the <<<>>> markers
  * from the title and lifts the type out of the pipe-delimited meta line.
  * episodes maps the album videos list. danmaku derives the segment count from
@@ -17,7 +17,7 @@ import { mockFetcher } from './mockFetcher.js'
  * decode the manifest applies to t.c.
  */
 
-describe('builtin:sohu manifest', () => {
+describe('sohu manifest', () => {
   it('search: keeps site=1 albums, strips markers and parses the meta type', async () => {
     const { fetcher, calls } = mockFetcher({
       'https://m.so.tv.sohu.com/search/pc/keyword': {

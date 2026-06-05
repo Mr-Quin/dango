@@ -1,13 +1,13 @@
 import { ManifestRunner, zManifest } from '@mr-quin/dango'
 import { describe, expect, it } from 'bun:test'
-import builtinBahamut from '../manifests/builtin-bahamut.json' with { type: 'json' }
+import builtinBahamut from '../manifests/bahamut.json' with { type: 'json' }
 import searchFixture from './fixtures/bahamut-search.json' with { type: 'json' }
 import videoFixture from './fixtures/bahamut-video.json' with { type: 'json' }
 import danmuFixture from './fixtures/bahamut-danmu.json' with { type: 'json' }
 import { mockFetcher } from './mockFetcher.js'
 
 /**
- * Pins the builtin:bahamut reference manifest end-to-end against captured
+ * Pins the bahamut reference manifest end-to-end against captured
  * fixtures. search lifts video_sn and parses the year and episode count out of
  * the Traditional Chinese info string. episodes flattens the episodes object
  * (whose values are arrays grouped by season) into canonical entries. danmaku
@@ -15,7 +15,7 @@ import { mockFetcher } from './mockFetcher.js'
  * position maps to a danmaku mode and the hex color is converted to an int.
  */
 
-describe('builtin:bahamut manifest', () => {
+describe('bahamut manifest', () => {
   it('search: lifts video_sn and parses year and episode count from info', async () => {
     const { fetcher, calls } = mockFetcher({
       'https://api.gamer.com.tw/mobile_app/anime/v1/search.php': {

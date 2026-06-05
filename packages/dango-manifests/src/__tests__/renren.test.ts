@@ -1,13 +1,13 @@
 import { ManifestRunner, zManifest } from '@mr-quin/dango'
 import { describe, expect, it } from 'bun:test'
-import builtinRenren from '../manifests/builtin-renren.json' with { type: 'json' }
+import builtinRenren from '../manifests/renren.json' with { type: 'json' }
 import searchFixture from './fixtures/renren-search.json' with { type: 'json' }
 import detailsFixture from './fixtures/renren-details.json' with { type: 'json' }
 import danmuFixture from './fixtures/renren-danmu.json' with { type: 'json' }
 import { mockFetcher } from './mockFetcher.js'
 
 /**
- * Pins the builtin:renren reference manifest end-to-end against captured
+ * Pins the renren reference manifest end-to-end against captured
  * fixtures. search maps the qwtv/search data list to canonical entries.
  * episodes maps drama/details episodeList keyed by sid, deriving titles from
  * episodeNo when the upstream title is empty. danmaku reads the array-rooted
@@ -15,7 +15,7 @@ import { mockFetcher } from './mockFetcher.js'
  * {p, m} shape, where p carries the real time offset, color and author id.
  */
 
-describe('builtin:renren manifest', () => {
+describe('renren manifest', () => {
   it('search: maps the qwtv search list to canonical entries', async () => {
     const { fetcher, calls } = mockFetcher({
       'https://api.gorafie.com/qwtv/search': {

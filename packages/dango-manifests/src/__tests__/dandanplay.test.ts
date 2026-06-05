@@ -7,14 +7,14 @@ import {
   it,
   setSystemTime,
 } from 'bun:test'
-import builtinDandanplay from '../manifests/builtin-dandanplay.json' with { type: 'json' }
+import builtinDandanplay from '../manifests/dandanplay.json' with { type: 'json' }
 import bangumiFixture from './fixtures/ddp-bangumi.json' with { type: 'json' }
 import commentsFixture from './fixtures/ddp-comments.json' with { type: 'json' }
 import searchFixture from './fixtures/ddp-search.json' with { type: 'json' }
 import { mockFetcher } from './mockFetcher.js'
 
 /**
- * Pins the builtin:dandanplay reference manifest, the unified DDP source. It
+ * Pins the dandanplay reference manifest, the unified DDP source. It
  * targets a configurable baseUrl (default official api.dandanplay.net) over the
  * /api/v2 paths and picks one of three auth modes: DDP signing when
  * appId/appSecret are set (X-Signature = Base64(SHA256(appId+ts+path+appSecret)),
@@ -32,7 +32,7 @@ function readHeaders(call: { init?: unknown }): Record<string, string> {
   return (call.init as { headers?: Record<string, string> }).headers ?? {}
 }
 
-describe('builtin:dandanplay manifest', () => {
+describe('dandanplay manifest', () => {
   beforeAll(() => {
     setSystemTime(new Date('2024-01-01T00:00:00Z'))
   })

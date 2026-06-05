@@ -1,6 +1,6 @@
 import { ManifestRunner, zManifest } from '@mr-quin/dango'
 import { describe, expect, it } from 'bun:test'
-import builtinIqiyi from '../manifests/builtin-iqiyi.json' with { type: 'json' }
+import builtinIqiyi from '../manifests/iqiyi.json' with { type: 'json' }
 import searchFixture from './fixtures/iqiyi-search.json' with { type: 'json' }
 import decodeFixture from './fixtures/iqiyi-decode.json' with { type: 'json' }
 import episodesFixture from './fixtures/iqiyi-episodes.json' with { type: 'json' }
@@ -9,7 +9,7 @@ import segmentFixture from './fixtures/iqiyi-segment.json' with { type: 'json' }
 import { mockFetcher } from './mockFetcher.js'
 
 /**
- * Pins the builtin:iqiyi reference manifest end-to-end against captured
+ * Pins the iqiyi reference manifest end-to-end against captured
  * fixtures. search keeps template 101/102/103 albums whose pageUrl is a real
  * /v_ watch page and lifts the linkId, type and episode count. episodes decodes
  * the linkId to a tvid then walks the signed base_info album_episodes block.
@@ -22,7 +22,7 @@ const segmentBytes = Uint8Array.from(atob(segmentFixture.b64), (c) =>
   c.charCodeAt(0)
 )
 
-describe('builtin:iqiyi manifest', () => {
+describe('iqiyi manifest', () => {
   it('search: keeps /v_ watch-page albums and lifts linkId, type and count', async () => {
     const { fetcher, calls } = mockFetcher({
       'https://mesh.if.iqiyi.com/portal/lw/search/homePageV3': {

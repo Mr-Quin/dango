@@ -1,6 +1,6 @@
 import { ManifestRunner, zManifest } from '@mr-quin/dango'
 import { describe, expect, it } from 'bun:test'
-import builtinMaiduidui from '../manifests/builtin-maiduidui.json' with { type: 'json' }
+import builtinMaiduidui from '../manifests/maiduidui.json' with { type: 'json' }
 import searchFixture from './fixtures/maiduidui-search.json' with { type: 'json' }
 import sactionsFixture from './fixtures/maiduidui-sactions.json' with { type: 'json' }
 import barrage0 from './fixtures/maiduidui-barrage-0.json' with { type: 'json' }
@@ -8,7 +8,7 @@ import barrage1 from './fixtures/maiduidui-barrage-1.json' with { type: 'json' }
 import { mockFetcher } from './mockFetcher.js'
 
 /**
- * Pins the builtin:maiduidui reference manifest end-to-end against captured
+ * Pins the maiduidui reference manifest end-to-end against captured
  * fixtures. search keeps drama/movie/variety results and flattens vodList into
  * canonical entries. episodes maps the listVodSactions data array. danmaku is a
  * per-minute forEach over vodBarrage: the segment count derives from
@@ -23,7 +23,7 @@ function segmentTimes(init: unknown): number {
   return parsed.data?.times ?? -1
 }
 
-describe('builtin:maiduidui manifest', () => {
+describe('maiduidui manifest', () => {
   it('search: keeps drama/movie/variety results and flattens vodList', async () => {
     const { fetcher, calls } = mockFetcher({
       'https://mob.mddcloud.com.cn/searchApi/search/getAllSearchResult4820.action':

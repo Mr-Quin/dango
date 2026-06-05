@@ -10,7 +10,7 @@ import { FileDescriptorSetSchema } from '@bufbuild/protobuf/wkt'
 import { base64Decode } from '@bufbuild/protobuf/wire'
 import { ManifestRunner, zManifest } from '@mr-quin/dango'
 import { describe, expect, it } from 'bun:test'
-import builtinBilibili from '../manifests/builtin-bilibili.json' with { type: 'json' }
+import builtinBilibili from '../manifests/bilibili.json' with { type: 'json' }
 import bangumiFixture from './fixtures/bilibili-search-bangumi.json' with { type: 'json' }
 import ftFixture from './fixtures/bilibili-search-ft.json' with { type: 'json' }
 import seasonFixture from './fixtures/bilibili-season.json' with { type: 'json' }
@@ -52,7 +52,7 @@ function encodeSegment(
   return toBinary(reply, create(reply, { elems }))
 }
 
-describe('builtin:bilibili manifest', () => {
+describe('bilibili manifest', () => {
   it('runs WBI-signed media_bangumi + media_ft searches', async () => {
     const navResponse = {
       data: {

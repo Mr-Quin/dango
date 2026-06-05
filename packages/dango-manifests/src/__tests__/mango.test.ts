@@ -1,6 +1,6 @@
 import { ManifestRunner, zManifest } from '@mr-quin/dango'
 import { describe, expect, it } from 'bun:test'
-import builtinMango from '../manifests/builtin-mango.json' with { type: 'json' }
+import builtinMango from '../manifests/mango.json' with { type: 'json' }
 import searchFixture from './fixtures/mango-search.json' with { type: 'json' }
 import showlistBootstrap from './fixtures/mango-showlist-bootstrap.json' with { type: 'json' }
 import showlistMonth from './fixtures/mango-showlist-month.json' with { type: 'json' }
@@ -12,7 +12,7 @@ import danmakuSeg1 from './fixtures/mango-danmaku-1.json' with { type: 'json' }
 import { mockFetcher } from './mockFetcher.js'
 
 /**
- * Pins the builtin:mango reference manifest end-to-end against captured
+ * Pins the mango reference manifest end-to-end against captured
  * fixtures. search filters to source=imgo media and lifts collection_id out of
  * the /b/<id> URL. episodes runs the two-stage showlist forEach (bootstrap to
  * discover months, then one request per month) and drops cross-collection
@@ -21,7 +21,7 @@ import { mockFetcher } from './mockFetcher.js'
  * CommentEntity shape.
  */
 
-describe('builtin:mango manifest', () => {
+describe('mango manifest', () => {
   it('search: keeps source=imgo media and extracts collectionId from the /b/ URL', async () => {
     const { fetcher, calls } = mockFetcher({
       'https://mobileso.bz.mgtv.com/msite/search/v2': {

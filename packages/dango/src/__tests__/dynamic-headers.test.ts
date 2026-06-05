@@ -7,7 +7,7 @@ import { mockFetcher } from './fixtures.js'
  * `request.headers` accepts either a static `{ name: expr }` record or a
  * single JSONata expression evaluating to a `{ name: value }` object. The
  * latter is needed when header names are dynamic (e.g. user-supplied auth
- * header lists in `builtin:dandanplay`).
+ * header lists in `dandanplay`).
  */
 
 const baseManifest = {

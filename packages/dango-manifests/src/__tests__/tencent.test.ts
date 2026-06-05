@@ -1,7 +1,7 @@
 import type { FetchLike } from '@mr-quin/dango'
 import { ManifestRunner, zManifest } from '@mr-quin/dango'
 import { describe, expect, it } from 'bun:test'
-import builtinTencent from '../manifests/builtin-tencent.json' with { type: 'json' }
+import builtinTencent from '../manifests/tencent.json' with { type: 'json' }
 
 interface MockResponse {
   status?: number
@@ -158,7 +158,7 @@ const danmakuSegment1 = {
   ],
 }
 
-describe('builtin:tencent manifest', () => {
+describe('tencent manifest', () => {
   it('runs search, picks MainNeed box, filters episodeless items', async () => {
     const { fetcher, calls } = mockFetcher({
       'https://pbaccess.video.qq.com/trpc.videosearch.mobile_search.MultiTerminalSearch/MbSearch?vplatform=2':
