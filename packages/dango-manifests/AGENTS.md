@@ -6,7 +6,7 @@ Ships the JSON manifests that drive [@mr-quin/dango](../dango/AGENTS.md). One ma
 
 ## Layout
 
-- `src/manifests/*.json`: the manifests. Filenames mirror the manifest `id` (`builtin:<source>` → `builtin-<source>.json`).
+- `src/manifests/*.json`: the manifests. Filenames are `builtin-<source>.json`; the manifest `id` is the bare `<source>`.
 - `src/__tests__/<manifest>.test.ts`: per-manifest pipeline tests.
 - `src/__tests__/fixtures/<source>-*.json`: captured representative responses. Each manifest owns its fixtures.
 - `scripts/smoke-test.ts`: manual end-to-end test against the real source APIs. Not in CI.
@@ -25,7 +25,7 @@ Adding an aggregate index is a footgun: it forces every consumer to load every m
 
 Sources call their upstream API directly: point at the upstream host and list it in `hosts`. This package has no dependency on any host application's backend or proxy. Authenticated sources sign requests in-pipeline using config-supplied secrets (see DanDanPlay below), never a hosted credential service.
 
-## DanDanPlay (`builtin:dandanplay`)
+## DanDanPlay (`dandanplay`)
 
 One manifest for every DanDanPlay endpoint: the official API, a proxy, or a self-hosted compatible server. The official DDP API is just the special case where `baseUrl` is unset and `appId`/`appSecret` are supplied. `hosts: ['*']` since `baseUrl` is config-driven.
 
@@ -50,7 +50,7 @@ Three auth modes, by config:
 
 `baseUrl`, `appId`, `appSecret`, `auth`, `chConvert` are all optional config, so they are **not** in pipeline `inputs` (the engine requires every listed input present); only `q` / `bangumiId` / `episodeId` are. Paths are `/api/v2/...`; a host points `baseUrl` at a proxy/self-hosted server to override the official default. There is no separate `ddp-compat` manifest, it is this manifest with a different `baseUrl`.
 
-## Bilibili (`builtin:bilibili`)
+## Bilibili (`bilibili`)
 
 Two parallel `media_bangumi` + `media_ft` calls under `search`. Episodes go through `/pgc/view/web/season`. Danmaku has two variants:
 
@@ -59,49 +59,49 @@ Two parallel `media_bangumi` + `media_ft` calls under `search`. Episodes go thro
 
 Modes 2 and 3 (substyles of scroll-right) collapse to mode 1 in the canonical output; modes outside `{1,4,5,6}` are filtered out.
 
-## Tencent (`builtin:tencent`)
+## Tencent (`tencent`)
 
 POST endpoints with complex JSON bodies. Episodes pagination uses `forEach.breakOn` ("stop when this page has < 100 items"), forcing sequential iteration. Danmaku is two-phase: an `http` step hits `barrage/base/{vid}` to discover segment names, an `assign` step flattens `segment_index.*.segment_name` into an array, and a `forEach` fetches each segment in parallel.
 
 Comment styling: `content_style` is a JSON-encoded string in the response. The manifest uses `$jsonParse` to extract the hex color, falling back to white when missing or unparseable.
 
-## Hanjutv (`builtin:hanjutv`)
+## Hanjutv (`hanjutv`)
 
 Korean-drama source on `hxqapi.hiyun.tv` (+ a `hxqapi.zmdcq.com` mirror). Search returns a flat list; episodes come from a detail lookup; danmaku is fetched per segment. Canonical output is the standard `{p, m}` shape.
 
-## Mango (`builtin:mango`)
+## Mango (`mango`)
 
 Mango TV (`*.mgtv.com`). Search keeps `source=imgo` media and lifts `collection_id` out of the `/b/<id>` URL. Episodes run a two-stage `forEach`: bootstrap the showlist to discover months, then one request per month, dropping cross-collection leakage. Danmaku derives the segment count from the video duration and pulls per-minute CDN JSON shards.
 
-## Migu (`builtin:migu`)
+## Migu (`migu`)
 
 Migu Video (`*.migu.cn` / `*.miguvideo.com`). Search, a content-info lookup feeding the episodes list, and segmented danmaku mapped to the canonical shape.
 
-## Youku (`builtin:youku`)
+## Youku (`youku`)
 
 Youku (`*.youku.com`). Search filters to Youku-owned results and strips HTML from titles. Episodes map the openapi videos list. Danmaku is a signed multi-step flow: read the video duration, pull the cna guid from an etag header and the `_m_h5_tk` token from a Set-Cookie header, build per-minute signed POSTs in an assign step, then `forEach` those requests. Signing uses `$millis`, so segment URLs are non-deterministic.
 
-## iQIYI (`builtin:iqiyi`)
+## iQIYI (`iqiyi`)
 
 iQIYI (`*.iqiyi.com` + `mesh.if.iqiyi.com`, `pcw-api.iq.com`). Search keeps templates 101/102/103 whose `pageUrl` is a real `/v_` watch page, which filters out cross-site redirect stubs (e.g. titles that resolve to `v.qq.com`). Episodes decode the linkId to a tvid, then read the signed `base_info` `album_episodes` block. Danmaku derives the per-300s shard list from the duration and fetches zlib-deflated XML bullet shards (`format: 'xml'`, `decompress: 'deflate'`); time comes from `showTime`.
 
-## Aiyifan (`builtin:aiyifan`)
+## Aiyifan (`aiyifan`)
 
 Aiyifan / yfsp.tv. Every pipeline first GETs the `www.yfsp.tv` homepage and regex-extracts the `pConfig` `publicKey` / `privateKey`, then signs each JSON request with `$md5(pub & '&' & $lowercase(canon) & '&' & priv)` where `canon` is the literal query string. Danmaku comes from `getBarrage`; color is `#RRGGBB` hex.
 
-## Bahamut (`builtin:bahamut`)
+## Bahamut (`bahamut`)
 
 Bahamut Anime Gamer (`api.gamer.com.tw`), Traditional Chinese; search with simplified-Chinese keywords often misses. Danmaku is a single `danmu.php` call; the `time` field is in tenths of a second (output divides by 10). Note: episodes flatten **all** category groups under `anime.episodes.*`, so a title that ships a main group plus an alternate-version group yields each episode number once per group (distinct `videoSn`). That is the real upstream shape, not a dedup bug; revisit only if a group needs suppressing.
 
-## Maiduidui (`builtin:maiduidui`)
+## Maiduidui (`maiduidui`)
 
 Maiduidui (`mob.mddcloud.com.cn`). Search nests `data[group].vodList[]`; the `type` label lives on the parent group, so bind it (`$tn := typeName`) before descending into `vodList`. Danmaku is a per-minute `vodBarrage` `forEach`; time comes from `times`, and the rows carry no color (defaults to white).
 
-## Renren (`builtin:renren`)
+## Renren (`renren`)
 
 Renren (`api.gorafie.com` + `static-dm.qwdjapp.com`), strong on foreign drama. Danmaku is a single fetch whose root is an array; each row has a CSV `p` string that the manifest splits into `time,*,color,*,*,*,uid`.
 
-## Sohu (`builtin:sohu`)
+## Sohu (`sohu`)
 
 Sohu TV (`*.sohu.com`). Search filters to `site=1` albums and strips `<<<>>>` markers from titles. Danmaku paginates `dmListAll` by `time_begin` (300s windows). Color quirk: `t.c` is a **decimal** RGB string for most comments but a `#RRGGBB` **hex** string for some, so the manifest branches on a leading `#` (`$contains($cr, '#') ? $hexToInt(...) : $number(...)`). Treating every value as hex overflows past `0xFFFFFF`.
 
@@ -109,7 +109,7 @@ Sohu TV (`*.sohu.com`). Search filters to `site=1` albums and strips `<<<>>>` ma
 
 - Manifests use **raw JSON, not pre-parsed**. Consumers wrap with `zManifest.parse()` at startup. Pre-parsing in this package would force a dango type dependency to flow through and tie shipping versions tighter than needed.
 - One manifest per file.
-- Manifest `id` must be `builtin:<source>` for anything shipped here.
+- Manifest `id` is the bare `<source>` for anything shipped here.
 - Tests must (1) parse against `zManifest`, (2) mock `FetchLike` with captured fixtures per pipeline, (3) assert the exact canonical output shape. Use exact URL match in the mock fetcher, silent query-string mismatches should surface as test failures.
 - Fixtures are captured responses, edited only to redact noise. Keep representative shape and value types.
 

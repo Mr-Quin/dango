@@ -282,7 +282,7 @@ export const zManifest = z.object({
   version: z.string(),
   /**
    * Allowed request hosts. Plain hostnames, `*.example.com` wildcards, or
-   * the literal `*` (any host, for templates like `builtin:dandanplay` where
+   * the literal `*` (any host, for templates like `dandanplay` where
    * the user supplies the host via a config `baseUrl`).
    */
   hosts: z

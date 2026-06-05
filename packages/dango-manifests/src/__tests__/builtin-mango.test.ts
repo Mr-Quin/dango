@@ -12,7 +12,7 @@ import danmakuSeg1 from './fixtures/mango-danmaku-1.json' with { type: 'json' }
 import { mockFetcher } from './mockFetcher.js'
 
 /**
- * Pins the builtin:mango reference manifest end-to-end against captured
+ * Pins the mango reference manifest end-to-end against captured
  * fixtures. search filters to source=imgo media and lifts collection_id out of
  * the /b/<id> URL. episodes runs the two-stage showlist forEach (bootstrap to
  * discover months, then one request per month) and drops cross-collection
@@ -21,7 +21,7 @@ import { mockFetcher } from './mockFetcher.js'
  * CommentEntity shape.
  */
 
-describe('builtin:mango manifest', () => {
+describe('mango manifest', () => {
   it('search: keeps source=imgo media and extracts collectionId from the /b/ URL', async () => {
     const { fetcher, calls } = mockFetcher({
       'https://mobileso.bz.mgtv.com/msite/search/v2': {

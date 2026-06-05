@@ -8,7 +8,7 @@ import barrage1 from './fixtures/maiduidui-barrage-1.json' with { type: 'json' }
 import { mockFetcher } from './mockFetcher.js'
 
 /**
- * Pins the builtin:maiduidui reference manifest end-to-end against captured
+ * Pins the maiduidui reference manifest end-to-end against captured
  * fixtures. search keeps drama/movie/variety results and flattens vodList into
  * canonical entries. episodes maps the listVodSactions data array. danmaku is a
  * per-minute forEach over vodBarrage: the segment count derives from
@@ -23,7 +23,7 @@ function segmentTimes(init: unknown): number {
   return parsed.data?.times ?? -1
 }
 
-describe('builtin:maiduidui manifest', () => {
+describe('maiduidui manifest', () => {
   it('search: keeps drama/movie/variety results and flattens vodList', async () => {
     const { fetcher, calls } = mockFetcher({
       'https://mob.mddcloud.com.cn/searchApi/search/getAllSearchResult4820.action':

@@ -45,7 +45,7 @@ function mockFetcher(handlers: Record<string, MockResponse>): {
   return { fetcher, calls }
 }
 
-describe('builtin:hanjutv manifest', () => {
+describe('hanjutv manifest', () => {
   it('search: signs the request and decrypts the no-pad AES response', async () => {
     const { fetcher, calls } = mockFetcher({
       'https://hxqapi.hiyun.tv/api/search/s5?k=%E7%A4%BA%E4%BE%8B&srefer=search_input&type=0&page=1':

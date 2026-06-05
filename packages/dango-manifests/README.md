@@ -6,21 +6,21 @@ This package is data, not code. There is no `index.ts`: consumers import each ma
 
 ## Shipped manifests
 
-| Id                   | Endpoint                                    | Notes                                                                                                                                                                |
-| -------------------- | ------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `builtin:dandanplay` | `baseUrl` (default `api.dandanplay.net`)    | Unified DDP source. Default official; optional `appId`/`appSecret` signing, `auth` headers, or none (proxy). `baseUrl` overrides the endpoint (proxy / self-hosted). |
-| `builtin:bilibili`   | `api.bilibili.com`                          | Parallel media_bangumi + media_ft search; xml + protobuf danmaku variants.                                                                                           |
-| `builtin:tencent`    | `pbaccess.video.qq.com` + `dm.video.qq.com` | POST bodies, page-cursor episode pagination via forEach `breakOn`, two-phase danmaku (segment index then per-segment fetch).                                         |
-| `builtin:hanjutv`    | `hxqapi.hiyun.tv` + `hxqapi.zmdcq.com`      | Korean-drama source; search, detail-driven episodes, per-segment danmaku.                                                                                            |
-| `builtin:mango`      | `*.mgtv.com` + `*.hitv.com`                 | Mango TV; source=imgo search, two-stage showlist episodes, per-minute CDN danmaku shards.                                                                            |
-| `builtin:migu`       | `*.migu.cn` + `*.miguvideo.com`             | Migu Video; content-info lookup, episodes list, segmented danmaku.                                                                                                   |
-| `builtin:youku`      | `*.youku.com` + `log.mmstat.com`            | Youku; HTML-stripped search, openapi episodes, signed per-minute danmaku POSTs (cna guid + \_m_h5_tk token).                                                         |
-| `builtin:iqiyi`      | `*.iqiyi.com` + `mesh.if.iqiyi.com`         | iQIYI; /v\_ watch-page search, signed base_info episodes, zlib-deflated XML bullet shards.                                                                           |
-| `builtin:aiyifan`    | `yfsp.tv` + `rankv21.tripdata.app`          | Aiyifan; homepage-scraped pub/priv keys sign each JSON request; getBarrage danmaku.                                                                                  |
-| `builtin:bahamut`    | `api.gamer.com.tw`                          | Bahamut Anime (Traditional Chinese); single danmu.php fetch, time in tenths of a second.                                                                             |
-| `builtin:maiduidui`  | `mob.mddcloud.com.cn`                       | Maiduidui; nested search, listVodSactions episodes, per-minute vodBarrage shards.                                                                                    |
-| `builtin:renren`     | `api.gorafie.com` + `static-dm.qwdjapp.com` | Renren (foreign drama); array-rooted danmaku with CSV `p` strings.                                                                                                   |
-| `builtin:sohu`       | `*.sohu.com`                                | Sohu TV; site=1 search, album episodes, paginated dmListAll danmaku (decimal/hex color handling).                                                                    |
+| Id           | Endpoint                                    | Notes                                                                                                                                                                |
+| ------------ | ------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `dandanplay` | `baseUrl` (default `api.dandanplay.net`)    | Unified DDP source. Default official; optional `appId`/`appSecret` signing, `auth` headers, or none (proxy). `baseUrl` overrides the endpoint (proxy / self-hosted). |
+| `bilibili`   | `api.bilibili.com`                          | Parallel media_bangumi + media_ft search; xml + protobuf danmaku variants.                                                                                           |
+| `tencent`    | `pbaccess.video.qq.com` + `dm.video.qq.com` | POST bodies, page-cursor episode pagination via forEach `breakOn`, two-phase danmaku (segment index then per-segment fetch).                                         |
+| `hanjutv`    | `hxqapi.hiyun.tv` + `hxqapi.zmdcq.com`      | Korean-drama source; search, detail-driven episodes, per-segment danmaku.                                                                                            |
+| `mango`      | `*.mgtv.com` + `*.hitv.com`                 | Mango TV; source=imgo search, two-stage showlist episodes, per-minute CDN danmaku shards.                                                                            |
+| `migu`       | `*.migu.cn` + `*.miguvideo.com`             | Migu Video; content-info lookup, episodes list, segmented danmaku.                                                                                                   |
+| `youku`      | `*.youku.com` + `log.mmstat.com`            | Youku; HTML-stripped search, openapi episodes, signed per-minute danmaku POSTs (cna guid + \_m_h5_tk token).                                                         |
+| `iqiyi`      | `*.iqiyi.com` + `mesh.if.iqiyi.com`         | iQIYI; /v\_ watch-page search, signed base_info episodes, zlib-deflated XML bullet shards.                                                                           |
+| `aiyifan`    | `yfsp.tv` + `rankv21.tripdata.app`          | Aiyifan; homepage-scraped pub/priv keys sign each JSON request; getBarrage danmaku.                                                                                  |
+| `bahamut`    | `api.gamer.com.tw`                          | Bahamut Anime (Traditional Chinese); single danmu.php fetch, time in tenths of a second.                                                                             |
+| `maiduidui`  | `mob.mddcloud.com.cn`                       | Maiduidui; nested search, listVodSactions episodes, per-minute vodBarrage shards.                                                                                    |
+| `renren`     | `api.gorafie.com` + `static-dm.qwdjapp.com` | Renren (foreign drama); array-rooted danmaku with CSV `p` strings.                                                                                                   |
+| `sohu`       | `*.sohu.com`                                | Sohu TV; site=1 search, album episodes, paginated dmListAll danmaku (decimal/hex color handling).                                                                    |
 
 ## Layout
 
@@ -79,12 +79,12 @@ https://cdn.jsdelivr.net/npm/@mr-quin/dango-manifests@<version>/<file>
 
 ```jsonc
 {
-  "packageVersion": "0.2.0",
+  "packageVersion": "0.3.0",
   "manifests": [
     {
-      "id": "builtin:bilibili",
+      "id": "bilibili",
       "name": "Bilibili",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "apiVersion": 1,
       "file": "src/manifests/builtin-bilibili.json",
     },
@@ -96,7 +96,7 @@ https://cdn.jsdelivr.net/npm/@mr-quin/dango-manifests@<version>/<file>
 Each `file` is the in-package path to fetch, e.g.:
 
 ```
-https://cdn.jsdelivr.net/npm/@mr-quin/dango-manifests@0.2.0/src/manifests/builtin-bilibili.json
+https://cdn.jsdelivr.net/npm/@mr-quin/dango-manifests@0.3.0/src/manifests/builtin-bilibili.json
 ```
 
 unpkg works the same way (`https://unpkg.com/@mr-quin/dango-manifests@<version>/...`). Pin a `<version>` for reproducibility; omit it to track the latest published release.
@@ -105,7 +105,7 @@ unpkg works the same way (`https://unpkg.com/@mr-quin/dango-manifests@<version>/
 
 ## Routing notes
 
-**DanDanPlay** (`builtin:dandanplay`) is one manifest for every DDP endpoint over the `/api/v2` paths. `baseUrl` (config) defaults to the official `api.dandanplay.net`; point it at a proxy or self-hosted server to override. Auth is picked by config: `appId` + `appSecret` sign each request (`X-Signature: Base64(SHA256(appId + timestamp + path + appSecret))`, secret never sent); else `auth.enabled` + `auth.headers` attach custom headers; else no auth (for a proxy that signs server-side). The official API is just the case with no `baseUrl` and credentials set.
+**DanDanPlay** (`dandanplay`) is one manifest for every DDP endpoint over the `/api/v2` paths. `baseUrl` (config) defaults to the official `api.dandanplay.net`; point it at a proxy or self-hosted server to override. Auth is picked by config: `appId` + `appSecret` sign each request (`X-Signature: Base64(SHA256(appId + timestamp + path + appSecret))`, secret never sent); else `auth.enabled` + `auth.headers` attach custom headers; else no auth (for a proxy that signs server-side). The official API is just the case with no `baseUrl` and credentials set.
 
 **Bilibili** and **Tencent** call their public APIs directly. Both rely on `rewriteHeaders` for `Origin` / `Referer`, which a browser host's `FetchLike` applies via a request-header rewrite mechanism such as `chrome.declarativeNetRequest`. The smoke script merges those headers in directly since Node fetch lets you set them.
 
@@ -123,7 +123,7 @@ The smoke fetcher keeps a per-host cookie jar so bilibili's anti-bot wall lets u
 
 ## Adding a new manifest
 
-1. Drop the JSON file in `src/manifests/`. Use `id: 'builtin:<source>'`.
+1. Drop the JSON file in `src/manifests/`. Use `id: '<source>'`.
 2. Capture representative responses from the source's API to `src/__tests__/fixtures/`.
 3. Write a per-manifest test that:
    - Parses the manifest against `zManifest` (catches schema drift)

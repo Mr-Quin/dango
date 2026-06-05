@@ -46,7 +46,7 @@ function mockFetcher(handlers: Record<string, MockResponse>): {
   return { fetcher, calls }
 }
 
-describe('builtin:migu manifest', () => {
+describe('migu manifest', () => {
   it('search: maps long-content matches to canonical shape and drops shorts', async () => {
     const { fetcher, calls } = mockFetcher({
       'https://jadeite.migu.cn/search/v3/open-search': {

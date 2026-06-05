@@ -158,7 +158,7 @@ const danmakuSegment1 = {
   ],
 }
 
-describe('builtin:tencent manifest', () => {
+describe('tencent manifest', () => {
   it('runs search, picks MainNeed box, filters episodeless items', async () => {
     const { fetcher, calls } = mockFetcher({
       'https://pbaccess.video.qq.com/trpc.videosearch.mobile_search.MultiTerminalSearch/MbSearch?vplatform=2':

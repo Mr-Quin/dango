@@ -51,7 +51,7 @@ describe('catalog.json', () => {
 
   it('mirrors each manifest id/name/version/apiVersion and points at a real file', () => {
     for (const entry of catalog.manifests) {
-      const expectedFile = `src/manifests/${entry.id.replace(':', '-')}.json`
+      const expectedFile = `src/manifests/builtin-${entry.id}.json`
       expect(entry.file).toBe(expectedFile)
       const fileName = entry.file.replace('src/manifests/', '')
       const manifest = readManifest(fileName)

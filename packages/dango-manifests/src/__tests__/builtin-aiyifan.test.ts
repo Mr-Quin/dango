@@ -8,7 +8,7 @@ import barrageFixture from './fixtures/aiyifan-barrage.json' with { type: 'json'
 import { mockFetcher } from './mockFetcher.js'
 
 /**
- * Pins the builtin:aiyifan reference manifest end-to-end against captured
+ * Pins the aiyifan reference manifest end-to-end against captured
  * fixtures. Every pipeline first GETs the yfsp.tv homepage and regex-extracts
  * the pConfig publicKey/privateKey used to sign the downstream JSON requests, so
  * the mock serves a minimal homepage carrying the real keys. search maps the
@@ -19,7 +19,7 @@ import { mockFetcher } from './mockFetcher.js'
 
 const homepage = `<!doctype html><html><head><script>window.__NUXT__={"pConfig":{"publicKey":"CJSuC3GpDZSuDIumCZbVLLDVEJWkD3KkE34kCZ0vNpGtDpauCZHbDcCoOZGtEJ9YEJGuD3WtCZarDcCnDpLcNpXaE3PcDMKnOp1YPcKoCZatDJSvOJCtDMKuC3aqE68u","privateKey":["SuC3JSuC3GpDZSuDIumC","unused"]}}</script></head><body></body></html>`
 
-describe('builtin:aiyifan manifest', () => {
+describe('aiyifan manifest', () => {
   it('search: extracts pConfig keys then maps the briefsearch result', async () => {
     const { fetcher, calls } = mockFetcher({
       'https://www.yfsp.tv/': { body: homepage },

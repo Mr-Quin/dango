@@ -9,7 +9,7 @@ import danmakuSeg1 from './fixtures/youku-danmaku-1.json' with { type: 'json' }
 import { mockFetcher } from './mockFetcher.js'
 
 /**
- * Pins the builtin:youku reference manifest end-to-end against captured
+ * Pins the youku reference manifest end-to-end against captured
  * fixtures. search filters to Youku-owned results, strips HTML from titles and
  * lifts the type/year out of the dot-separated feature string. episodes maps
  * the openapi videos list. danmaku is the multi-step signed flow: read the
@@ -20,7 +20,7 @@ import { mockFetcher } from './mockFetcher.js'
  * matches them by stripping the query string.
  */
 
-describe('builtin:youku manifest', () => {
+describe('youku manifest', () => {
   it('search: keeps Youku-owned results, strips HTML and parses the feature string', async () => {
     const { fetcher, calls } = mockFetcher({
       'https://search.youku.com/api/search': {

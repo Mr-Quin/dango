@@ -52,7 +52,7 @@ function encodeSegment(
   return toBinary(reply, create(reply, { elems }))
 }
 
-describe('builtin:bilibili manifest', () => {
+describe('bilibili manifest', () => {
   it('runs WBI-signed media_bangumi + media_ft searches', async () => {
     const navResponse = {
       data: {
