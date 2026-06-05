@@ -9,13 +9,15 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "bun run --filter '@mr-quin/dango' build",
+    "build": "bun run --filter '@mr-quin/dango' build && bun run catalog",
     "type-check": "bun run --filter '*' type-check",
     "test": "bun test",
     "lint": "oxlint",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
-    "check": "bun run build && bun run type-check && bun run lint && bun run format:check && bun test"
+    "catalog": "bun run --filter '@mr-quin/dango-manifests' catalog",
+    "catalog:check": "bun run --filter '@mr-quin/dango-manifests' catalog:check",
+    "check": "bun run build && bun run type-check && bun run lint && bun run format:check && bun run catalog:check && bun test"
   },
   "devDependencies": {
     "@types/bun": "latest",
