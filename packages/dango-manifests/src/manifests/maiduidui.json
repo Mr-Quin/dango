@@ -2,6 +2,11 @@
   "apiVersion": 1,
   "id": "maiduidui",
   "name": "Maiduidui",
+  "locales": {
+    "zh-CN": {
+      "name": "埋堆堆"
+    }
+  },
   "version": "0.3.0",
   "hosts": ["mob.mddcloud.com.cn"],
   "search": {

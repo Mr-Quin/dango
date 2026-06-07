@@ -2,6 +2,11 @@
   "apiVersion": 1,
   "id": "youku",
   "name": "Youku",
+  "locales": {
+    "zh-CN": {
+      "name": "优酷"
+    }
+  },
   "version": "0.3.0",
   "hosts": [
     "search.youku.com",

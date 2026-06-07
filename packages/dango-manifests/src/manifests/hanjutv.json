@@ -2,6 +2,11 @@
   "apiVersion": 1,
   "id": "hanjutv",
   "name": "Hanjutv",
+  "locales": {
+    "zh-CN": {
+      "name": "韩剧TV"
+    }
+  },
   "version": "0.3.0",
   "hosts": ["hxqapi.hiyun.tv", "hxqapi.zmdcq.com"],
   "search": {
