@@ -174,6 +174,7 @@ export class ManifestRunner {
       httpCache: opts?.httpCache ?? this.httpCache,
       maxForEachItems: opts?.maxForEachItems,
       maxBodyBytes: opts?.maxBodyBytes,
+      allowPrivateHosts: opts?.allowPrivateHosts,
     }
     return runPipeline(this.manifest, variants, inputs, merged) as Promise<T>
   }

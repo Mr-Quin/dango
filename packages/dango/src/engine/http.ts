@@ -45,6 +45,14 @@ export interface HttpRunOptions {
   fetcher?: FetchLike
   /** Hosts allowlist (manifest.hosts). Resolved URLs must match. */
   allowedHosts: string[]
+  /**
+   * Permit requests to private/loopback hosts. Off by default: the engine
+   * blocks the local network regardless of the `hosts` allowlist (anti-SSRF).
+   * A host app sets this only on a deliberate, user-authorized basis (e.g. a
+   * user-entered local endpoint for a trusted source). The allowlist still
+   * applies; this lifts only the private-host block.
+   */
+  allowPrivateHosts?: boolean
   /** Cancellation signal threaded into the fetcher. */
   signal?: AbortSignal
   /** Required when any request uses `format: 'proto'`. */
@@ -56,17 +64,29 @@ export interface HttpRunOptions {
   maxBodyBytes?: number
 }
 
-function hostMatches(url: string, allowed: string[]): boolean {
-  let host: string
-  try {
-    // Use `.hostname` (not `.host`) so port-suffixed URLs match bare entries.
-    host = new URL(url).hostname
-  } catch {
-    return false
+/**
+ * Stable, localizable reason a request URL's host was rejected. The app keys
+ * its own message off `code`; `HostNotAllowedError.message` is a fallback.
+ */
+export type HostRejectionCode = 'host-not-allowed' | 'private-host-blocked'
+
+export class HostNotAllowedError extends Error {
+  readonly code: HostRejectionCode
+  /** The resolved request URL that was rejected. */
+  readonly url: string
+  constructor(code: HostRejectionCode, url: string) {
+    super(
+      code === 'private-host-blocked'
+        ? `blocked private/loopback host (allowPrivateHosts not set): ${url}`
+        : `URL host not in manifest.hosts allowlist: ${url}`
+    )
+    this.name = 'HostNotAllowedError'
+    this.code = code
+    this.url = url
   }
-  if (isPrivateHost(host)) {
-    return false
-  }
+}
+
+function allowlistMatches(host: string, allowed: string[]): boolean {
   return allowed.some((pattern) => {
     if (pattern === '*') return true
     if (pattern === host) return true
@@ -75,6 +95,31 @@ function hostMatches(url: string, allowed: string[]): boolean {
     }
     return false
   })
+}
+
+// Returns the rejection reason, or null when the host is permitted.
+// `allowPrivateHosts` lifts only the private/loopback block; the manifest's
+// `hosts` allowlist still applies (so a private host needs `*` or an explicit
+// entry to pass, exactly as a public host does).
+function checkHost(
+  url: string,
+  allowed: string[],
+  allowPrivateHosts: boolean
+): HostRejectionCode | null {
+  let host: string
+  try {
+    // Use `.hostname` (not `.host`) so port-suffixed URLs match bare entries.
+    host = new URL(url).hostname
+  } catch {
+    return 'host-not-allowed'
+  }
+  if (isPrivateHost(host) && !allowPrivateHosts) {
+    return 'private-host-blocked'
+  }
+  if (!allowlistMatches(host, allowed)) {
+    return 'host-not-allowed'
+  }
+  return null
 }
 
 const xmlParser = new XMLParser({
@@ -227,8 +272,13 @@ export async function executeRequest(
   options: HttpRunOptions
 ): Promise<HttpStepResult> {
   const url = await buildUrl(spec, context)
-  if (!hostMatches(url, options.allowedHosts)) {
-    throw new Error(`URL host not in manifest.hosts allowlist: ${url}`)
+  const rejection = checkHost(
+    url,
+    options.allowedHosts,
+    options.allowPrivateHosts ?? false
+  )
+  if (rejection) {
+    throw new HostNotAllowedError(rejection, url)
   }
   const headers = await buildHeaders(spec, context)
   const rewriteHeaders = await buildRewriteHeaders(spec, context)

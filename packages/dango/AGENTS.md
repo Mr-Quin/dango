@@ -13,7 +13,7 @@ A dango is a stack of items on a skewer, each pipeline is a stack of named steps
 - auth-header forbid-list (`Cookie`/`Authorization`/etc. rejected in `request.headers`)
 - `rewriteHeaders` allowlist (Origin/Referer/UA only)
 - step-id prototype-pollution rejection
-- hosts allowlist plus private-IP / localhost / loopback / link-local / `*.local` rejection (at load and request time)
+- hosts allowlist plus private-IP / localhost / loopback / link-local / `*.local` rejection (at load and request time). The request-time private-host block is off by default but a host app can lift it per-run via `RunOptions.allowPrivateHosts` for a deliberately user-authorized local endpoint; the allowlist still applies. Rejections throw a `HostNotAllowedError` carrying a localizable `code` (`'host-not-allowed'` | `'private-host-blocked'`).
 - per-expression JSONata evaluation timeout (`DEFAULT_EVAL_TIMEOUT_MS`)
 - bounded LRU compile cache (`DEFAULT_MAX_CACHE_SIZE`)
 - response body size cap (`DEFAULT_MAX_BODY_BYTES` default, `MAX_BODY_BYTES` hard ceiling)
