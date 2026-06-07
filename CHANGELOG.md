@@ -25,6 +25,31 @@ The engine version and the manifest `apiVersion` are tracked independently.
 
 ### Security
 
+## [0.5.0] - 2026-06-07
+
+Host-app opt-in for private/loopback endpoints, plus localizable host-rejection
+errors.
+
+### Added
+
+- `allowPrivateHosts` option on `RunOptions` (engine): a host-app-supplied,
+  default-off opt-in that lifts the request-time private/loopback-host block for
+  a deliberately user-authorized local endpoint (e.g. a self-hosted
+  dandanplay-compatible server). It cannot be set from a manifest, and the
+  `hosts` allowlist still applies, so a host outside the allowlist — private or
+  not — is still rejected.
+- `HostNotAllowedError` class and `HostRejectionCode` type (engine), exported
+  from the package root. A rejected request now throws this typed error carrying
+  a stable `code` (`'private-host-blocked'` | `'host-not-allowed'`) and the
+  offending `url`, so a host app can localize off the code.
+
+### Changed
+
+- Request-time host rejection now throws `HostNotAllowedError` (a subclass of
+  `Error`) instead of a plain `Error`, and the private-host rejection message
+  text changed. Consumers that matched the old message string should switch to
+  the typed error's `code`.
+
 ## [0.4.0] - 2026-06-07
 
 Localization for manifest-authored display strings.
