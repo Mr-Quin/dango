@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'bun:test'
-import { runPipeline } from '../engine/runner.js'
+import { HostNotAllowedError } from '../engine/http.js'
+import { type RunOptions, runPipeline } from '../engine/runner.js'
 import { zManifest } from '../manifest/schema.js'
 import { mockFetcher } from './fixtures.js'
 
@@ -19,6 +20,32 @@ function baseManifest(overrides: Record<string, unknown>) {
     hosts: ['api.example.com'],
     ...overrides,
   })
+}
+
+// Runs a one-step GET against `url` under the given `hosts` allowlist and run
+// options, returning the thrown value (or resolved output) for inspection.
+async function runHostCheck(
+  hosts: string[],
+  url: string,
+  opts: Partial<RunOptions> = {}
+) {
+  const manifest = baseManifest({
+    hosts,
+    search: {
+      inputs: [],
+      steps: [
+        { type: 'http', id: 'r', request: { method: 'GET', url: `'${url}'` } },
+      ],
+      output: 'r',
+    },
+  })
+  const { fetcher } = mockFetcher({ [url]: { body: '{}' } })
+  return runPipeline(
+    manifest,
+    manifest.search!,
+    {},
+    { fetcher, ...opts }
+  ).catch((e: unknown) => e)
 }
 
 describe('private host rejection at manifest load', () => {
@@ -76,27 +103,87 @@ describe('private host rejection at manifest load', () => {
 })
 
 describe('private host rejection at request time', () => {
+  const privateHostManifest = baseManifest({
+    hosts: ['*'],
+    search: {
+      inputs: [],
+      steps: [
+        {
+          type: 'http',
+          id: 'r',
+          request: { method: 'GET', url: "'http://127.0.0.1/secret'" },
+          extract: { v: 'ok' },
+        },
+      ],
+      output: 'r.v',
+    },
+  })
+
   it('blocks a request whose resolved URL is a private host even under hosts:["*"]', async () => {
-    const manifest = baseManifest({
-      hosts: ['*'],
-      search: {
-        inputs: [],
-        steps: [
-          {
-            type: 'http',
-            id: 'r',
-            request: { method: 'GET', url: "'http://127.0.0.1/secret'" },
-          },
-        ],
-        output: 'r',
-      },
-    })
     const { fetcher } = mockFetcher({
-      'http://127.0.0.1/secret': { body: '{}' },
+      'http://127.0.0.1/secret': { body: '{"ok":true}' },
+    })
+    const err = await runPipeline(
+      privateHostManifest,
+      privateHostManifest.search!,
+      {},
+      { fetcher }
+    ).catch((e: unknown) => e)
+    expect(err).toBeInstanceOf(HostNotAllowedError)
+    if (err instanceof HostNotAllowedError) {
+      expect(err.code).toBe('private-host-blocked')
+      expect(err.url).toBe('http://127.0.0.1/secret')
+    }
+  })
+
+  it('allows a private host when allowPrivateHosts is set', async () => {
+    const { fetcher } = mockFetcher({
+      'http://127.0.0.1/secret': { body: '{"ok":true}' },
     })
     await expect(
-      runPipeline(manifest, manifest.search!, {}, { fetcher })
-    ).rejects.toThrow(/not in manifest.hosts allowlist/)
+      runPipeline(
+        privateHostManifest,
+        privateHostManifest.search!,
+        {},
+        {
+          fetcher,
+          allowPrivateHosts: true,
+        }
+      )
+    ).resolves.toBe(true)
+  })
+
+  it('tags an allowlist miss with code host-not-allowed', async () => {
+    const err = await runHostCheck(
+      ['api.example.com'],
+      'https://evil.example.org/x'
+    )
+    expect(err).toBeInstanceOf(HostNotAllowedError)
+    if (err instanceof HostNotAllowedError) {
+      expect(err.code).toBe('host-not-allowed')
+    }
+  })
+
+  it('allowPrivateHosts does not bypass the allowlist for a public host', async () => {
+    const err = await runHostCheck(
+      ['api.example.com'],
+      'https://evil.example.org/x',
+      { allowPrivateHosts: true }
+    )
+    expect(err).toBeInstanceOf(HostNotAllowedError)
+    if (err instanceof HostNotAllowedError) {
+      expect(err.code).toBe('host-not-allowed')
+    }
+  })
+
+  it('allowPrivateHosts does not bypass the allowlist for a private host', async () => {
+    const err = await runHostCheck(['api.example.com'], 'http://127.0.0.1/x', {
+      allowPrivateHosts: true,
+    })
+    expect(err).toBeInstanceOf(HostNotAllowedError)
+    if (err instanceof HostNotAllowedError) {
+      expect(err.code).toBe('host-not-allowed')
+    }
   })
 
   it('allows a public host under hosts:["*"]', async () => {

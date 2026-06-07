@@ -52,6 +52,12 @@ export interface RunOptions {
    * defaults to the http module's default and is clamped to its hard max.
    */
   maxBodyBytes?: number
+  /**
+   * Permit requests to private/loopback hosts. Off by default (anti-SSRF). Set
+   * only on a deliberate, user-authorized basis; the `hosts` allowlist still
+   * applies. See `HttpRunOptions.allowPrivateHosts`.
+   */
+  allowPrivateHosts?: boolean
 }
 
 /** Hard ceiling on the elements a `forEach.in` array may yield. */
@@ -195,6 +201,7 @@ async function runStep(
       const result = await executeRequest(step.request, iterContext, {
         fetcher: options.fetcher,
         allowedHosts: manifest.hosts,
+        allowPrivateHosts: options.allowPrivateHosts,
         signal: options.signal,
         protoRegistry: options.protoRegistry,
         maxBodyBytes: options.maxBodyBytes,
@@ -260,6 +267,7 @@ async function runStep(
   const result = await executeRequest(step.request, context, {
     fetcher: options.fetcher,
     allowedHosts: manifest.hosts,
+    allowPrivateHosts: options.allowPrivateHosts,
     signal: options.signal,
     protoRegistry: options.protoRegistry,
     maxBodyBytes: options.maxBodyBytes,

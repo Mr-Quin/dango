@@ -2,6 +2,8 @@ export {
   AbortedError,
   DEFAULT_MAX_BODY_BYTES,
   type FetchLike,
+  HostNotAllowedError,
+  type HostRejectionCode,
   MAX_BODY_BYTES,
 } from './engine/http.js'
 export { isPrivateHost, isPrivateHostPattern } from './engine/host-policy.js'
