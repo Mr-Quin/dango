@@ -11,6 +11,10 @@ Two packages:
 - `packages/dango` (`@mr-quin/dango`): the engine. Library-shippable: no `chrome.*`, `window`, DOM, or `node:` builtins. Runs in a browser, a service worker, or Node.
 - `packages/dango-manifests` (`@mr-quin/dango-manifests`): the built-in manifests (JSON) plus their fixtures and per-source tests. Depends on the engine for tests only; the published package is data.
 
+## Specs and design docs
+
+Do not commit spec, design, or planning documents to this repo, and do not include them in PRs. PRs carry only code, tests, and docs that ship with or describe the packages (`README`s, `AGENTS.md`, `CHANGELOG.md`).
+
 ## Toolchain
 
 This repo is bun-first. Do not introduce pnpm, npm, yarn, vitest, biome, or prettier.
