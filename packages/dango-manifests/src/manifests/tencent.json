@@ -8,7 +8,7 @@
       "cookieSet.title": "访问腾讯视频以设置 Cookie"
     }
   },
-  "version": "0.3.0",
+  "version": "0.4.0",
   "hosts": ["pbaccess.video.qq.com", "dm.video.qq.com"],
   "urlMatch": [
     {

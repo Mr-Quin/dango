@@ -7,7 +7,7 @@
       "name": "爱奇艺"
     }
   },
-  "version": "0.3.0",
+  "version": "0.4.0",
   "hosts": [
     "mesh.if.iqiyi.com",
     "pcw-api.iq.com",
