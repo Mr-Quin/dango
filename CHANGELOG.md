@@ -25,6 +25,28 @@ The engine version and the manifest `apiVersion` are tracked independently.
 
 ### Security
 
+## [0.4.0] - 2026-06-07
+
+Localization for manifest-authored display strings.
+
+### Added
+
+- `getDisplayStrings(manifest, locale)` and the `ResolvedDisplayStrings` type
+  (engine): resolves a manifest's display strings — `name`, `configSchema`
+  `title`/`description` (recursive), and `cookieSet.title` — into a locale, with
+  BCP-47 narrowing (`zh-TW` → `zh`) and per-key fallback to the source language.
+  Pure and off the execution path; the runner never reads it.
+- `locales` optional field on the manifest (`zManifest`): translations keyed by
+  BCP-47 locale then by dotted path to the field. Additive; manifest `apiVersion`
+  stays 1.
+- `zh-CN` translations for all thirteen built-in manifests.
+
+### Changed
+
+- `@mr-quin/dango-manifests`: reworded the DanDanPlay `appId`/`appSecret` config
+  help for accuracy (dropped a misleading "never sent" claim) and set the
+  Bilibili display name to `B站`.
+
 ## [0.3.0] - 2026-06-05
 
 Pre-1.0 release bundling the CDN catalog index, engine security hardening, and a

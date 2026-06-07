@@ -7,7 +7,7 @@
       "name": "优酷"
     }
   },
-  "version": "0.3.0",
+  "version": "0.4.0",
   "hosts": [
     "search.youku.com",
     "openapi.youku.com",

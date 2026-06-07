@@ -79,12 +79,12 @@ https://cdn.jsdelivr.net/npm/@mr-quin/dango-manifests@<version>/<file>
 
 ```jsonc
 {
-  "packageVersion": "0.3.0",
+  "packageVersion": "0.4.0",
   "manifests": [
     {
       "id": "bilibili",
       "name": "Bilibili",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "apiVersion": 1,
       "file": "src/manifests/bilibili.json",
     },
@@ -96,7 +96,7 @@ https://cdn.jsdelivr.net/npm/@mr-quin/dango-manifests@<version>/<file>
 Each `file` is the in-package path to fetch, e.g.:
 
 ```
-https://cdn.jsdelivr.net/npm/@mr-quin/dango-manifests@0.3.0/src/manifests/bilibili.json
+https://cdn.jsdelivr.net/npm/@mr-quin/dango-manifests@0.4.0/src/manifests/bilibili.json
 ```
 
 unpkg works the same way (`https://unpkg.com/@mr-quin/dango-manifests@<version>/...`). Pin a `<version>` for reproducibility; omit it to track the latest published release.

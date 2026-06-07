@@ -10,7 +10,7 @@
       "cookieSet.title": "登录B站"
     }
   },
-  "version": "0.3.0",
+  "version": "0.4.0",
   "hosts": ["api.bilibili.com"],
   "urlMatch": [
     {
