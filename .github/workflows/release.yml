@@ -27,6 +27,13 @@ jobs:
         with:
           node-version: 22
           registry-url: https://registry.npmjs.org
+      - name: Verify tag matches package versions
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          for pkg in dango dango-manifests; do
+            ver=$(node -p "require('./packages/$pkg/package.json').version")
+            [ "$ver" = "$tag" ] || { echo "::error::packages/$pkg is $ver, tag is $tag"; exit 1; }
+          done
       - run: npm install -g npm@latest # OIDC publishing needs npm >= 11.5.1
       - run: bun install --frozen-lockfile
       - run: bun run build
