@@ -78,9 +78,13 @@ they need, for the widest engine compatibility.
 `zManifest` also has a required free-form `version` string (`z.string()`, no
 semver or regex enforcement). It is registry/debug metadata only. The engine never
 reads it: `ManifestRunner` exposes `id` and `name` getters but no `version` getter,
-and nothing in the engine consumes `manifest.version`. All thirteen builtins set it to
-`"0.2.0"`. It is not a compatibility signal; `apiVersion` is the only contract the
-engine enforces.
+and nothing in the engine consumes `manifest.version`. It is not a compatibility
+signal; `apiVersion` is the only contract the engine enforces.
+
+Each manifest's `version` is **independent and bumped per manifest**, only when
+that manifest's own content changes — it is not tied to the npm package version,
+and a package release must not bulk-bump it. `catalog.json` surfaces it per entry,
+so a host can use it to detect that a specific manifest changed.
 
 ## Engine npm semver (the API)
 
@@ -141,6 +145,27 @@ prefixed `_`, and undocumented behavior are never public API. Do not import them
 The manifest format is the more stable of the two contracts and is versioned
 independently by `apiVersion`. A v1 manifest is supported until a major engine
 release drops it (announced via `SUPPORTED_API_VERSIONS` plus a changelog entry).
+
+## Release procedure
+
+Both published packages share one npm version and are released together on a
+single `vX.Y.Z` tag. Per-manifest `version` fields are not part of this (see
+above).
+
+1. `bun run bump <version>` — sets the npm `version` of both `package.json`s and
+   regenerates `catalog.json`.
+2. Move the `CHANGELOG.md` `[Unreleased]` entries into a dated `[X.Y.Z]` section.
+3. `bun run check` — confirm the tree is green.
+4. `git commit -am "chore: release vX.Y.Z"` (via a PR, or direct to `main` if
+   unprotected).
+5. Tag the release commit and push: `git tag -a vX.Y.Z -m vX.Y.Z && git push --follow-tags`.
+
+Pushing the tag triggers `.github/workflows/release.yml`, which first fails if
+the tag does not match both `package.json` versions, then publishes both packages
+to npm via OIDC trusted publishing (provenance is automatic; no `NPM_TOKEN`).
+Prerequisites are a `release` GitHub environment and a trusted publisher on npm
+for each package. `apiVersion` is independent of the npm version; bump it only on
+an incompatible manifest-format change.
 
 ## Changelog
 
