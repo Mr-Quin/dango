@@ -1,30 +1,38 @@
 name: Release
 
-# Publishes both packages to npm on a version tag (e.g. v0.1.0).
-# Bump versions in the package.json files, tag, and push.
-# Requires the NPM_TOKEN secret (an npm automation token for the @mr-quin scope).
+# Publishes both packages to npm on a version tag (e.g. v0.4.0) via OIDC
+# trusted publishing — no NPM_TOKEN. Prerequisites (configured outside this repo):
+#   - a `release` GitHub environment
+#   - a trusted publisher on npm for @mr-quin/dango AND @mr-quin/dango-manifests
+#     (repo Mr-Quin/dango, workflow release.yml, environment release)
 
 on:
   push:
     tags: ['v*']
 
+permissions:
+  contents: read
+  id-token: write
+
 jobs:
   publish:
     runs-on: ubuntu-latest
+    environment: release
     steps:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+      - run: npm install -g npm@latest # OIDC publishing needs npm >= 11.5.1
       - run: bun install --frozen-lockfile
       - run: bun run build
       - run: bun run type-check
       - run: bun test
-      # Publish the engine before the manifests. bun reads NPM_CONFIG_TOKEN
-      # directly; use an npm automation token so no OTP is required.
-      - run: cd packages/dango && bun publish --access public
-        env:
-          NPM_CONFIG_TOKEN: ${{ secrets.NPM_TOKEN }}
-      - run: cd packages/dango-manifests && bun publish --access public
-        env:
-          NPM_CONFIG_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - run: npm publish --access public
+        working-directory: packages/dango
+      - run: npm publish --access public
+        working-directory: packages/dango-manifests
