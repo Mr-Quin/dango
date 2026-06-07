@@ -2,6 +2,12 @@
   "apiVersion": 1,
   "id": "tencent",
   "name": "Tencent Video",
+  "locales": {
+    "zh-CN": {
+      "name": "腾讯视频",
+      "cookieSet.title": "访问腾讯视频以设置 Cookie"
+    }
+  },
   "version": "0.3.0",
   "hosts": ["pbaccess.video.qq.com", "dm.video.qq.com"],
   "urlMatch": [

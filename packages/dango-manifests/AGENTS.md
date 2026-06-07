@@ -105,6 +105,22 @@ Renren (`api.gorafie.com` + `static-dm.qwdjapp.com`), strong on foreign drama. D
 
 Sohu TV (`*.sohu.com`). Search filters to `site=1` albums and strips `<<<>>>` markers from titles. Danmaku paginates `dmListAll` by `time_begin` (300s windows). Color quirk: `t.c` is a **decimal** RGB string for most comments but a `#RRGGBB` **hex** string for some, so the manifest branches on a leading `#` (`$contains($cr, '#') ? $hexToInt(...) : $number(...)`). Treating every value as hex overflows past `0xFFFFFF`.
 
+## Localization
+
+Display strings (`name`, `configSchema` `title`/`description` at any depth, and `cookieSet.title`) are localized through an optional top-level `locales` block. Keys are BCP-47 locale tags, then the **dotted path** to the field; only strings that differ from the source language are listed.
+
+```jsonc
+"locales": {
+  "zh-CN": {
+    "name": "B站",
+    "configSchema.properties.danmakuFormat.title": "弹幕格式",
+    "cookieSet.title": "登录B站"
+  }
+}
+```
+
+Top-level fields stay the source / fallback language (English here), so a manifest with nothing to translate omits `locales` entirely. The engine resolves on demand via `getDisplayStrings(manifest, locale)` (narrows `zh-TW` → `zh`, falls back to the source value per key, ignores unknown keys). The execution path never reads `locales` — it is pure presentation data. All current manifests carry `zh-CN`; the catalog index still indexes the source-language `name` only.
+
 ## Conventions
 
 - Manifests use **raw JSON, not pre-parsed**. Consumers wrap with `zManifest.parse()` at startup. Pre-parsing in this package would force a dango type dependency to flow through and tie shipping versions tighter than needed.

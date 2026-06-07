@@ -2,6 +2,25 @@
   "apiVersion": 1,
   "id": "dandanplay",
   "name": "DanDanPlay",
+  "locales": {
+    "zh-CN": {
+      "name": "弹弹play",
+      "configSchema.properties.baseUrl.title": "基础地址",
+      "configSchema.properties.baseUrl.description": "弹弹play（或兼容）API 的根地址。默认为官方 https://api.dandanplay.net。指向代理或自建服务器即可覆盖。",
+      "configSchema.properties.appId.title": "应用 ID",
+      "configSchema.properties.appId.description": "弹弹play 开放平台的 App ID。使用官方 API 时需填写；由代理在服务端签名时可留空。",
+      "configSchema.properties.appSecret.title": "应用密钥",
+      "configSchema.properties.appSecret.description": "弹弹play 开放平台的 App Secret，用于对官方 API 的请求进行签名。",
+      "configSchema.properties.auth.title": "鉴权",
+      "configSchema.properties.auth.description": "随每个请求发送的自定义请求头（如 token）。未设置 appId/appSecret 时用于替代签名，例如对接自建的兼容服务器。",
+      "configSchema.properties.auth.properties.enabled.title": "启用鉴权请求头",
+      "configSchema.properties.auth.properties.headers.title": "请求头",
+      "configSchema.properties.auth.properties.headers.items.properties.key.title": "请求头名称",
+      "configSchema.properties.auth.properties.headers.items.properties.value.title": "值",
+      "configSchema.properties.chConvert.title": "中文转换",
+      "configSchema.properties.chConvert.description": "0 = 不转换，1 = 转为简体，2 = 转为繁体"
+    }
+  },
   "version": "0.3.0",
   "hosts": ["*"],
   "configSchema": {
@@ -15,12 +34,12 @@
       "appId": {
         "type": "string",
         "title": "App ID",
-        "description": "DanDanPlay open-platform App ID. Required for the official API; omit when using a proxy that signs server-side."
+        "description": "DanDanPlay open-platform App ID. Required when using the official API; leave empty when a proxy signs requests server-side."
       },
       "appSecret": {
         "type": "string",
         "title": "App Secret",
-        "description": "DanDanPlay open-platform App Secret, used to sign requests. Only feeds the local signature, never sent."
+        "description": "DanDanPlay open-platform App Secret. Used to sign requests to the official API."
       },
       "auth": {
         "type": "object",

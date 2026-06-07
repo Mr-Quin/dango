@@ -2,6 +2,11 @@
   "apiVersion": 1,
   "id": "iqiyi",
   "name": "iQIYI",
+  "locales": {
+    "zh-CN": {
+      "name": "爱奇艺"
+    }
+  },
   "version": "0.3.0",
   "hosts": [
     "mesh.if.iqiyi.com",

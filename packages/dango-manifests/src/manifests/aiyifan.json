@@ -2,6 +2,11 @@
   "apiVersion": 1,
   "id": "aiyifan",
   "name": "Aiyifan",
+  "locales": {
+    "zh-CN": {
+      "name": "爱壹帆"
+    }
+  },
   "version": "0.3.0",
   "hosts": ["www.yfsp.tv", "rankv21.tripdata.app", "m10.yfsp.tv"],
   "search": {

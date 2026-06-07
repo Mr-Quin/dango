@@ -340,5 +340,14 @@ export const zManifest = z.object({
       title: z.string().optional(),
     })
     .optional(),
+  /**
+   * Translations for display strings, keyed by BCP-47 locale then by dotted
+   * path to the field (`name`, `cookieSet.title`, and `configSchema`
+   * `title`/`description` at any depth, e.g.
+   * `configSchema.properties.danmakuFormat.title`). Top-level fields are the
+   * source/fallback language; only differing strings are listed. Presentation
+   * only — the pipeline never reads this; resolve via `getDisplayStrings`.
+   */
+  locales: z.record(z.string(), z.record(z.string(), z.string())).optional(),
 })
 export type Manifest = z.infer<typeof zManifest>

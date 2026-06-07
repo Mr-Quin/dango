@@ -34,6 +34,10 @@ export {
   urlMatches,
 } from './engine/url-match.js'
 export { helpers } from './helpers/registry.js'
+export {
+  getDisplayStrings,
+  type ResolvedDisplayStrings,
+} from './manifest/localization.js'
 export type {
   ConfigSchema,
   Manifest,

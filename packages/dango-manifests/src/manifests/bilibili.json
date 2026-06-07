@@ -2,6 +2,14 @@
   "apiVersion": 1,
   "id": "bilibili",
   "name": "Bilibili",
+  "locales": {
+    "zh-CN": {
+      "name": "B站",
+      "configSchema.properties.danmakuFormat.title": "弹幕格式",
+      "configSchema.properties.danmakuFormat.description": "xml 是旧版接口，最多约 3000 条弹幕；protobuf 分页返回全部弹幕",
+      "cookieSet.title": "登录B站"
+    }
+  },
   "version": "0.3.0",
   "hosts": ["api.bilibili.com"],
   "urlMatch": [
