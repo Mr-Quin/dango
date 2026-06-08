@@ -59,7 +59,7 @@
         "throttleMs": 100
       }
     ],
-    "output": "[$filter(pages, function($p) { $p.src_clip_id = collectionId }).{ 'providerIds': { 'vid': video_id, 'cid': $string($$.collectionId) }, 'title': $trim(t1 & ' ' & t2), 'episodeNumber': $number($regexExtract(t1 & t2, '第(\\\\d+)集')) }]"
+    "output": "[($filter(pages, function($p) { $p.src_clip_id = collectionId })^(ts)).{ 'providerIds': { 'vid': video_id, 'cid': $string($$.collectionId) }, 'title': $trim(t1 & ' ' & t2), 'episodeNumber': $number($regexExtract(t1 & t2, '第(\\\\d+)集')) }]"
   },
   "danmaku": {
     "inputs": ["cid", "vid"],
