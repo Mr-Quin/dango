@@ -58,6 +58,12 @@ export interface RunOptions {
    * applies. See `HttpRunOptions.allowPrivateHosts`.
    */
   allowPrivateHosts?: boolean
+  /**
+   * Skip failed `forEach` iterations instead of rejecting; the rest run and
+   * partial results are returned. Off by default (first failure cancels the
+   * in-flight siblings and rejects). A genuine abort always propagates.
+   */
+  continueOnError?: boolean
 }
 
 /** Hard ceiling on the elements a `forEach.in` array may yield. */
@@ -136,33 +142,75 @@ async function runWithConcurrency<T, R>(
   limit: number,
   throttleMs: number,
   signal: AbortSignal | undefined,
-  task: (item: T) => Promise<R>
-): Promise<R[]> {
-  const waitForSlot = makeThrottle(throttleMs, signal)
-
-  if (limit <= 1 || items.length <= 1) {
-    const out: R[] = []
-    for (const item of items) {
-      await waitForSlot()
-      out.push(await task(item))
-    }
-    return out
+  continueOnError: boolean,
+  task: (item: T, signal: AbortSignal) => Promise<R>
+): Promise<(R | undefined)[]> {
+  // Linked to the caller's signal: a failure can cancel the siblings, and a
+  // parent abort still cancels everything.
+  const controller = new AbortController()
+  const onParentAbort = () => controller.abort()
+  if (signal) {
+    if (signal.aborted) controller.abort()
+    else signal.addEventListener('abort', onParentAbort, { once: true })
   }
-  const results: R[] = []
-  let next = 0
-  const workers = Array.from(
-    { length: Math.min(limit, items.length) },
-    async () => {
-      while (true) {
-        const i = next++
-        if (i >= items.length) return
-        await waitForSlot()
-        results[i] = await task(items[i] as T)
+  const childSignal = controller.signal
+  const waitForSlot = makeThrottle(throttleMs, childSignal)
+
+  // Recorded, not thrown, so the original error surfaces instead of a
+  // sibling's AbortedError from the cancellation.
+  let firstError: unknown
+  const runOne = async (item: T): Promise<R | undefined> => {
+    try {
+      return await task(item, childSignal)
+    } catch (err) {
+      if (continueOnError && !(err instanceof AbortedError)) {
+        return undefined
       }
+      if (firstError === undefined) {
+        firstError = err
+        controller.abort()
+      }
+      return undefined
     }
-  )
-  await Promise.all(workers)
-  return results
+  }
+
+  try {
+    if (limit <= 1 || items.length <= 1) {
+      const out: (R | undefined)[] = []
+      for (const item of items) {
+        if (firstError !== undefined) break
+        await waitForSlot()
+        out.push(await runOne(item))
+      }
+      if (firstError !== undefined) throw firstError
+      return out
+    }
+    const results: (R | undefined)[] = []
+    let next = 0
+    const workers = Array.from(
+      { length: Math.min(limit, items.length) },
+      async () => {
+        while (firstError === undefined) {
+          const i = next++
+          if (i >= items.length) return
+          try {
+            await waitForSlot()
+          } catch (err) {
+            // Throttle rejects only on abort: quiet stop if a sibling failed,
+            // else a genuine parent abort to propagate.
+            if (firstError !== undefined) return
+            throw err
+          }
+          results[i] = await runOne(items[i] as T)
+        }
+      }
+    )
+    await Promise.all(workers)
+    if (firstError !== undefined) throw firstError
+    return results
+  } finally {
+    signal?.removeEventListener('abort', onParentAbort)
+  }
 }
 
 async function runStep(
@@ -189,20 +237,24 @@ async function runStep(
         `forEach.in must evaluate to an array, got ${typeof items}`
       )
     }
+    const continueOnError = options.continueOnError ?? false
     const forEachCap = resolveForEachCap(options.maxForEachItems)
     if (items.length > forEachCap) {
       throw new Error(
         `forEach.in yielded ${items.length} items, exceeding cap of ${forEachCap}`
       )
     }
-    const runIteration = async (element: unknown) => {
-      throwIfAborted(options.signal)
+    const runIteration = async (
+      element: unknown,
+      signal: AbortSignal | undefined
+    ) => {
+      throwIfAborted(signal)
       const iterContext: Context = { ...context, [step.as]: element }
       const result = await executeRequest(step.request, iterContext, {
         fetcher: options.fetcher,
         allowedHosts: manifest.hosts,
         allowPrivateHosts: options.allowPrivateHosts,
-        signal: options.signal,
+        signal,
         protoRegistry: options.protoRegistry,
         maxBodyBytes: options.maxBodyBytes,
       })
@@ -223,7 +275,13 @@ async function runStep(
       let consecutive = 0
       for (const element of items) {
         await waitForSlot()
-        const result = await runIteration(element)
+        let result: unknown
+        try {
+          result = await runIteration(element, options.signal)
+        } catch (err) {
+          if (err instanceof AbortedError || !continueOnError) throw err
+          continue
+        }
         perItemResults.push(result)
         const stop = await evalExpr(stopExpr, result)
         if (stop) {
@@ -239,6 +297,7 @@ async function runStep(
         step.concurrency,
         step.throttleMs,
         options.signal,
+        continueOnError,
         runIteration
       )
     }
