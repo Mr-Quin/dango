@@ -175,6 +175,7 @@ export class ManifestRunner {
       maxForEachItems: opts?.maxForEachItems,
       maxBodyBytes: opts?.maxBodyBytes,
       allowPrivateHosts: opts?.allowPrivateHosts,
+      continueOnError: opts?.continueOnError,
     }
     return runPipeline(this.manifest, variants, inputs, merged) as Promise<T>
   }
