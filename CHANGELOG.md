@@ -15,13 +15,6 @@ The engine version and the manifest `apiVersion` are tracked independently.
 
 ### Added
 
-- `continueOnError` option on `RunOptions` (engine): a host-app-supplied,
-  default-off opt-in that makes every `forEach` step tolerate per-iteration
-  request failures — a failed iteration is skipped and the rest still run,
-  yielding partial results. Threaded through `ManifestRunner` per call; hosts
-  typically set it only on `runDanmaku`, where one missing segment shouldn't
-  drop the whole overlay. A genuine abort always propagates regardless.
-
 ### Changed
 
 ### Deprecated
@@ -30,12 +23,28 @@ The engine version and the manifest `apiVersion` are tracked independently.
 
 ### Fixed
 
+### Security
+
+## [0.6.0] - 2026-06-07
+
+Concurrent `forEach` steps now fail fast, plus a host opt-in for partial
+results on per-iteration failures.
+
+### Added
+
+- `continueOnError` option on `RunOptions` (engine): a host-app-supplied,
+  default-off opt-in that makes every `forEach` step tolerate per-iteration
+  request failures — a failed iteration is skipped and the rest still run,
+  yielding partial results. Threaded through `ManifestRunner` per call; hosts
+  typically set it only on `runDanmaku`, where one missing segment shouldn't
+  drop the whole overlay. A genuine abort always propagates regardless.
+
+### Fixed
+
 - Concurrent `forEach` steps now fail fast: when one iteration's request fails,
   the in-flight sibling requests are cancelled and no further requests are
   dispatched before the step rejects. Previously the remaining requests kept
   firing after the failure had already doomed the step.
-
-### Security
 
 ## [0.5.0] - 2026-06-07
 
