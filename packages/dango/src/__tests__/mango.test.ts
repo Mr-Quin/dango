@@ -76,9 +76,12 @@ describe('Mango (search)', () => {
 describe('Mango (episodes, forEach over months)', () => {
   it('fetches the month list once, then iterates each month and concatenates', async () => {
     const manifest = zManifest.parse(mangoManifest)
+    // mgtv returns months newest-first, and each month's list is also
+    // newest-first, so the raw concatenation is fully reversed. The manifest
+    // re-sorts by the `ts` timestamp ascending to restore episode order.
     const bootstrap = {
       data: {
-        tab_m: [{ m: '202309' }, { m: '202310' }, { m: '202311' }],
+        tab_m: [{ m: '202311' }, { m: '202310' }, { m: '202309' }],
         list: [],
       },
     }
@@ -86,24 +89,54 @@ describe('Mango (episodes, forEach over months)', () => {
       '202309': {
         data: {
           list: [
-            { video_id: 'v1', t1: '第1集', t2: '相遇', src_clip_id: '444555' },
-            { video_id: 'v2', t1: '第2集', t2: '冒险', src_clip_id: '444555' },
             // wrong src_clip_id, must be filtered out
-            { video_id: 'vX', t1: '幕后', t2: '花絮', src_clip_id: '999999' },
+            {
+              video_id: 'vX',
+              t1: '幕后',
+              t2: '花絮',
+              src_clip_id: '999999',
+              ts: '2023-09-30 20:00:00.0',
+            },
+            {
+              video_id: 'v2',
+              t1: '第2集',
+              t2: '冒险',
+              src_clip_id: '444555',
+              ts: '2023-09-22 20:00:00.0',
+            },
+            {
+              video_id: 'v1',
+              t1: '第1集',
+              t2: '相遇',
+              src_clip_id: '444555',
+              ts: '2023-09-15 20:00:00.0',
+            },
           ],
         },
       },
       '202310': {
         data: {
           list: [
-            { video_id: 'v3', t1: '第3集', t2: '同伴', src_clip_id: '444555' },
+            {
+              video_id: 'v3',
+              t1: '第3集',
+              t2: '同伴',
+              src_clip_id: '444555',
+              ts: '2023-10-06 20:00:00.0',
+            },
           ],
         },
       },
       '202311': {
         data: {
           list: [
-            { video_id: 'v4', t1: '第4集', t2: '旅途', src_clip_id: '444555' },
+            {
+              video_id: 'v4',
+              t1: '第4集',
+              t2: '旅途',
+              src_clip_id: '444555',
+              ts: '2023-11-03 20:00:00.0',
+            },
           ],
         },
       },

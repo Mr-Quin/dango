@@ -23,6 +23,12 @@ The engine version and the manifest `apiVersion` are tracked independently.
 
 ### Fixed
 
+- `@mr-quin/dango-manifests`: mango (芒果TV) episodes came back reverse-
+  chronological (newest first) because mgtv returns months newest-first and the
+  per-month lists are reversed too. The episodes pipeline now sorts by the `ts`
+  timestamp ascending, restoring episode order. (mango manifest `0.4.0` →
+  `0.4.1`.)
+
 ### Security
 
 ## [0.6.0] - 2026-06-07
