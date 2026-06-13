@@ -1,5 +1,6 @@
 {
   "apiVersion": 1,
+  "identityFields": [],
   "id": "iqiyi",
   "name": "iQiyi",
   "version": "0.1.0",

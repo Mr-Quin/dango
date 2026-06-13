@@ -18,6 +18,7 @@ import { mockFetcher } from './fixtures.js'
 function baseManifest(overrides: Record<string, unknown>) {
   return zManifest.parse({
     apiVersion: 1,
+    identityFields: [],
     id: 'test',
     name: 'test',
     version: '0.1.0',

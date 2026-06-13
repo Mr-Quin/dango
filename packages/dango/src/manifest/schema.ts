@@ -266,7 +266,7 @@ export const zConfigSchema: z.ZodType<JsonSchemaShape> = z.lazy(() =>
 )
 export type ConfigSchema = z.infer<typeof zConfigSchema>
 
-export const zManifest = z.object({
+const zManifestObject = z.object({
   /** Engine API version; load fails if not in SUPPORTED_API_VERSIONS. */
   apiVersion: z
     .number()
@@ -294,6 +294,24 @@ export const zManifest = z.object({
     }),
   /** Per-installation options the user sets; merged into pipeline context at run time. */
   configSchema: zConfigSchema.optional(),
+  /**
+   * configValues keys whose values partition this manifest's content
+   * namespace across deployments. The host restricts a season's configValues
+   * to these fields, normalizes, and hashes them to derive a stable
+   * namespaceKey identifying the content namespace the season's providerIds
+   * are valid in. Each entry must name a top-level `configSchema` property.
+   *
+   * An empty array means no config value partitions content: the namespace is
+   * the manifest id alone (fixed-site sources like bilibili/tencent). A
+   * self-hostable / multi-instance source lists the field(s) that vary per
+   * deployment (e.g. `["baseUrl"]` for a DanDanPlay-compatible server).
+   *
+   * Required and explicit: omitting it is an authoring error, never a silent
+   * default. The declaration is read per manifest version, so a later version
+   * may change it (e.g. `[]` -> `["baseUrl"]`). The engine only declares which
+   * fields matter; it never computes or hashes the key.
+   */
+  identityFields: z.array(z.string()),
   /**
    * Patterns for the host's "which source handles this URL" resolver.
    * Each entry: URL host matches `host` (exact / `*.domain`) AND pathname
@@ -349,5 +367,30 @@ export const zManifest = z.object({
    * only — the pipeline never reads this; resolve via `getDisplayStrings`.
    */
   locales: z.record(z.string(), z.record(z.string(), z.string())).optional(),
+})
+
+export const zManifest = zManifestObject.superRefine((manifest, ctx) => {
+  // Every identity field must name a declared top-level configSchema property.
+  // This catches typos and fields removed from the schema, and rejects a
+  // non-empty list on a manifest with no configSchema at all.
+  const props = manifest.configSchema?.properties ?? {}
+  const seen = new Set<string>()
+  for (const field of manifest.identityFields) {
+    if (seen.has(field)) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['identityFields'],
+        message: `duplicate identityFields entry "${field}"`,
+      })
+    }
+    seen.add(field)
+    if (!(field in props)) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['identityFields'],
+        message: `identityFields entry "${field}" is not a configSchema property`,
+      })
+    }
+  }
 })
 export type Manifest = z.infer<typeof zManifest>

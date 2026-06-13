@@ -70,6 +70,7 @@ describe('format: proto', () => {
   it('decodes a Bilibili-style danmaku segment via manifest-carried descriptor', async () => {
     const manifest = zManifest.parse({
       apiVersion: 1,
+      identityFields: [],
       id: 'bilibili-proto-test',
       name: 'Bilibili proto test',
       version: '0.1.0',
@@ -135,6 +136,7 @@ describe('format: proto', () => {
   it('errors when protoSchema is unknown', async () => {
     const manifest = zManifest.parse({
       apiVersion: 1,
+      identityFields: [],
       id: 'bad-proto',
       name: 'bad',
       version: '0.1.0',
@@ -170,6 +172,7 @@ describe('format: proto', () => {
   it('errors when protoMessage path does not exist in the schema', async () => {
     const manifest = zManifest.parse({
       apiVersion: 1,
+      identityFields: [],
       id: 'bad-message',
       name: 'bad',
       version: '0.1.0',

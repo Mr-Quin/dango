@@ -1,5 +1,6 @@
 {
   "apiVersion": 1,
+  "identityFields": [],
   "id": "bilibili",
   "name": "Bilibili",
   "version": "0.1.0",

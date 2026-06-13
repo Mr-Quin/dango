@@ -1,5 +1,6 @@
 {
   "apiVersion": 1,
+  "identityFields": [],
   "id": "migu",
   "name": "Migu Video",
   "locales": {

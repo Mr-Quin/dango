@@ -1,5 +1,6 @@
 {
   "apiVersion": 1,
+  "identityFields": ["baseUrl"],
   "id": "dandanplay",
   "name": "DanDanPlay",
   "locales": {

@@ -12,6 +12,7 @@ import { zManifest } from '../manifest/schema.js'
 function manifest(forEach: Record<string, unknown>) {
   return zManifest.parse({
     apiVersion: 1,
+    identityFields: [],
     id: 'foreach-err',
     name: 'foreach-err',
     version: '0.1.0',
