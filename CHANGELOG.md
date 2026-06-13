@@ -23,13 +23,43 @@ The engine version and the manifest `apiVersion` are tracked independently.
 
 ### Fixed
 
+### Security
+
+## [0.7.0] - 2026-06-13
+
+Manifests now declare their content-namespace identity, letting a host derive a
+stable per-deployment namespace key for a saved season.
+
+### Added
+
+- `@mr-quin/dango`: `identityFields`, a required manifest field listing the
+  `configSchema` config keys whose values partition the manifest's content
+  namespace across deployments. An empty list means the namespace is the
+  manifest id alone (fixed-site sources like bilibili/tencent); a self-hostable
+  source lists the deployment-varying field(s) (e.g. dandanplay declares
+  `["baseUrl"]`, since a self-hosted DanDanPlay-compatible server has its own
+  private id space). The schema rejects entries that don't name a declared
+  top-level `configSchema` property.
+- `@mr-quin/dango`: `ManifestRunner.identityFields()`, returning the declared
+  list so a host can resolve, normalize, and hash a season's identifying config
+  values into a stable namespace key. The engine only declares which fields
+  matter; it never computes the key.
+
+### Changed
+
+- **BREAKING:** `@mr-quin/dango`: `identityFields` is now required on every
+  manifest; a manifest that omits it is rejected at parse time, with no implicit
+  default. `apiVersion` stays `1` (a pre-1.0 `0.x` breaking format change).
+- `@mr-quin/dango-manifests`: every manifest now declares `identityFields`
+  (dandanplay `["baseUrl"]`, all others `[]`) and is bumped to `0.5.0`.
+
+### Fixed
+
 - `@mr-quin/dango-manifests`: mango (芒果TV) episodes came back reverse-
   chronological (newest first) because mgtv returns months newest-first and the
   per-month lists are reversed too. The episodes pipeline now sorts by the `ts`
   timestamp ascending, restoring episode order. (mango manifest `0.4.0` →
   `0.4.1`.)
-
-### Security
 
 ## [0.6.0] - 2026-06-07
 
