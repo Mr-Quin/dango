@@ -8,7 +8,7 @@
       "name": "咪咕视频"
     }
   },
-  "version": "0.4.0",
+  "version": "0.5.0",
   "hosts": ["jadeite.migu.cn", "v3-sc.miguvideo.com", "webapi.miguvideo.com"],
   "search": {
     "inputs": ["q"],
