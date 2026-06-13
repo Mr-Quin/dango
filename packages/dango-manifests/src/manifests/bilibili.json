@@ -1,5 +1,6 @@
 {
   "apiVersion": 1,
+  "identityFields": [],
   "id": "bilibili",
   "name": "Bilibili",
   "locales": {
@@ -10,7 +11,7 @@
       "cookieSet.title": "登录B站"
     }
   },
-  "version": "0.4.0",
+  "version": "0.5.0",
   "hosts": ["api.bilibili.com"],
   "urlMatch": [
     {

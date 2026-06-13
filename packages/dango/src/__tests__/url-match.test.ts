@@ -20,6 +20,7 @@ function manifestWith(
 ) {
   return zManifest.parse({
     apiVersion: 1,
+    identityFields: [],
     id,
     name: id,
     version: '0.1.0',

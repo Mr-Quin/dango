@@ -15,6 +15,7 @@ import { mockFetcher } from './fixtures.js'
 
 const baseManifest = {
   apiVersion: 1,
+  identityFields: [],
   id: 'maptest',
   name: 'MapTest',
   version: '0.1.0',

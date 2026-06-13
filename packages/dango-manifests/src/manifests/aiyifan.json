@@ -1,5 +1,6 @@
 {
   "apiVersion": 1,
+  "identityFields": [],
   "id": "aiyifan",
   "name": "Aiyifan",
   "locales": {
@@ -7,7 +8,7 @@
       "name": "爱壹帆"
     }
   },
-  "version": "0.4.0",
+  "version": "0.5.0",
   "hosts": ["www.yfsp.tv", "rankv21.tripdata.app", "m10.yfsp.tv"],
   "search": {
     "inputs": ["q"],

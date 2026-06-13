@@ -29,6 +29,7 @@ function buildManifest(breakOnConsecutive?: number) {
   }
   return zManifest.parse({
     apiVersion: 1,
+    identityFields: [],
     id: 'breakOnConsecutive-test',
     name: 'breakOnConsecutive-test',
     version: '0.1.0',
@@ -109,6 +110,7 @@ describe('forEach breakOnConsecutive', () => {
     expect(() =>
       zManifest.parse({
         apiVersion: 1,
+        identityFields: [],
         id: 'no-breakOn',
         name: 'no-breakOn',
         version: '0.1.0',

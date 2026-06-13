@@ -1,5 +1,6 @@
 {
   "apiVersion": 1,
+  "identityFields": [],
   "id": "maiduidui",
   "name": "Maiduidui",
   "locales": {
@@ -7,7 +8,7 @@
       "name": "埋堆堆"
     }
   },
-  "version": "0.4.0",
+  "version": "0.5.0",
   "hosts": ["mob.mddcloud.com.cn"],
   "search": {
     "inputs": ["q"],

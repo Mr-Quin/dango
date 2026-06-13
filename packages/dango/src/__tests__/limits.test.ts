@@ -14,6 +14,7 @@ describe('step id sanitization', () => {
     expect(() =>
       zManifest.parse({
         apiVersion: 1,
+        identityFields: [],
         id: 'evil',
         name: 'evil',
         version: '0.1.0',
@@ -31,6 +32,7 @@ describe('step id sanitization', () => {
     expect(() =>
       zManifest.parse({
         apiVersion: 1,
+        identityFields: [],
         id: 'evil',
         name: 'evil',
         version: '0.1.0',
@@ -48,6 +50,7 @@ describe('step id sanitization', () => {
     expect(() =>
       zManifest.parse({
         apiVersion: 1,
+        identityFields: [],
         id: 'evil',
         name: 'evil',
         version: '0.1.0',
@@ -65,6 +68,7 @@ describe('step id sanitization', () => {
     expect(() =>
       zManifest.parse({
         apiVersion: 1,
+        identityFields: [],
         id: 'ok',
         name: 'ok',
         version: '0.1.0',
@@ -84,6 +88,7 @@ describe('http step extract requires id', () => {
     expect(() =>
       zManifest.parse({
         apiVersion: 1,
+        identityFields: [],
         id: 'bad',
         name: 'bad',
         version: '0.1.0',
@@ -109,6 +114,7 @@ describe('http step extract requires id', () => {
     expect(() =>
       zManifest.parse({
         apiVersion: 1,
+        identityFields: [],
         id: 'ok',
         name: 'ok',
         version: '0.1.0',
@@ -133,6 +139,7 @@ describe('http step extract requires id', () => {
     expect(() =>
       zManifest.parse({
         apiVersion: 1,
+        identityFields: [],
         id: 'ok',
         name: 'ok',
         version: '0.1.0',
@@ -160,6 +167,7 @@ describe('forEach throttle with concurrency > 1', () => {
     // and fired at the same instant. Slot reservation must be synchronous.
     const manifest = zManifest.parse({
       apiVersion: 1,
+      identityFields: [],
       id: 'throttle-race',
       name: 'throttle race',
       version: '0.1.0',
@@ -210,6 +218,7 @@ describe('forEach abort during throttle sleep', () => {
   it('surfaces AbortedError promptly without waiting out the throttle', async () => {
     const manifest = zManifest.parse({
       apiVersion: 1,
+      identityFields: [],
       id: 'foreach-abort',
       name: 'foreach-abort',
       version: '0.1.0',

@@ -70,6 +70,17 @@ export class ManifestRunner {
     return false
   }
 
+  /**
+   * configValues keys whose values partition this manifest's content
+   * namespace; the host restricts a season's configValues to these fields,
+   * normalizes, and hashes them into a stable namespaceKey. An empty array
+   * means no field partitions content (the namespace is the manifest id
+   * alone). The engine declares the list only; it never computes the key.
+   */
+  identityFields(): string[] {
+    return [...this.manifest.identityFields]
+  }
+
   /** Defaults extracted from `configSchema.properties`; merge under user values. */
   configDefaults(): Record<string, unknown> {
     const props = this.manifest.configSchema?.properties ?? {}
