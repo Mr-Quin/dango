@@ -60,7 +60,22 @@ export function findAdapterByMetadata(
 
 export async function parseDanAnyBody(
   format: string,
-  raw: Uint8Array
+  raw: Uint8Array,
+  params?: [
+    (
+      | Parameters<typeof DanuniJsonAdapter>[1]
+      | Parameters<typeof ArtplayerAdapter>[1]
+      | Parameters<typeof DplayerAdapter>[1]
+      | Parameters<typeof DdplayAdapter>[1]
+      | Parameters<typeof TencentAdapter>[1]
+      | Parameters<typeof VodAdapter>[1]
+    ),
+    (
+      | Parameters<typeof ArtplayerAdapter>[2]
+      | Parameters<typeof DplayerAdapter>[2]
+      | Parameters<typeof DdplayAdapter>[2]
+    ),
+  ]
 ): Promise<UDanmaku[]> {
   const udb = new UniDB().init()
   switch (format) {
@@ -80,26 +95,65 @@ export async function parseDanAnyBody(
       ).$danmakus
     case DanuniJsonMetadata.type:
       return (
-        await udb.import(DanuniJsonAdapter(await fileParser(raw, 'json')))
+        await udb.import(
+          DanuniJsonAdapter(
+            await fileParser(raw, 'json'),
+            params?.[0] as Parameters<typeof DanuniJsonAdapter>[1] | undefined
+          )
+        )
       ).$danmakus
     case DanuniPbMetadata.type:
       return (await udb.import(DanuniPbAdapter(await fileParser(raw, 'bin'))))
         .$danmakus
     case ArtplayerMetadata.type:
-      return (await udb.import(ArtplayerAdapter(await fileParser(raw, 'json'))))
-        .$danmakus
+      return (
+        await udb.import(
+          ArtplayerAdapter(
+            await fileParser(raw, 'json'),
+            params?.[0] as Parameters<typeof ArtplayerAdapter>[1] | undefined,
+            params?.[1] as Parameters<typeof ArtplayerAdapter>[2] | undefined
+          )
+        )
+      ).$danmakus
     case DplayerMetadata.type:
-      return (await udb.import(DplayerAdapter(await fileParser(raw, 'json'))))
-        .$danmakus
+      return (
+        await udb.import(
+          DplayerAdapter(
+            await fileParser(raw, 'json'),
+            params?.[0] as Parameters<typeof DplayerAdapter>[1] | undefined,
+            params?.[1] as Parameters<typeof DplayerAdapter>[2] | undefined
+          )
+        )
+      ).$danmakus
     case DdplayMetadata.type:
-      return (await udb.import(DdplayAdapter(await fileParser(raw, 'json'))))
-        .$danmakus
+      return (
+        await udb.import(
+          DdplayAdapter(
+            await fileParser(raw, 'json'),
+            params?.[0] as Parameters<typeof DdplayAdapter>[1] | undefined,
+            params?.[1] as Parameters<typeof DdplayAdapter>[2] | undefined
+          )
+        )
+      ).$danmakus
     case TencentMetadata.type:
-      return (await udb.import(TencentAdapter(await fileParser(raw, 'json'))))
-        .$danmakus
+      return (
+        await udb.import(
+          TencentAdapter(
+            await fileParser(raw, 'json'),
+            params?.[0] as Parameters<typeof TencentAdapter>[1] | undefined
+          )
+        )
+      ).$danmakus
     case VodMetadata.type:
-      return (await udb.import(VodAdapter(await fileParser(raw, 'json'))))
-        .$danmakus
+      return (
+        await udb.import(
+          VodAdapter(
+            await fileParser(raw, 'json'),
+            params?.[0] as Parameters<typeof VodAdapter>[1] | undefined,
+            params?.[1] as Parameters<typeof VodAdapter>[2] | undefined
+          )
+        )
+      ).$danmakus
     default:
       throw new Error(`Unsupported '@dan-uni/dan-any' format: ${format}`)
   }

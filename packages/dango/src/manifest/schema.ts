@@ -84,6 +84,11 @@ export const zRequestSpec = z.object({
   protoSchema: z.string().optional(),
   /** Fully-qualified protobuf type (e.g. `pkg.SubMsg`); required when format is 'proto'. */
   protoMessage: z.string().optional(),
+  /** 
+   * Parameters to pass to the adapter of `@dan-uni/dan-any`.
+   * Can be string-type expr (will be parsed by evalExpr)
+   */
+  dananyParams: z.array(z.string()).optional(),
   /** Host-applied overrides for headers fetch can't set (Origin/Referer/UA). */
   rewriteHeaders: zRewriteHeaders.optional(),
   /**

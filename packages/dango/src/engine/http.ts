@@ -163,12 +163,18 @@ function parseTextBody(format: string, raw: string): unknown {
   }
 }
 
-async function parseBodyUnion(format: string, raw: Uint8Array) {
-  if (zDanAnyFormat.safeParse(format).success)
-    return parseDanAnyBody(format, raw)
-  else if (zResponseFormat.safeParse(format).success)
-    return parseTextBody(format, await fileParser(raw, 'string'))
-  else throw new Error(`unknown format: ${format}`)
+async function parseBodyUnion(
+  spec: RequestSpec,
+  raw: Uint8Array,
+  context: unknown
+) {
+  if (zDanAnyFormat.safeParse(spec.format).success) {
+    const ps = []
+    for (const p of spec.dananyParams ?? []) ps.push(await evalExpr(p, context))
+    return parseDanAnyBody(spec.format, raw, ps as [any, any])
+  } else if (zResponseFormat.safeParse(spec.format).success)
+    return parseTextBody(spec.format, await fileParser(raw, 'string'))
+  else throw new Error(`unknown format: ${spec.format}`)
 }
 
 // Headers manifests can't set via `request.headers`: auth (Cookie/Auth/
@@ -315,7 +321,7 @@ export async function executeRequest(
   res.headers.forEach((v, k) => {
     responseHeaders[k.toLowerCase()] = v
   })
-  const parsedBody = await parseBody(spec, res, options)
+  const parsedBody = await parseBody(spec, res, context, options)
   return { body: parsedBody, headers: responseHeaders, status: res.status }
 }
 
@@ -341,6 +347,7 @@ async function decompressBytes(
 async function parseBody(
   spec: RequestSpec,
   res: HttpResponse,
+  context: unknown,
   options: HttpRunOptions
 ): Promise<unknown> {
   const cap = resolveBodyCap(options.maxBodyBytes)
@@ -369,11 +376,11 @@ async function parseBody(
     assertWithinCap(bytes, cap)
     const dec = await decompressBytes(bytes, spec.decompress)
     assertWithinCap(dec, cap)
-    return parseBodyUnion(spec.format, dec)
+    return parseBodyUnion(spec, dec, context)
   }
   const bytes = await res.bytes()
   assertWithinCap(bytes, cap)
-  return parseBodyUnion(spec.format, bytes)
+  return parseBodyUnion(spec, bytes, context)
 }
 
 const defaultFetcher: FetchLike = async (input, init) => {
