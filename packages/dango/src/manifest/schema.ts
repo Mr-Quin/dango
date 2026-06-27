@@ -23,21 +23,20 @@ const zString = zExpr
 
 const zHttpMethod = z.enum(['GET', 'POST'])
 export const zResponseFormat = z.enum(['json', 'xml', 'text', 'jsonp', 'proto'])
-export const zDanAnyFormat = z.enum(
-  [
-    BiliXmlMetadata,
-    BiliGrpcMetadata,
-    BiliCommandGrpcMetadata,
-    BiliUpMetadata,
-    DanuniJsonMetadata,
-    DanuniPbMetadata,
-    ArtplayerMetadata,
-    DplayerMetadata,
-    DdplayMetadata,
-    TencentMetadata,
-    VodMetadata,
-  ].map((metadata) => metadata.type)
-)
+const DAN_ANY_FORMAT_TYPES = [
+  BiliXmlMetadata.type,
+  BiliGrpcMetadata.type,
+  BiliCommandGrpcMetadata.type,
+  BiliUpMetadata.type,
+  DanuniJsonMetadata.type,
+  DanuniPbMetadata.type,
+  ArtplayerMetadata.type,
+  DplayerMetadata.type,
+  DdplayMetadata.type,
+  TencentMetadata.type,
+  VodMetadata.type,
+] as const
+export const zDanAnyFormat = z.enum(DAN_ANY_FORMAT_TYPES)
 
 // Headers allowed in `rewriteHeaders`. Auth-bearing names (Cookie, Auth) are
 // forbidden everywhere; these three are the ones the host applies via DNR.

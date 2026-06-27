@@ -25,7 +25,6 @@ import {
   VodMetadata,
 } from '@dan-uni/dan-any/adapters'
 import { UDanmaku } from '@dan-uni/dan-any/core'
-import { HttpResponse } from './http.js'
 import { UniDB } from '@dan-uni/dan-any/core/main/pure'
 import { fileParser } from '@dan-uni/dan-any/utils'
 import JSONbig from 'json-bigint'
@@ -51,9 +50,12 @@ const metadata2adapter = {
 export function findAdapterByMetadata(
   metadata: Metadata | Metadata['type']
 ): Adapter {
-  return metadata2adapter[
-    typeof metadata === 'string' ? metadata : metadata.type
-  ]
+  const type = typeof metadata === 'string' ? metadata : metadata.type
+  const adapter = metadata2adapter[type]
+  if (!adapter) {
+    throw new Error(`Unsupported '@dan-uni/dan-any' metadata type: ${type}`)
+  }
+  return adapter
 }
 
 export async function parseDanAnyBody(

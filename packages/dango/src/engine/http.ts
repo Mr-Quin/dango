@@ -2,14 +2,12 @@ import { XMLParser } from 'fast-xml-parser'
 import { helpers } from '../helpers/registry.js'
 import {
   zDanAnyFormat,
-  zRequestSpec,
   zResponseFormat,
   type RequestSpec,
 } from '../manifest/schema.js'
 import { isPrivateHost } from './host-policy.js'
 import { evalExpr, evalString } from './jsonata-eval.js'
 import type { ProtoRegistry } from './proto.js'
-import { UDanmaku } from '@dan-uni/dan-any/core'
 import { parseDanAnyBody } from './dan-uni.js'
 import { fileParser } from '@dan-uni/dan-any/utils'
 
@@ -370,6 +368,7 @@ async function parseBody(
     const bytes = await res.bytes()
     assertWithinCap(bytes, cap)
     const dec = await decompressBytes(bytes, spec.decompress)
+    assertWithinCap(dec, cap)
     return parseBodyUnion(spec.format, dec)
   }
   const bytes = await res.bytes()
