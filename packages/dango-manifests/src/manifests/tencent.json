@@ -93,7 +93,7 @@
       },
       {
         "type": "forEach",
-        "id": "segments",
+        "id": "udanmakus",
         "in": "segmentNames.names",
         "as": "segName",
         "concurrency": 4,
@@ -101,16 +101,15 @@
         "request": {
           "method": "GET",
           "url": "'https://dm.video.qq.com/barrage/segment/' & vid & '/' & segName",
+          "format": "tencent.json",
           "rewriteHeaders": {
             "Origin": "'https://v.qq.com'",
             "Referer": "'https://v.qq.com/'"
           }
-        },
-        "collect": "barrage_list"
+        }
       }
     ],
-    "output": "[segments]",
-    "map": "($s := content_style and content_style != '' ? $jsonParse(content_style) : null; $g := $s.gradient_colors; $hex := $exists($g[0]) and $g[0] != '' ? $g[0] : $s.color; $color := $exists($hex) and $hex != '' ? $hexToInt($replace($hex, /^#/, '')) : 16777215; { 'p': $string($number(time_offset) / 1000) & ',1,' & $string($color) & ',' & (vuid ? $string(vuid) : ''), 'm': content })"
+    "output": "$da_toCommentEntity(udanmakus)"
   },
   "cookieSet": {
     "url": "https://v.qq.com",
