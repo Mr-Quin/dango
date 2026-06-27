@@ -1,9 +1,17 @@
 import { XMLParser } from 'fast-xml-parser'
 import { helpers } from '../helpers/registry.js'
-import type { RequestSpec } from '../manifest/schema.js'
+import {
+  zDanAnyFormat,
+  zRequestSpec,
+  zResponseFormat,
+  type RequestSpec,
+} from '../manifest/schema.js'
 import { isPrivateHost } from './host-policy.js'
 import { evalExpr, evalString } from './jsonata-eval.js'
 import type { ProtoRegistry } from './proto.js'
+import { UDanmaku } from '@dan-uni/dan-any/core'
+import { parseDanAnyBody } from './dan-uni.js'
+import { fileParser } from '@dan-uni/dan-any/utils'
 
 /**
  * Hard ceiling on a response body, in bytes. A request may opt into a smaller
@@ -155,6 +163,14 @@ function parseTextBody(format: string, raw: string): unknown {
     default:
       throw new Error(`unknown format: ${format}`)
   }
+}
+
+async function parseBodyUnion(format: string, raw: Uint8Array) {
+  if (zDanAnyFormat.safeParse(format).success)
+    return parseDanAnyBody(format, raw)
+  else if (zResponseFormat.safeParse(format).success)
+    return parseTextBody(format, await fileParser(raw, 'string'))
+  else throw new Error(`unknown format: ${format}`)
 }
 
 // Headers manifests can't set via `request.headers`: auth (Cookie/Auth/
@@ -317,11 +333,11 @@ function assertWithinCap(body: Uint8Array | string, cap: number): void {
 async function decompressBytes(
   bytes: Uint8Array,
   format: 'deflate' | 'deflate-raw' | 'gzip'
-): Promise<string> {
+) {
   const blob = new Blob([bytes as BlobPart])
   const stream = blob.stream()
   const decoded = stream.pipeThrough(new DecompressionStream(format))
-  return new Response(decoded).text()
+  return new Response(decoded).bytes()
 }
 
 async function parseBody(
@@ -331,6 +347,7 @@ async function parseBody(
 ): Promise<unknown> {
   const cap = resolveBodyCap(options.maxBodyBytes)
   if (spec.format === 'proto') {
+    // FIXME: the proto raw may be compressed, so we need to decompress first before decoding.
     if (options.protoRegistry === undefined) {
       throw new Error(
         `request specifies format: 'proto' but no protoRegistry was provided`
@@ -352,13 +369,12 @@ async function parseBody(
   if (spec.decompress) {
     const bytes = await res.bytes()
     assertWithinCap(bytes, cap)
-    const text = await decompressBytes(bytes, spec.decompress)
-    assertWithinCap(text, cap)
-    return parseTextBody(spec.format, text)
+    const dec = await decompressBytes(bytes, spec.decompress)
+    return parseBodyUnion(spec.format, dec)
   }
-  const text = await res.text()
-  assertWithinCap(text, cap)
-  return parseTextBody(spec.format, text)
+  const bytes = await res.bytes()
+  assertWithinCap(bytes, cap)
+  return parseBodyUnion(spec.format, bytes)
 }
 
 const defaultFetcher: FetchLike = async (input, init) => {
