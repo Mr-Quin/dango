@@ -112,7 +112,7 @@
       },
       {
         "type": "forEach",
-        "id": "segments",
+        "id": "udanmakus",
         "in": "$range(1, $ceil(info.durationSec / 300) + 1)",
         "as": "i",
         "concurrency": 3,
@@ -121,16 +121,15 @@
           "method": "GET",
           "url": "'https://cmts.iqiyi.com/bullet/' & $substring(tvid, $length(tvid) - 4, 2) & '/' & $substring(tvid, $length(tvid) - 2, 2) & '/' & tvid & '_300_' & $string(i) & '.z'",
           "query": "{ 'rn': '0.123456789', 'business': 'danmu', 'is_iqiyi': 'true', 'is_video_page': 'true', 'tvid': tvid, 'albumid': info.albumId, 'categoryid': info.categoryId, 'qypid': '010102101000000000' }",
-          "format": "xml",
+          "format": "iqiyi.xml",
+          "dananyParams": [
+            "tvid"
+          ],
           "decompress": "deflate",
           "rewriteHeaders": { "Referer": "'https://www.iqiyi.com/'" }
-        },
-        "extract": {
-          "items": "[danmu.data.entry.list.bulletInfo]"
-        },
-        "collect": "items"
+        }
       }
     ],
-    "output": "[segments.{ 'p': $string($number(showTime)) & ',1,' & $string(color ? $hexToInt(color) : 16777215) & ',' & (contentId ? $string(contentId) : ''), 'm': content }]"
+    "output": "$da_toCommentEntity(udanmakus)"
   }
 }

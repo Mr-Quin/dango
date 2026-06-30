@@ -109,9 +109,9 @@ describe('mango manifest', () => {
     // duration 01:30 → 90s → ceil(90/60) = 2 segments (0,1). info + ctl + 2 segs
     expect(calls).toHaveLength(4)
     expect(result).toEqual([
-      { p: '1,1,16777215,5', m: 'first' },
-      { p: '5,1,16777215,', m: 'second' },
-      { p: '65,1,16777215,12', m: 'late' },
+      { p: '1,1,16777215,5@mgtv', m: 'first' },
+      { p: '5,1,16777215,65@mgtv', m: 'second' },
+      { p: '65,1,16777215,12@mgtv', m: 'late' },
     ])
   })
 

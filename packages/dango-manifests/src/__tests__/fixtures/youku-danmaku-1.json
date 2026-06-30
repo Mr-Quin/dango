@@ -1,5 +1,11 @@
 {
+  "api": "mopen.youku.danmu.list",
   "data": {
-    "result": "{\"data\":{\"result\":[{\"playat\":65000,\"uid\":\"102\",\"content\":\"late one\"}]}}"
-  }
+    "result": "{\"code\":1,\"cost\":\"8\",\"data\":{\"result\":[],\"count\":11,\"scm\":\"0.0\"},\"message\":\"success\"}"
+  },
+  "ret": [
+    "SUCCESS::调用成功"
+  ],
+  "traceId": "213368d817828066938622054e9103",
+  "v": "1.0"
 }

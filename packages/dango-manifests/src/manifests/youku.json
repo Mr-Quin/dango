@@ -101,25 +101,22 @@
       },
       {
         "type": "forEach",
-        "id": "segments",
+        "id": "udanmakus",
         "in": "prep.iters",
         "as": "iter",
         "concurrency": 4,
         "throttleMs": 100,
         "request": {
           "method": "POST",
+          "format": "youku.json",
           "url": "iter.url",
           "headers": { "Content-Type": "'application/x-www-form-urlencoded'" },
           "body": "iter.body",
           "credentials": "include",
           "rewriteHeaders": { "Referer": "'https://v.youku.com'" }
-        },
-        "extract": {
-          "items": "$jsonParse(data.result).data.result"
-        },
-        "collect": "items"
+        }
       }
     ],
-    "output": "[segments.{ 'p': $string($number(playat) / 1000) & ',1,16777215,' & $string(uid), 'm': content }]"
+    "output": "$da_toCommentEntity(udanmakus)"
   }
 }
