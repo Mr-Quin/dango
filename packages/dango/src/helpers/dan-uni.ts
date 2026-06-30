@@ -1,4 +1,4 @@
-import { DdplayTransformer } from '@dan-uni/dan-any/adapters'
+import { DdplayAdapter, DdplayTransformer } from '@dan-uni/dan-any/adapters'
 import { UDanmaku } from '@dan-uni/dan-any/core'
 import { UniChunk, UniDB } from '@dan-uni/dan-any/core/main/pure'
 
@@ -16,4 +16,11 @@ export function toCommentEntity(uchunk: UniChunk) {
     delete d.cid
     return d
   })
+}
+
+export function fromCommentEntity(comments: { p: string; m: string }[]) {
+  const uchunk = udb.makeChunk({ tmp: true })
+  const dans = comments.map((c) => ({ ...c, cid: 0 }))
+  uchunk.import(DdplayAdapter({ comments: dans, count: dans.length }))
+  return uchunk.$danmakus
 }
