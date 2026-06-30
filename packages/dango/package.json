@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@bufbuild/protobuf": "^2",
-    "@dan-uni/dan-any": "^2.3.2",
+    "@dan-uni/dan-any": "^2.3.7",
     "fast-xml-parser": "^4.5.1",
     "js-md5": "^0.8.3",
     "json-bigint": "^1.0.0",

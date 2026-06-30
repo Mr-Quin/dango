@@ -2,6 +2,8 @@ import {
   Adapter,
   ArtplayerAdapter,
   ArtplayerMetadata,
+  BahaAdapter,
+  BahaMetadata,
   BiliCommandGrpcAdapter,
   BiliCommandGrpcMetadata,
   BiliGrpcAdapter,
@@ -18,11 +20,17 @@ import {
   DdplayMetadata,
   DplayerAdapter,
   DplayerMetadata,
+  IqiyiAdapter,
+  IqiyiMetadata,
   Metadata,
+  MgtvAdapter,
+  MgtvMetadata,
   TencentAdapter,
   TencentMetadata,
   VodAdapter,
   VodMetadata,
+  YoukuAdapter,
+  YoukuMetadata,
 } from '@dan-uni/dan-any/adapters'
 import { UDanmaku } from '@dan-uni/dan-any/core'
 import { UniDB } from '@dan-uni/dan-any/core/main/pure'
@@ -41,10 +49,14 @@ const metadata2adapter = {
   [DanuniJsonMetadata.type]: DanuniJsonAdapter,
   [DanuniPbMetadata.type]: DanuniPbAdapter,
   [ArtplayerMetadata.type]: ArtplayerAdapter,
+  [BahaMetadata.type]: BahaAdapter,
   [DplayerMetadata.type]: DplayerAdapter,
   [DdplayMetadata.type]: DdplayAdapter,
+  [IqiyiMetadata.type]: IqiyiAdapter,
+  [MgtvMetadata.type]: MgtvAdapter,
   [TencentMetadata.type]: TencentAdapter,
   [VodMetadata.type]: VodAdapter,
+  [YoukuMetadata.type]: YoukuAdapter,
 }
 
 export function findAdapterByMetadata(
@@ -65,8 +77,11 @@ export async function parseDanAnyBody(
     (
       | Parameters<typeof DanuniJsonAdapter>[1]
       | Parameters<typeof ArtplayerAdapter>[1]
+      | Parameters<typeof BahaAdapter>[1]
       | Parameters<typeof DplayerAdapter>[1]
       | Parameters<typeof DdplayAdapter>[1]
+      | Parameters<typeof IqiyiAdapter>[1]
+      | Parameters<typeof MgtvAdapter>[1]
       | Parameters<typeof TencentAdapter>[1]
       | Parameters<typeof VodAdapter>[1]
     ),
@@ -74,6 +89,8 @@ export async function parseDanAnyBody(
       | Parameters<typeof ArtplayerAdapter>[2]
       | Parameters<typeof DplayerAdapter>[2]
       | Parameters<typeof DdplayAdapter>[2]
+      | Parameters<typeof MgtvAdapter>[2]
+      | Parameters<typeof VodAdapter>[2]
     ),
   ]
 ): Promise<UDanmaku[]> {
@@ -115,6 +132,15 @@ export async function parseDanAnyBody(
           )
         )
       ).$danmakus
+    case BahaMetadata.type:
+      return (
+        await udb.import(
+          BahaAdapter(
+            await fileParser(raw, 'json'),
+            params?.[0] as Parameters<typeof BahaAdapter>[1] | undefined
+          )
+        )
+      ).$danmakus
     case DplayerMetadata.type:
       return (
         await udb.import(
@@ -132,6 +158,25 @@ export async function parseDanAnyBody(
             await fileParser(raw, 'json'),
             params?.[0] as Parameters<typeof DdplayAdapter>[1] | undefined,
             params?.[1] as Parameters<typeof DdplayAdapter>[2] | undefined
+          )
+        )
+      ).$danmakus
+    case IqiyiMetadata.type:
+      return (
+        await udb.import(
+          IqiyiAdapter(
+            await fileParser(raw, 'string'),
+            params?.[0] as Parameters<typeof IqiyiAdapter>[1] | undefined
+          )
+        )
+      ).$danmakus
+    case MgtvMetadata.type:
+      return (
+        await udb.import(
+          MgtvAdapter(
+            await fileParser(raw, 'json'),
+            params?.[0] as Parameters<typeof MgtvAdapter>[1] | undefined,
+            params?.[1] as Parameters<typeof MgtvAdapter>[2] | undefined
           )
         )
       ).$danmakus
@@ -154,6 +199,9 @@ export async function parseDanAnyBody(
           )
         )
       ).$danmakus
+    case YoukuMetadata.type:
+      return (await udb.import(YoukuAdapter(await fileParser(raw, 'json'))))
+        .$danmakus
     default:
       throw new Error(`Unsupported '@dan-uni/dan-any' format: ${format}`)
   }

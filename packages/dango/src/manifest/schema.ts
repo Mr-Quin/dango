@@ -2,6 +2,7 @@ import { z } from 'zod'
 import { isPrivateHostPattern } from '../engine/host-policy.js'
 import {
   ArtplayerMetadata,
+  BahaMetadata,
   BiliCommandGrpcMetadata,
   BiliGrpcMetadata,
   BiliUpMetadata,
@@ -10,8 +11,11 @@ import {
   DanuniPbMetadata,
   DdplayMetadata,
   DplayerMetadata,
+  IqiyiMetadata,
+  MgtvMetadata,
   TencentMetadata,
   VodMetadata,
+  YoukuMetadata,
 } from '@dan-uni/dan-any/adapters'
 
 /** A JSONata expression evaluated against the pipeline context. */
@@ -31,10 +35,14 @@ const DAN_ANY_FORMAT_TYPES = [
   DanuniJsonMetadata.type,
   DanuniPbMetadata.type,
   ArtplayerMetadata.type,
+  BahaMetadata.type,
   DplayerMetadata.type,
   DdplayMetadata.type,
+  IqiyiMetadata.type,
+  MgtvMetadata.type,
   TencentMetadata.type,
   VodMetadata.type,
+  YoukuMetadata.type,
 ] as const
 export const zDanAnyFormat = z.enum(DAN_ANY_FORMAT_TYPES)
 
@@ -84,7 +92,7 @@ export const zRequestSpec = z.object({
   protoSchema: z.string().optional(),
   /** Fully-qualified protobuf type (e.g. `pkg.SubMsg`); required when format is 'proto'. */
   protoMessage: z.string().optional(),
-  /** 
+  /**
    * Parameters to pass to the adapter of `@dan-uni/dan-any`.
    * Can be string-type expr (will be parsed by evalExpr)
    */

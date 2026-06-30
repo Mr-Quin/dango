@@ -17,7 +17,7 @@
       "version": "0.7.0",
       "dependencies": {
         "@bufbuild/protobuf": "^2",
-        "@dan-uni/dan-any": "^2.3.2",
+        "@dan-uni/dan-any": "^2.3.7",
         "fast-xml-parser": "^4.5.1",
         "js-md5": "^0.8.3",
         "json-bigint": "^1.0.0",
@@ -40,7 +40,7 @@
   "packages": {
     "@bufbuild/protobuf": ["@bufbuild/protobuf@2.12.1", "", {}, "sha512-BvAMfS6LrgZiryOAZ4pBYucu4wG/Ei/9o9DZ9akbREnMLbPJiom2i8b9C8IsKErQoiKqVhrerzt3kOT/RrzLHg=="],
 
-    "@dan-uni/dan-any": ["@dan-uni/dan-any@2.3.2", "", { "dependencies": { "@bufbuild/protobuf": "^2.12.1", "@electric-sql/pglite": "^0.5.3", "@electric-sql/pglite-tools": "^0.4.3", "@noble/hashes": "^2.2.0", "drizzle-orm": "^1.0.0-rc.4-5d5b77c", "fast-xml-builder": "^1.2.0", "fast-xml-parser": "^5.9.3", "json-bigint": "^1.0.0", "zod": "^4.4.3" } }, "sha512-eH9aabTXnHzVZfBUF1Zm3doEHpFuLsqXfHdTZla0rR6TEp4Ul7ZNxYqRwlIy0sdNTo79KYXHtiZ1s49uCUlhxQ=="],
+    "@dan-uni/dan-any": ["@dan-uni/dan-any@2.3.7", "", { "dependencies": { "@bufbuild/protobuf": "^2.12.1", "@electric-sql/pglite": "^0.5.3", "@electric-sql/pglite-tools": "^0.4.3", "@noble/hashes": "^2.2.0", "drizzle-orm": "^1.0.0-rc.4-5d5b77c", "fast-xml-builder": "^1.2.0", "fast-xml-parser": "^5.9.3", "json-bigint": "^1.0.0", "zod": "^4.4.3" } }, "sha512-+4ny7MF6nWFjxF5p1GdVg6PUGi0sUH8/kmpDAaIPXcq7KwrzwQzyGwMBNhdONR0jvwjQvYbVP2rNnB92MSuCmA=="],
 
     "@electric-sql/pglite": ["@electric-sql/pglite@0.5.3", "", {}, "sha512-iTTYbA5Uesrl+N7zss0J5LopT7KE4j9aymYo+EZZh+rZbARQCUQOs+n2pay64JRUpc3fCkpfrniTNJnvYzOE+g=="],
 
