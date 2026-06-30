@@ -174,7 +174,7 @@ export async function parseDanAnyBody(
       return (
         await udb.import(
           MgtvAdapter(
-            await fileParser(raw, 'json'),
+            await fileParser(raw, 'json', JSONBig),
             params?.[0] as Parameters<typeof MgtvAdapter>[1] | undefined,
             params?.[1] as Parameters<typeof MgtvAdapter>[2] | undefined
           )
