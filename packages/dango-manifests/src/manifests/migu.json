@@ -8,7 +8,7 @@
       "name": "咪咕视频"
     }
   },
-  "version": "0.5.0",
+  "version": "0.5.1",
   "hosts": ["jadeite.migu.cn", "v3-sc.miguvideo.com", "webapi.miguvideo.com"],
   "search": {
     "inputs": ["q"],
@@ -24,7 +24,7 @@
             "appId": "'miguvideo'",
             "terminalId": "'www'"
           },
-          "body": "{ 'k': q, 'pageIdx': 1, 'pageSize': 20, 'ct': 101, 'mediaSource': 9000000, 'appVersion': '6.1.1.00', 'isCorrectWord': 1, 'copyrightTerminal': 3, 'searchScene': 2, 'uiVersion': 'A3.26.0', 'sid': '1X4A395AL3XS3UV5MT8PQ1L5JUYK6KFM8VKDSDD48S5Y7YX5WY1MOUHRT6512988' }",
+          "body": "{ 'k': q, 'pageIdx': 1, 'pageSize': 20, 'ct': 101, 'mediaSource': 9000000, 'appVersion': '6.1.1.00', 'isCorrectWord': 1, 'copyrightTerminal': 3, 'searchScene': 2, 'uiVersion': 'A3.26.0', 'packId': '1002581,1002601,1003861,1003862,1003863,1003864,1003865,1003866,1004041,1004121,1004261,1004262,1004281,1004321,1004262,1004281,1004322,1004261,1004421,1004422,1002781,1004301,1004641,1004761,1005061,1005261,1005301,1005321,1005361,1005362,1005341,1005342,1005521,1005722,1005721,1015749,1015761,1015760,1015762,1015763,1015768,1015786,1015790,1015812,1015813,1015814,1015815,1015816,1015817,1015820,1015819,1015821', 'sid': '1X4A395AL3XS3UV5MT8PQ1L5JUYK6KFM8VKDSDD48S5Y7YX5WY1MOUHRT6512988' }",
           "rewriteHeaders": {
             "Origin": "'https://www.miguvideo.com'",
             "Referer": "'https://www.miguvideo.com/'",
@@ -33,7 +33,7 @@
         }
       }
     ],
-    "output": "[search.body.contentInfoList[$exists(shortMediaAsset) and shortMediaAsset.isLong = true].($sma := shortMediaAsset; $eps := $exists($sma.extraData.episodes[0]) ? $sma.extraData.episodes[0] : $sma.pID; { 'providerIds': { 'epsId': $string($eps) }, 'indexedId': $string($eps), 'title': $sma.name, 'type': $sma.contDisplayName, 'typeDescription': $sma.contDisplayName, 'imageUrl': $sma.h5pics.highResolutionV, 'year': $exists($sma.year) and $trim($sma.year) != '' ? $number($trim($sma.year)) : null })]"
+    "output": "($fromList := [search.body.contentInfoList.shortMediaAsset[isLong = 1 or isLong = true]]; $fromCluster := [search.body.mediaClusterInfo.mediaAssetList[isLong = 1 or isLong = true]]; [$append($fromList, $fromCluster).($sma := $; $eps := $exists($sma.extraData.episodes[0]) ? $sma.extraData.episodes[0] : $sma.pID; { 'providerIds': { 'epsId': $string($eps) }, 'indexedId': $string($eps), 'title': $sma.name, 'type': $sma.contDisplayName, 'typeDescription': $sma.contDisplayName, 'imageUrl': $sma.h5pics.highResolutionV, 'year': $exists($sma.year) and $trim($sma.year) != '' ? $number($trim($sma.year)) : null })])"
   },
   "episodes": {
     "inputs": ["epsId"],
@@ -105,6 +105,6 @@
         "collect": "comments"
       }
     ],
-    "output": "[segments.{ 'cid': $number(cid), 'p': $string(playtime) & ',1,' & $string(textcolor ? $hexToInt(textcolor) : 16777215), 'm': msg }]"
+    "output": "[segments.{ 'cid': $number(cid), 'p': $string(playtime) & ',1,' & $string($exists(textcolor) and textcolor != '' ? ($h := $hexToInt($replace($string(textcolor), '#', '')); $h >= 0 ? $h : 16777215) : 16777215), 'm': msg }]"
   }
 }
