@@ -22,9 +22,10 @@ import { mockFetcher } from './mockFetcher.js'
  */
 
 describe('mango manifest', () => {
-  it('search: keeps source=imgo media and extracts collectionId from the /b/ URL', async () => {
+  it('search: keeps mango-own (imgo/empty source) mediaRebirthV2 media and uses clipId as the collectionId', async () => {
     const { fetcher, calls } = mockFetcher({
-      'https://mobileso.bz.mgtv.com/msite/search/v2': {
+      // did/mac/seqId are per-run md5s, so match on the query-stripped URL.
+      'https://mobileso.bz.mgtv.com/aphone/search/rebirth/v2': {
         body: JSON.stringify(searchFixture),
       },
     })
