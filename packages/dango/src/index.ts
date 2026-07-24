@@ -7,6 +7,7 @@ export {
   MAX_BODY_BYTES,
 } from './engine/http.js'
 export { isPrivateHost, isPrivateHostPattern } from './engine/host-policy.js'
+export { Base64DecodeError } from './helpers/errors.js'
 export {
   DEFAULT_EVAL_TIMEOUT_MS,
   DEFAULT_MAX_CACHE_SIZE,
