@@ -14,5 +14,5 @@
   "renren": { "query": "老友记" },
   "sohu": { "query": "小欢喜" },
   "tencent": { "query": "庆余年" },
-  "youku": { "query": "长月烬明" }
+  "youku": { "query": "长月烬明", "minDanmaku": 0 }
 }
