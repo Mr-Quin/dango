@@ -32,7 +32,7 @@
     {
       "id": "hanjutv",
       "name": "Hanjutv",
-      "version": "0.5.0",
+      "version": "0.5.1",
       "apiVersion": 1,
       "file": "src/manifests/hanjutv.json"
     },
