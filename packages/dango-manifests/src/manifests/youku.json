@@ -8,7 +8,7 @@
       "name": "优酷"
     }
   },
-  "version": "0.5.0",
+  "version": "0.5.1",
   "hosts": [
     "search.youku.com",
     "openapi.youku.com",
@@ -96,7 +96,7 @@
         "type": "assign",
         "id": "prep",
         "values": {
-          "iters": "$map($range(0, $floor(info.durationSec / 60) + 1), function($mat) { ($t := $millis(); $msg := { 'ctime': $t, 'ctype': 10004, 'cver': 'v1.0', 'guid': cna.value, 'mat': $mat, 'mcount': 1, 'pid': 0, 'sver': '3.1.0', 'type': 1, 'vid': vid }; $msgB64 := $base64Encode($stringify($msg)); $innerSign := $md5($msgB64 & 'MkmC9SoIw6xCkSKHhJ7b5D2r51kBiREr'); $data := $stringify($merge([$msg, { 'msg': $msgB64, 'sign': $innerSign }])); $outerSign := $md5($substring(tkEnc.tk, 0, 32) & '&' & $string($t) & '&24679788&' & $data); { 'url': 'https://acs.youku.com/h5/mopen.youku.danmu.list/1.0/?' & $sortedQueryString({ 'jsv': '2.5.6', 'appKey': '24679788', 't': $string($t), 'sign': $outerSign, 'api': 'mopen.youku.danmu.list', 'v': '1.0', 'type': 'originaljson', 'dataType': 'jsonp', 'timeout': '20000', 'jsonpIncPrefix': 'utility' }), 'body': 'data=' & $encodeUrlComponent($data) }) })"
+          "iters": "$type(tkEnc.tk) = 'string' and tkEnc.tk != '' ? $map($range(0, $floor(info.durationSec / 60) + 1), function($mat) { ($t := $millis(); $msg := { 'ctime': $t, 'ctype': 10004, 'cver': 'v1.0', 'guid': cna.value, 'mat': $mat, 'mcount': 1, 'pid': 0, 'sver': '3.1.0', 'type': 1, 'vid': vid }; $msgB64 := $base64Encode($stringify($msg)); $innerSign := $md5($msgB64 & 'MkmC9SoIw6xCkSKHhJ7b5D2r51kBiREr'); $data := $stringify($merge([$msg, { 'msg': $msgB64, 'sign': $innerSign }])); $outerSign := $md5($substring(tkEnc.tk, 0, 32) & '&' & $string($t) & '&24679788&' & $data); { 'url': 'https://acs.youku.com/h5/mopen.youku.danmu.list/1.0/?' & $sortedQueryString({ 'jsv': '2.5.6', 'appKey': '24679788', 't': $string($t), 'sign': $outerSign, 'api': 'mopen.youku.danmu.list', 'v': '1.0', 'type': 'originaljson', 'dataType': 'jsonp', 'timeout': '20000', 'jsonpIncPrefix': 'utility' }), 'body': 'data=' & $encodeUrlComponent($data) }) }) : []"
         }
       },
       {
