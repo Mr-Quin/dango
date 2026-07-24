@@ -48,6 +48,8 @@ function mockFetcher(handlers: Record<string, MockResponse>): {
 describe('hanjutv manifest', () => {
   it('search: signs the request and decrypts the no-pad AES response', async () => {
     const { fetcher, calls } = mockFetcher({
+      // Warm-up GET registers the mobile identity before s5 will return data.
+      'https://hxqapi.hiyun.tv/api/common/configs': { body: '{}' },
       'https://hxqapi.hiyun.tv/api/search/s5?k=%E7%A4%BA%E4%BE%8B&srefer=search_input&type=0&page=1':
         { body: JSON.stringify(searchFixture) },
     })
@@ -79,8 +81,10 @@ describe('hanjutv manifest', () => {
         year: null,
       },
     ])
-    expect(calls).toHaveLength(1)
-    const sentHeaders = (calls[0].init as { headers?: Record<string, string> })
+    // Warm-up (configs) then the signed s5 request.
+    expect(calls).toHaveLength(2)
+    expect(calls[0].url).toBe('https://hxqapi.hiyun.tv/api/common/configs')
+    const sentHeaders = (calls[1].init as { headers?: Record<string, string> })
       .headers
     // uk + sign are AES outputs (non-empty base64). Pin shape so a future
     // change that silently drops the encrypt helper fails this test rather

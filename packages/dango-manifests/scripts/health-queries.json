@@ -9,10 +9,10 @@
   "hanjutv": { "query": "顶楼" },
   "iqiyi": { "query": "莲花楼" },
   "maiduidui": { "query": "繁花" },
-  "mango": { "query": "琅琊榜" },
+  "mango": { "query": "大侦探" },
   "migu": { "query": "流浪地球" },
   "renren": { "query": "老友记" },
   "sohu": { "query": "小欢喜" },
   "tencent": { "query": "庆余年" },
-  "youku": { "query": "长月烬明" }
+  "youku": { "query": "长月烬明", "minDanmaku": 0 }
 }

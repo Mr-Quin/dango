@@ -2,29 +2,35 @@
   "data": {
     "contents": [
       {
-        "type": "media",
+        "type": "mediaRebirthV2",
         "data": [
           {
-            "source": "imgo",
-            "url": "https://www.mgtv.com/b/444555/666.html",
+            "source": "",
+            "clipId": "444555",
             "title": "<em>Frieren</em>: Beyond Journey's End",
-            "desc": ["类型:动漫/2023/日本"],
+            "desc": ["类型: 动漫 / 2023 / 日本"],
             "img": "https://example.com/frieren.jpg",
             "videoCount": 28
           },
           {
             "source": "iqiyi",
-            "url": "https://www.iqiyi.com/x/999.html",
+            "clipId": "999",
             "title": "should be filtered (non-imgo source)",
-            "desc": ["类型:电视剧/2024/中国"],
+            "desc": ["类型: 电视剧 / 2024 / 中国"],
             "img": "",
             "videoCount": 12
           }
         ]
       },
       {
-        "type": "feed",
-        "data": [{ "source": "imgo", "title": "should be filtered (non-media)" }]
+        "type": "mediaRebirth",
+        "data": [
+          {
+            "source": "iqiyi",
+            "clipId": "777",
+            "title": "should be filtered (aggregated non-mango content type)"
+          }
+        ]
       }
     ]
   }

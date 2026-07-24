@@ -8,7 +8,7 @@
       "name": "芒果TV"
     }
   },
-  "version": "0.5.0",
+  "version": "0.6.0",
   "hosts": [
     "mobileso.bz.mgtv.com",
     "pcweb.api.mgtv.com",
@@ -20,17 +20,26 @@
     "inputs": ["q"],
     "steps": [
       {
+        "type": "assign",
+        "id": "device",
+        "values": {
+          "deviceId": "$md5($string($millis()))"
+        }
+      },
+      {
         "type": "http",
         "id": "search",
         "request": {
           "method": "GET",
-          "url": "'https://mobileso.bz.mgtv.com/msite/search/v2'",
-          "query": "{ 'q': q, 'pc': '30', 'pn': '1', 'sort': '-99', 'ty': '0', 'du': '0', 'pt': '0', 'corr': '1', 'abroad': '0', '_support': '10000000000000000' }",
-          "rewriteHeaders": { "Referer": "'https://www.mgtv.com/'" }
+          "url": "'https://mobileso.bz.mgtv.com/aphone/search/rebirth/v2'",
+          "query": "{ 'q': q, '_support': '10100001', 'device': '23127PN0CC', 'osVersion': '16', 'appVersion': '9.3.3', 'did': device.deviceId, 'mac': device.deviceId, 'seqId': $md5(device.deviceId & '.' & $string($millis())), 'ticket': '', 'userId': '0', 'osType': 'android', 'type': '10', 'abroad': '0' }",
+          "rewriteHeaders": {
+            "User-Agent": "'Dalvik/2.1.0 (Linux; U; Android 16; 23127PN0CC Build/AP1A.240505.003)'"
+          }
         }
       }
     ],
-    "output": "[search.data.contents[type='media'].data[source='imgo'].($cid := $regexExtract(url, '/b/(\\\\d+)'); { 'providerIds': { 'collectionId': $cid }, 'indexedId': $cid, 'title': $replace(title, /<[^>]+>/, ''), 'type': $substringBefore(desc[0], '/') ~> $replace('类型:', '') ~> $trim, 'year': $number($regexExtract(desc[0], '([12][890][0-9][0-9])')), 'imageUrl': img, 'episodeCount': videoCount })[providerIds.collectionId]]"
+    "output": "[search.data.contents[type='mediaRebirthV2'].data[($not($exists(source)) or source = '' or source = 'imgo') and clipId != ''].($cid := $string(clipId); $descText := $type(desc) = 'array' ? desc[0] : desc; { 'providerIds': { 'collectionId': $cid }, 'indexedId': $cid, 'title': $trim($replace(title, /<[^>]+>/, '')), 'type': $trim($replace($substringBefore($descText, '/'), '类型:', '')), 'year': $number($regexExtract($descText, '([12][890][0-9][0-9])')), 'imageUrl': img, 'episodeCount': videoCount })]"
   },
   "episodes": {
     "inputs": ["collectionId"],
