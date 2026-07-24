@@ -17,3 +17,6 @@ dist
 # misc
 .tmp
 coverage
+
+# live health-probe cookies (local only, never committed)
+packages/dango-manifests/scripts/health-cookies.json
