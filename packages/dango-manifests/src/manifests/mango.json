@@ -8,7 +8,7 @@
       "name": "芒果TV"
     }
   },
-  "version": "0.6.0",
+  "version": "0.7.0",
   "hosts": [
     "mobileso.bz.mgtv.com",
     "pcweb.api.mgtv.com",
@@ -39,7 +39,7 @@
         }
       }
     ],
-    "output": "[search.data.contents[type='mediaRebirthV2'].data[($not($exists(source)) or source = '' or source = 'imgo') and clipId != ''].($cid := $string(clipId); $descText := $type(desc) = 'array' ? desc[0] : desc; { 'providerIds': { 'collectionId': $cid }, 'indexedId': $cid, 'title': $trim($replace(title, /<[^>]+>/, '')), 'type': $trim($replace($substringBefore($descText, '/'), '类型:', '')), 'year': $number($regexExtract($descText, '([12][890][0-9][0-9])')), 'imageUrl': img, 'episodeCount': videoCount })]"
+    "output": "($media := search.data.contents[type='mediaRebirthV2' or type='mediaRebirthV3'].data[($not($exists(source)) or source = '' or source = 'imgo') and clipId != '']; $seen := [$map($media, function($m) { $string($m.clipId) })]; $series := search.data.contents[type='clipMerge'].data.dataList[clipId != '' and $not($string(clipId) in $seen)]; $append([$media.($cid := $string(clipId); $descText := $type(desc) = 'array' ? desc[0] : desc; { 'providerIds': { 'collectionId': $cid }, 'indexedId': $cid, 'title': $trim($replace(title, /<[^>]+>/, '')), 'type': $trim($replace($substringBefore($descText, '/'), '类型:', '')), 'year': $number($regexExtract($descText, '([12][890][0-9][0-9])')), 'imageUrl': img, 'episodeCount': videoCount })], [$series.($cid := $string(clipId); { 'providerIds': { 'collectionId': $cid }, 'indexedId': $cid, 'title': $trim($replace(title, /<[^>]+>/, '')), 'imageUrl': img })]))"
   },
   "episodes": {
     "inputs": ["collectionId"],
