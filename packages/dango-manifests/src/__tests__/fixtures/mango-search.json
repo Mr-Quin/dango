@@ -23,6 +23,64 @@
         ]
       },
       {
+        "type": "mediaRebirthV3",
+        "data": [
+          {
+            "source": "",
+            "clipId": "444558",
+            "title": "<em>Frieren</em>: Beyond Journey's End DVD版",
+            "desc": ["类型: 动漫 / 2023 / 日本"],
+            "img": "https://example.com/frieren-dvd.jpg",
+            "videoCount": 28
+          }
+        ]
+      },
+      {
+        "type": "clipMerge",
+        "data": [
+          {
+            "btnTx": "查看更多",
+            "title": "相关影视作品",
+            "dataList": [
+              {
+                "clipId": "444556",
+                "title": "Frieren: Beyond Journey's End Season 2",
+                "hlTitle": "<B>Frieren</B>: Beyond Journey's End Season 2",
+                "desc": ["相同系列"],
+                "img": "https://example.com/frieren-s2.jpg",
+                "jumpKind": "25",
+                "year": ""
+              },
+              {
+                "clipId": "444557",
+                "title": "Frieren: Beyond Journey's End Recap",
+                "hlTitle": "<B>Frieren</B>: Beyond Journey's End Recap",
+                "desc": ["相同系列"],
+                "img": "https://example.com/frieren-recap.jpg",
+                "jumpKind": "25",
+                "year": ""
+              },
+              {
+                "clipId": "444555",
+                "title": "duplicate of the mediaRebirthV2 hit",
+                "desc": ["相同系列"],
+                "img": "https://example.com/frieren.jpg",
+                "jumpKind": "25",
+                "year": ""
+              },
+              {
+                "clipId": "",
+                "title": "no clipId, dropped",
+                "desc": ["相同系列"],
+                "img": "",
+                "jumpKind": "25",
+                "year": ""
+              }
+            ]
+          }
+        ]
+      },
+      {
         "type": "mediaRebirth",
         "data": [
           {

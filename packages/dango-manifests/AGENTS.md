@@ -71,7 +71,7 @@ Korean-drama source on `hxqapi.hiyun.tv` (+ a `hxqapi.zmdcq.com` mirror). Search
 
 ## Mango (`mango`)
 
-Mango TV (`*.mgtv.com`). Search keeps `source=imgo` media and lifts `collection_id` out of the `/b/<id>` URL. Episodes run a two-stage `forEach`: bootstrap the showlist to discover months, then one request per month, dropping cross-collection leakage. Danmaku derives the segment count from the video duration and pulls per-minute CDN JSON shards.
+Mango TV (`*.mgtv.com`). Search keeps `source=imgo` media from the `mediaRebirthV2` / `mediaRebirthV3` content blocks (`mediaRebirth` without the `V` is aggregated third-party content: `source: 'iqiyi'` and an empty `clipId`), then appends the `clipMerge` block's `dataList`, deduped against the primary hits. Upstream only returns the newest season as a `mediaRebirthV2` entry and demotes every sibling season and spin-off to `clipMerge`, so dropping that block loses "seasons 1-10" for a series like 大侦探. `clipMerge` rows carry only `clipId` / `title` / `img`, hence no `type`, `year`, or `episodeCount` on those results. `videoCount` is also gone from the `mediaRebirthV2` rows themselves, so `episodeCount` is usually undefined now. Episodes run a two-stage `forEach`: bootstrap the showlist to discover months, then one request per month, dropping cross-collection leakage. Danmaku derives the segment count from the video duration and pulls per-minute CDN JSON shards.
 
 ## Migu (`migu`)
 
