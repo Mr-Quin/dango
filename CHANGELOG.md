@@ -25,6 +25,49 @@ The engine version and the manifest `apiVersion` are tracked independently.
 
 ### Security
 
+## [0.8.1] - 2026-07-25
+
+A mango search repair: sibling seasons upstream moved into a content block the
+manifest did not read.
+
+### Fixed
+
+- `@mr-quin/dango-manifests`: mango (芒果TV) search returned only the newest
+  season of a series. Upstream now emits a single `mediaRebirthV2` entry and
+  demotes every sibling season and spin-off into a `clipMerge` block, so
+  searching 大侦探 yielded 第十一季 alone instead of all eleven seasons. Search
+  output now unions both blocks (deduped by `clipId`) and also reads
+  `mediaRebirthV3`, which carries mango-own media of the same shape.
+  `clipMerge` rows only carry `clipId`/`title`/`img`, so `type`, `year` and
+  `episodeCount` are absent on those results; `episodeCount` is now generally
+  absent anyway, since upstream dropped `videoCount` from the media rows.
+  (mango manifest `0.6.0` → `0.7.0`.)
+
+## [0.8.0] - 2026-07-24
+
+Typed base64 errors in the engine, plus repairs to four provider manifests
+whose live search or danmaku had drifted.
+
+### Added
+
+- `@mr-quin/dango`: `Base64DecodeError`, raised by the codec/crypto helpers
+  (`base64Decode`, and `aesCbcDecrypt`/`aesCbcEncrypt` via `base64ToBytes`) when
+  given input that is not valid base64. It previously surfaced as a raw
+  `DOMException` from `atob`, so a junk or empty upstream field now classifies as
+  a typed engine error with context instead of an opaque platform exception.
+
+### Fixed
+
+- `@mr-quin/dango-manifests`: hanjutv search returned an empty encrypted payload
+  and threw. The manifest now warms up the mobile identity via
+  `/api/common/configs` before the s5 search and guards the empty-data path.
+- `@mr-quin/dango-manifests`: mango search returned 403 from the web search
+  endpoint. Moved to the aphone rebirth search endpoint with a device signature.
+- `@mr-quin/dango-manifests`: migu search returned 403 as a GET. It now POSTs the
+  open-search request, and the danmaku color parsing is corrected.
+- `@mr-quin/dango-manifests`: youku danmaku threw on a cold mtop token. The
+  pipeline now guards the missing-token path.
+
 ## [0.7.0] - 2026-06-13
 
 Manifests now declare their content-namespace identity, letting a host derive a

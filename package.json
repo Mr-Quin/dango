@@ -17,6 +17,7 @@
     "format:check": "oxfmt --check",
     "catalog": "bun run --filter '@mr-quin/dango-manifests' catalog",
     "catalog:check": "bun run --filter '@mr-quin/dango-manifests' catalog:check",
+    "health": "bun run packages/dango-manifests/scripts/health.ts",
     "bump": "bun run scripts/bump-version.ts",
     "check": "bun run build && bun run type-check && bun run lint && bun run format:check && bun run catalog:check && bun test"
   },

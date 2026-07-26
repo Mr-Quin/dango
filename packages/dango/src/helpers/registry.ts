@@ -1,4 +1,5 @@
 import { md5 } from 'js-md5'
+import { base64ToBytes } from './_subtle-bytes.js'
 import { aesCbcDecrypt, aesCbcEncrypt } from './aes-cbc.js'
 import { gatewayDecrypt } from './gateway-decrypt.js'
 import { hmacSha256 } from './hmac.js'
@@ -34,9 +35,9 @@ function base64Encode(s: string): string {
 }
 
 function base64Decode(s: string): string {
-  return new TextDecoder().decode(
-    Uint8Array.from(atob(s), (c) => c.charCodeAt(0))
-  )
+  // Routes through base64ToBytes so invalid input raises the typed
+  // Base64DecodeError instead of a bare atob DOMException.
+  return new TextDecoder().decode(base64ToBytes(s))
 }
 
 // Build a new string by reading `source` at each index in `indices`.

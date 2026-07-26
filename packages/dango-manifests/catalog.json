@@ -1,5 +1,5 @@
 {
-  "packageVersion": "0.7.0",
+  "packageVersion": "0.8.1",
   "manifests": [
     {
       "id": "aiyifan",
@@ -32,7 +32,7 @@
     {
       "id": "hanjutv",
       "name": "Hanjutv",
-      "version": "0.5.0",
+      "version": "0.5.1",
       "apiVersion": 1,
       "file": "src/manifests/hanjutv.json"
     },
@@ -53,14 +53,14 @@
     {
       "id": "mango",
       "name": "Mango TV",
-      "version": "0.5.0",
+      "version": "0.7.0",
       "apiVersion": 1,
       "file": "src/manifests/mango.json"
     },
     {
       "id": "migu",
       "name": "Migu Video",
-      "version": "0.5.0",
+      "version": "0.5.1",
       "apiVersion": 1,
       "file": "src/manifests/migu.json"
     },
@@ -88,7 +88,7 @@
     {
       "id": "youku",
       "name": "Youku",
-      "version": "0.5.0",
+      "version": "0.5.1",
       "apiVersion": 1,
       "file": "src/manifests/youku.json"
     }

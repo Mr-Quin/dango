@@ -22,9 +22,10 @@ import { mockFetcher } from './mockFetcher.js'
  */
 
 describe('mango manifest', () => {
-  it('search: keeps source=imgo media and extracts collectionId from the /b/ URL', async () => {
+  it('search: keeps mango-own (imgo/empty source) mediaRebirthV2/V3 media, appends the clipMerge siblings, and uses clipId as the collectionId', async () => {
     const { fetcher, calls } = mockFetcher({
-      'https://mobileso.bz.mgtv.com/msite/search/v2': {
+      // did/mac/seqId are per-run md5s, so match on the query-stripped URL.
+      'https://mobileso.bz.mgtv.com/aphone/search/rebirth/v2': {
         body: JSON.stringify(searchFixture),
       },
     })
@@ -43,6 +44,27 @@ describe('mango manifest', () => {
         year: 2023,
         imageUrl: 'https://example.com/frieren.jpg',
         episodeCount: 28,
+      },
+      {
+        providerIds: { collectionId: '444558' },
+        indexedId: '444558',
+        title: "Frieren: Beyond Journey's End DVD版",
+        type: '动漫',
+        year: 2023,
+        imageUrl: 'https://example.com/frieren-dvd.jpg',
+        episodeCount: 28,
+      },
+      {
+        providerIds: { collectionId: '444556' },
+        indexedId: '444556',
+        title: "Frieren: Beyond Journey's End Season 2",
+        imageUrl: 'https://example.com/frieren-s2.jpg',
+      },
+      {
+        providerIds: { collectionId: '444557' },
+        indexedId: '444557',
+        title: "Frieren: Beyond Journey's End Recap",
+        imageUrl: 'https://example.com/frieren-recap.jpg',
       },
     ])
     expect(calls).toHaveLength(1)
