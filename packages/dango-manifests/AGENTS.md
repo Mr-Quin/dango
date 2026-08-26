@@ -52,12 +52,22 @@ Three auth modes, by config:
 
 ## Bilibili (`bilibili`)
 
-Two parallel `media_bangumi` + `media_ft` calls under `search`. Episodes go through `/pgc/view/web/season`. Danmaku has two variants:
+Two parallel `media_bangumi` + `media_ft` calls under `search`, plus an optional third for user uploads (see below). Episodes go through `/pgc/view/web/season`. Danmaku has two variants:
 
 - `xml`: single call, response is XML; the manifest splits each `<d p="...">` attribute's comma-separated fields and rebuilds the canonical `time,mode,color,uid` shape.
 - `protobuf` (default), `forEach` over `$range(1, 31)` (up to 30 six-minute segments = 3 hour cap). Each iteration decodes the `dm.v1.DmSegMobileReply` message against the precompiled descriptor carried in `protoDescriptors.bili` (base64 `FileDescriptorSet`; regenerate via `scripts/gen-proto-descriptors.ts`). Bilibili returns 304 past the last segment, which the request opts into via `acceptStatus: [304]`; the engine treats the empty body as an empty payload.
 
 Modes 2 and 3 (substyles of scroll-right) collapse to mode 1 in the canonical output; modes outside `{1,4,5,6}` are filtered out.
+
+### User uploads (UGC)
+
+`configSchema.includeUserUploads` (boolean, default false) adds a third WBI-signed search, `search_type=video`. It is a `forEach` whose `in` evaluates to `[]` when the flag is off, so the gated branch costs zero requests instead of duplicating the whole search pipeline as a second variant.
+
+A UGC hit's providerIds are `{ bvid, aid }` rather than `{ seasonId, mediaId }`, and `episodes` / `season` / `parseUrl` each carry a matching variant selected by `$exists(bvid) and $not($exists(seasonId))`. The `seasonId` half of that guard matters: a pgc _episode_ also carries a `bvid`, so `$exists(bvid)` alone would not keep the pgc branch winning. The variant reads `/x/web-interface/view`: when the video belongs to a collection (`ugc_season`), the collection's videos are the episodes and `episodeNumber` is their position via the `#$i` positional bind; otherwise the video's own parts (`pages`) are, numbered by `page`. Danmaku is untouched, both branches resolve to a `cid`.
+
+Season identity is the landed `bvid`, not the collection id, so two videos of one collection saved from different pages are two seasons.
+
+`urlMatch` also claims `/video/BV…` and `/video/av…` pages. That part is not gated by the checkbox, `urlMatch` is matched by the host before any config is in scope.
 
 ## Tencent (`tencent`)
 

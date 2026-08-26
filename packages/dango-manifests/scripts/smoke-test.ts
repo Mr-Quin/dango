@@ -6,6 +6,7 @@
  * Usage:
  *   bun run smoke ddp [keyword]         # official api.dandanplay.net (needs DDP_APP_ID / DDP_APP_SECRET env)
  *   bun run smoke bilibili [keyword]    # api.bilibili.com direct
+ *   bun run smoke bilibili-ugc [kw]     # same, includeUserUploads: walks a user upload
  *   bun run smoke tencent [keyword]     # pbaccess.video.qq.com + dm.video.qq.com
  *
  * NOT wired into CI, hits real network endpoints and is not deterministic.
@@ -22,7 +23,7 @@ const keyword = process.argv[3] ?? 'Frieren'
 
 if (!source) {
   console.error('usage: bun run smoke <source> [keyword]')
-  console.error('  source: ddp | bilibili | tencent')
+  console.error('  source: ddp | bilibili | bilibili-ugc | tencent')
   process.exit(2)
 }
 
@@ -139,6 +140,8 @@ async function warmCookies(host: string) {
 interface Pipeline<TSearch, TEpisode> {
   manifest: unknown
   searchInputs: (q: string) => Record<string, unknown>
+  /** Picks the row to walk from; defaults to the first result. */
+  pickSearch?: (rows: unknown[]) => unknown
   episodeInputs: (s: TSearch) => Record<string, unknown>
   danmakuInputs: (e: TEpisode) => Record<string, unknown>
   describeSearch: (s: TSearch) => string
@@ -175,6 +178,12 @@ interface BiliEpisode {
   }
   title: string
   episodeNumber: string
+}
+
+interface BiliUgcSearch {
+  providerIds: { bvid: string; aid: number }
+  title: string
+  type: string
 }
 
 interface TencentSearch {
@@ -253,6 +262,36 @@ const pipelines: Record<string, Pipeline<unknown, unknown>> = {
     },
     warmCookieHost: 'bilibili.com',
   },
+  'bilibili-ugc': {
+    manifest: builtinBilibili,
+    searchInputs: (q) => {
+      return { q, includeUserUploads: true }
+    },
+    // Official bangumi hits come first, so walk the first user upload instead.
+    pickSearch: (rows) => {
+      return rows.find((r) => {
+        return (r as BiliUgcSearch).providerIds?.bvid !== undefined
+      })
+    },
+    episodeInputs: (s) => {
+      return { bvid: (s as BiliUgcSearch).providerIds.bvid }
+    },
+    danmakuInputs: (e) => {
+      return {
+        cid: (e as BiliEpisode).providerIds.cid,
+        danmakuFormat: 'protobuf',
+      }
+    },
+    describeSearch: (s) => {
+      const bs = s as BiliUgcSearch
+      return `${bs.title} (bvid=${bs.providerIds.bvid}, type=${bs.type})`
+    },
+    describeEpisode: (e) => {
+      const be = e as BiliEpisode
+      return `${be.title} (cid=${be.providerIds.cid}, ep=${be.episodeNumber})`
+    },
+    warmCookieHost: 'bilibili.com',
+  },
   tencent: {
     manifest: builtinTencent,
     searchInputs: (q) => {
@@ -308,7 +347,12 @@ async function main() {
   if (searchResults.length === 0) {
     throw new Error('search returned no results')
   }
-  const first = searchResults[0]
+  const first = pipeline.pickSearch
+    ? pipeline.pickSearch(searchResults)
+    : searchResults[0]
+  if (first === undefined) {
+    throw new Error('search returned no usable result')
+  }
   console.log(`[smoke:${source}]   first: ${pipeline.describeSearch(first)}`)
 
   console.log(`[smoke:${source}] episodes`)

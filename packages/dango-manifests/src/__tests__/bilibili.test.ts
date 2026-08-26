@@ -14,12 +14,26 @@ import builtinBilibili from '../manifests/bilibili.json' with { type: 'json' }
 import bangumiFixture from './fixtures/bilibili-search-bangumi.json' with { type: 'json' }
 import ftFixture from './fixtures/bilibili-search-ft.json' with { type: 'json' }
 import seasonFixture from './fixtures/bilibili-season.json' with { type: 'json' }
+import ugcSearchFixture from './fixtures/bilibili-search-video.json' with { type: 'json' }
+import ugcSeasonViewFixture from './fixtures/bilibili-ugc-season-view.json' with { type: 'json' }
+import ugcViewFixture from './fixtures/bilibili-ugc-view.json' with { type: 'json' }
 import { mockFetcher } from './mockFetcher.js'
 
 const XML_FIXTURE = readFileSync(
   fileURLToPath(new URL('./fixtures/bilibili-xml.xml', import.meta.url)),
   'utf-8'
 )
+
+const NAV_RESPONSE = {
+  data: {
+    wbi_img: {
+      img_url:
+        'https://i0.hdslb.com/bfs/wbi/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.png',
+      sub_url:
+        'https://i0.hdslb.com/bfs/wbi/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb.png',
+    },
+  },
+}
 
 const set = fromBinary(
   FileDescriptorSetSchema,
@@ -514,5 +528,235 @@ describe('bilibili manifest', () => {
 
     expect(result?.seasonInsert.indexedId).toBe('41410')
     expect(result?.episodeMeta).toBeUndefined()
+  })
+
+  it('search omits the UGC request when includeUserUploads is false', async () => {
+    const { fetcher, calls } = mockFetcher({
+      'https://api.bilibili.com/x/web-interface/nav': {
+        body: JSON.stringify(NAV_RESPONSE),
+      },
+      'https://api.bilibili.com/x/web-interface/wbi/search/type': (url) => {
+        const params = new URL(url).searchParams
+        return {
+          body: JSON.stringify(
+            params.get('search_type') === 'media_bangumi'
+              ? bangumiFixture
+              : ftFixture
+          ),
+        }
+      },
+    })
+    const runner = new ManifestRunner(zManifest.parse(builtinBilibili), {
+      fetcher,
+    })
+
+    const result = (await runner.runSearch({
+      q: 'frieren',
+      includeUserUploads: false,
+    })) as Array<{ indexedId: string }>
+
+    // nav + media_bangumi + media_ft. The gated forEach makes no request.
+    expect(calls).toHaveLength(3)
+    expect(calls.some((c) => c.url.includes('search_type=video'))).toBe(false)
+    expect(result).toHaveLength(2)
+  })
+
+  it('search appends user uploads when includeUserUploads is true', async () => {
+    const { fetcher, calls } = mockFetcher({
+      'https://api.bilibili.com/x/web-interface/nav': {
+        body: JSON.stringify(NAV_RESPONSE),
+      },
+      'https://api.bilibili.com/x/web-interface/wbi/search/type': (url) => {
+        const params = new URL(url).searchParams
+        const type = params.get('search_type')
+        if (type === 'media_bangumi')
+          return { body: JSON.stringify(bangumiFixture) }
+        if (type === 'media_ft') return { body: JSON.stringify(ftFixture) }
+        return { body: JSON.stringify(ugcSearchFixture) }
+      },
+    })
+    const runner = new ManifestRunner(zManifest.parse(builtinBilibili), {
+      fetcher,
+    })
+
+    const result = (await runner.runSearch({
+      q: 'frieren',
+      includeUserUploads: true,
+    })) as Array<Record<string, unknown>>
+
+    expect(calls).toHaveLength(4)
+    const ugcCall = calls.find((c) => c.url.includes('search_type=video'))
+    expect(ugcCall).toBeDefined()
+    // The UGC search is WBI-signed like the other two.
+    expect(new URL(ugcCall?.url ?? '').searchParams.get('w_rid')).toMatch(
+      /^[a-f0-9]{32}$/
+    )
+
+    // Official results first, user uploads appended.
+    expect(result).toHaveLength(4)
+    expect(result[0]?.providerIds).toEqual({
+      seasonId: 41410,
+      mediaId: 28219412,
+    })
+    expect(result[2]).toEqual({
+      providerIds: { bvid: 'BV1bpj66qEHs', aid: 116777275101297 },
+      indexedId: 'BV1bpj66qEHs',
+      // <em class="keyword"> highlight markup is stripped.
+      title: '鬼灭之刃真人版',
+      type: 'MAD·AMV',
+      typeDescription: 'MAD·AMV',
+      // Protocol-relative cover URLs are normalized to https.
+      imageUrl:
+        'https://i0.hdslb.com/bfs/archive/d87bceed51f1abafdcc777c513cc2a38ef38fb14.jpg',
+      year: 2026,
+    })
+  })
+
+  it('episodes variant maps the parts of a standalone UGC video', async () => {
+    const { fetcher, calls } = mockFetcher({
+      'https://api.bilibili.com/x/web-interface/view': {
+        body: JSON.stringify(ugcViewFixture),
+      },
+    })
+    const runner = new ManifestRunner(zManifest.parse(builtinBilibili), {
+      fetcher,
+    })
+
+    const result = (await runner.runEpisodes({
+      bvid: 'BV15EhG6qEAg',
+    })) as Array<Record<string, unknown>>
+
+    expect(calls[0]?.url).toContain('bvid=BV15EhG6qEAg')
+    expect(result).toHaveLength(2)
+    expect(result[0]).toEqual({
+      providerIds: {
+        cid: 41250393999,
+        aid: 117155433551659,
+        bvid: 'BV15EhG6qEAg',
+      },
+      indexedId: '41250393999',
+      title: '【中】《无限大》定档预告丨27年1月15日全球上线',
+      episodeNumber: 1,
+      imageUrl:
+        'https://i2.hdslb.com/bfs/archive/c6f6c0e1ee112630a5c97b7937648838d7128c07.jpg',
+    })
+    expect(result[1]?.episodeNumber).toBe(2)
+  })
+
+  it('episodes variant lists the whole collection when the video is in a ugc_season', async () => {
+    const { fetcher } = mockFetcher({
+      'https://api.bilibili.com/x/web-interface/view': {
+        body: JSON.stringify(ugcSeasonViewFixture),
+      },
+    })
+    const runner = new ManifestRunner(zManifest.parse(builtinBilibili), {
+      fetcher,
+    })
+
+    const result = (await runner.runEpisodes({
+      bvid: 'BV1anhG6KEaC',
+    })) as Array<Record<string, unknown>>
+
+    // The collection's videos are the episodes, not the landed video's parts.
+    expect(result).toHaveLength(2)
+    expect(result[0]?.providerIds).toEqual({
+      cid: 41249669654,
+      aid: 117155299395681,
+      bvid: 'BV15dhG6GEhd',
+    })
+    expect(result.map((r) => r.episodeNumber)).toEqual([1, 2])
+  })
+
+  it('episodes picks the pgc variant when seasonId is present', async () => {
+    const { fetcher, calls } = mockFetcher({
+      'https://api.bilibili.com/pgc/view/web/season': {
+        body: JSON.stringify(seasonFixture),
+      },
+    })
+    const runner = new ManifestRunner(zManifest.parse(builtinBilibili), {
+      fetcher,
+    })
+
+    // A pgc episode's providerIds carry a bvid too; seasonId must still win.
+    await runner.runEpisodes({ seasonId: 41410, bvid: 'BV1aaaaaaaa' })
+    expect(calls[0]?.url).toContain('/pgc/view/web/season')
+  })
+
+  it('season variant re-fetches a UGC video by bvid', async () => {
+    const { fetcher } = mockFetcher({
+      'https://api.bilibili.com/x/web-interface/view': {
+        body: JSON.stringify(ugcSeasonViewFixture),
+      },
+    })
+    const runner = new ManifestRunner(zManifest.parse(builtinBilibili), {
+      fetcher,
+    })
+
+    const result = (await runner.runSeason({ bvid: 'BV1anhG6KEaC' })) as {
+      providerIds: { bvid: string }
+      indexedId: string
+      episodeCount: number
+    } | null
+
+    expect(result?.providerIds.bvid).toBe('BV1anhG6KEaC')
+    expect(result?.indexedId).toBe('BV1anhG6KEaC')
+    expect(result?.episodeCount).toBe(2)
+  })
+
+  it('parseUrl resolves /video/BV<id> to the video and its position in the collection', async () => {
+    const { fetcher, calls } = mockFetcher({
+      'https://api.bilibili.com/x/web-interface/view': {
+        body: JSON.stringify(ugcSeasonViewFixture),
+      },
+    })
+    const runner = new ManifestRunner(zManifest.parse(builtinBilibili), {
+      fetcher,
+    })
+
+    const result = (await runner.runParseUrl(
+      'https://www.bilibili.com/video/BV1anhG6KEaC?spm_id_from=333.788'
+    )) as {
+      seasonInsert: { providerIds: { bvid: string }; episodeCount: number }
+      episodeMeta: {
+        providerIds: { cid: number; bvid: string }
+        episodeNumber: number
+        externalLink: string
+      }
+    } | null
+
+    expect(calls[0]?.url).toContain('bvid=BV1anhG6KEaC')
+    expect(calls[0]?.url).not.toContain('aid=')
+    expect(result?.seasonInsert.providerIds.bvid).toBe('BV1anhG6KEaC')
+    expect(result?.seasonInsert.episodeCount).toBe(2)
+    expect(result?.episodeMeta.providerIds.cid).toBe(41251442543)
+    // The landed video is the 2nd entry of the collection.
+    expect(result?.episodeMeta.episodeNumber).toBe(2)
+    expect(result?.episodeMeta.externalLink).toBe(
+      'https://www.bilibili.com/video/BV1anhG6KEaC'
+    )
+  })
+
+  it('parseUrl resolves /video/av<id> via the aid query', async () => {
+    const { fetcher, calls } = mockFetcher({
+      'https://api.bilibili.com/x/web-interface/view': {
+        body: JSON.stringify(ugcViewFixture),
+      },
+    })
+    const runner = new ManifestRunner(zManifest.parse(builtinBilibili), {
+      fetcher,
+    })
+
+    const result = (await runner.runParseUrl(
+      'https://www.bilibili.com/video/av117155433551659'
+    )) as {
+      seasonInsert: { providerIds: { bvid: string } }
+      episodeMeta: { episodeNumber: number }
+    } | null
+
+    expect(calls[0]?.url).toContain('aid=117155433551659')
+    expect(calls[0]?.url).not.toContain('bvid=')
+    expect(result?.seasonInsert.providerIds.bvid).toBe('BV15EhG6qEAg')
+    // Standalone upload: no collection to index into.
+    expect(result?.episodeMeta.episodeNumber).toBe(1)
   })
 })
