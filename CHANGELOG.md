@@ -15,6 +15,18 @@ The engine version and the manifest `apiVersion` are tracked independently.
 
 ### Added
 
+- `@mr-quin/dango-manifests`: bilibili search can now include user-uploaded
+  (UGC) videos, behind an opt-in `includeUserUploads` config flag (boolean,
+  default `false`). Anime and shows that exist only as user uploads were
+  unreachable, so their danmaku was too. When the flag is on, search adds a
+  WBI-signed `search_type=video` call and appends those hits with
+  `{ bvid, aid }` providerIds; `episodes`, `season`, and `parseUrl` gained a
+  matching variant that reads `/x/web-interface/view`, listing a collection's
+  videos (`ugc_season`) or the video's own parts (`pages`) as episodes.
+  `urlMatch` also claims `/video/BV…` and `/video/av…` pages, which is not
+  gated by the flag. Danmaku is unchanged; both branches resolve to a `cid`.
+  (bilibili manifest `0.5.0` → `0.6.0`.)
+
 ### Changed
 
 ### Deprecated
