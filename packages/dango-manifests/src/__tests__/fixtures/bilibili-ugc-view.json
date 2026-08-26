@@ -1,0 +1,57 @@
+{
+  "code": 0,
+  "message": "0",
+  "ttl": 1,
+  "data": {
+    "bvid": "BV15EhG6qEAg",
+    "aid": 117155433551659,
+    "videos": 4,
+    "tid": 184,
+    "tname": "",
+    "tname_v2": "",
+    "copyright": 3,
+    "pic": "http://i2.hdslb.com/bfs/archive/c6f6c0e1ee112630a5c97b7937648838d7128c07.jpg",
+    "title": "《无限大》定档预告丨27年1月15日全球上线",
+    "pubdate": 1787682371,
+    "ctime": 1787650219,
+    "desc": "《无限大》的故事将在新启、重霄的凌云两个地方开展，你将组建属于你自己的队伍，在不同的城市之间经历冒险，最终找到故事背后的真相。游戏并不止于此，你也将自由体验不同角色的人生，不同城市的风貌与生活。#无限大定档# \n\n更多关于《无限大》的资讯请关注＞＞https://www.biligame.com/detail/?id=110895",
+    "state": 0,
+    "duration": 736,
+    "cid": 41250393999,
+    "owner": {
+      "mid": 3494379073309365,
+      "name": "无限大",
+      "face": "https://i0.hdslb.com/bfs/face/354f81e2d54c7ff3481727244f71989db225d23e.jpg"
+    },
+    "pages": [
+      {
+        "cid": 41250393999,
+        "page": 1,
+        "from": "vupload",
+        "part": "【中】《无限大》定档预告丨27年1月15日全球上线",
+        "duration": 184,
+        "vid": "",
+        "weblink": "",
+        "dimension": {
+          "width": 3840,
+          "height": 2160,
+          "rotate": 0
+        }
+      },
+      {
+        "cid": 41250521123,
+        "page": 2,
+        "from": "vupload",
+        "part": "【日】《无限大》定档预告丨27年1月15日全球上线",
+        "duration": 184,
+        "vid": "",
+        "weblink": "",
+        "dimension": {
+          "width": 3840,
+          "height": 2160,
+          "rotate": 0
+        }
+      }
+    ]
+  }
+}

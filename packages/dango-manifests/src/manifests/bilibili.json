@@ -8,10 +8,12 @@
       "name": "B站",
       "configSchema.properties.danmakuFormat.title": "弹幕格式",
       "configSchema.properties.danmakuFormat.description": "xml 是旧版接口，最多约 3000 条弹幕；protobuf 分页返回全部弹幕",
-      "cookieSet.title": "登录B站"
+      "cookieSet.title": "登录B站",
+      "configSchema.properties.includeUserUploads.title": "包含用户投稿",
+      "configSchema.properties.includeUserUploads.description": "搜索时一并返回用户投稿（UGC）视频，而不仅是官方番剧库。默认关闭：UGC 结果较杂，且多为切片。"
     }
   },
-  "version": "0.5.0",
+  "version": "0.6.0",
   "hosts": ["api.bilibili.com"],
   "urlMatch": [
     {
@@ -21,6 +23,14 @@
     {
       "host": "www.bilibili.com",
       "path": "^/bangumi/play/ep(?<epid>\\d+)"
+    },
+    {
+      "host": "www.bilibili.com",
+      "path": "^/video/(?<bvid>BV[0-9A-Za-z]+)"
+    },
+    {
+      "host": "www.bilibili.com",
+      "path": "^/video/[aA][vV](?<aid>\\d+)"
     }
   ],
   "configSchema": {
@@ -32,6 +42,12 @@
         "default": "protobuf",
         "title": "Danmaku format",
         "description": "xml is the legacy endpoint capped at ~3000 comments; protobuf paginates and returns everything"
+      },
+      "includeUserUploads": {
+        "type": "boolean",
+        "default": false,
+        "title": "Include user uploads",
+        "description": "Also search user-uploaded (UGC) videos, not just the official bangumi catalogue. Off by default: UGC results are noisier and often clips."
       }
     }
   },
@@ -69,7 +85,8 @@
         "id": "params",
         "values": {
           "bangumi": "($p := { 'keyword': q, 'search_type': 'media_bangumi', 'wts': wbi.wts }; $merge([$p, { 'w_rid': $md5($sortedQueryString($p) & wbi.mixinKey) }]))",
-          "ft": "($p := { 'keyword': q, 'search_type': 'media_ft', 'wts': wbi.wts }; $merge([$p, { 'w_rid': $md5($sortedQueryString($p) & wbi.mixinKey) }]))"
+          "ft": "($p := { 'keyword': q, 'search_type': 'media_ft', 'wts': wbi.wts }; $merge([$p, { 'w_rid': $md5($sortedQueryString($p) & wbi.mixinKey) }]))",
+          "video": "($p := { 'keyword': q, 'search_type': 'video', 'wts': wbi.wts }; $merge([$p, { 'w_rid': $md5($sortedQueryString($p) & wbi.mixinKey) }]))"
         }
       },
       {
@@ -93,44 +110,98 @@
           "credentials": "include",
           "rewriteHeaders": { "Referer": "'https://www.bilibili.com/'" }
         }
-      }
-    ],
-    "output": "[[media_bangumi.data.result, media_ft.data.result].{ 'providerIds': { 'seasonId': season_id, 'mediaId': media_id }, 'indexedId': $string(season_id), 'title': $replace(title, /<[^>]+>/, ''), 'type': season_type_name, 'typeDescription': season_type_name, 'imageUrl': cover, 'episodeCount': ep_size, 'year': pubtime > 0 ? $number($substring($string($fromMillis(pubtime * 1000)), 0, 4)) : undefined }]"
-  },
-  "episodes": {
-    "inputs": ["seasonId"],
-    "steps": [
+      },
       {
-        "type": "http",
-        "id": "season",
+        "type": "forEach",
+        "id": "ugc",
+        "in": "includeUserUploads = true ? ['video'] : []",
+        "as": "searchType",
         "request": {
           "method": "GET",
-          "url": "'https://api.bilibili.com/pgc/view/web/season'",
-          "query": "{ 'season_id': $string(seasonId) }",
+          "url": "'https://api.bilibili.com/x/web-interface/wbi/search/type'",
+          "query": "$lookup(params, searchType)",
           "credentials": "include",
           "rewriteHeaders": { "Referer": "'https://www.bilibili.com/'" }
-        }
+        },
+        "collect": "[data.result]"
       }
     ],
-    "output": "[season.result.episodes[$not($contains(badge ? badge : '', '预告'))].{ 'providerIds': { 'cid': cid, 'aid': aid, 'bvid': bvid, 'epid': id }, 'indexedId': $string(cid), 'title': long_title and long_title != '' ? long_title : show_title, 'episodeNumber': $match(title, /^\\d+$/) ? $number(title) : (title and title != '' ? title : undefined), 'imageUrl': cover, 'alternativeTitle': share_copy and share_copy != '' ? [share_copy] : undefined }]"
+    "output": "[[media_bangumi.data.result, media_ft.data.result].{ 'providerIds': { 'seasonId': season_id, 'mediaId': media_id }, 'indexedId': $string(season_id), 'title': $replace(title, /<[^>]+>/, ''), 'type': season_type_name, 'typeDescription': season_type_name, 'imageUrl': cover, 'episodeCount': ep_size, 'year': pubtime > 0 ? $number($substring($string($fromMillis(pubtime * 1000)), 0, 4)) : undefined }, ugc.{ 'providerIds': { 'bvid': bvid, 'aid': aid }, 'indexedId': bvid, 'title': $replace(title, /<[^>]+>/, ''), 'type': typename, 'typeDescription': typename, 'imageUrl': 'https:' & $replace(pic, /^https?:/, ''), 'year': pubdate > 0 ? $number($substring($string($fromMillis(pubdate * 1000)), 0, 4)) : undefined }]"
   },
-  "season": {
-    "inputs": ["seasonId"],
-    "steps": [
-      {
-        "type": "http",
-        "id": "season",
-        "request": {
-          "method": "GET",
-          "url": "'https://api.bilibili.com/pgc/view/web/season'",
-          "query": "{ 'season_id': $string(seasonId) }",
-          "credentials": "include",
-          "rewriteHeaders": { "Referer": "'https://www.bilibili.com/'" }
+  "episodes": [
+    {
+      "inputs": ["seasonId"],
+      "steps": [
+        {
+          "type": "http",
+          "id": "season",
+          "request": {
+            "method": "GET",
+            "url": "'https://api.bilibili.com/pgc/view/web/season'",
+            "query": "{ 'season_id': $string(seasonId) }",
+            "credentials": "include",
+            "rewriteHeaders": { "Referer": "'https://www.bilibili.com/'" }
+          }
         }
-      }
-    ],
-    "output": "season.result ? { 'providerIds': { 'seasonId': season.result.season_id, 'mediaId': season.result.media_id }, 'indexedId': $string(season.result.season_id), 'title': $replace(season.result.title, /<[^>]+>/, ''), 'type': season.result.season_type_name ? season.result.season_type_name : $string(season.result.type), 'imageUrl': season.result.cover, 'episodeCount': $count(season.result.episodes[$not($contains(badge ? badge : '', '预告'))]) } : undefined"
-  },
+      ],
+      "output": "[season.result.episodes[$not($contains(badge ? badge : '', '预告'))].{ 'providerIds': { 'cid': cid, 'aid': aid, 'bvid': bvid, 'epid': id }, 'indexedId': $string(cid), 'title': long_title and long_title != '' ? long_title : show_title, 'episodeNumber': $match(title, /^\\d+$/) ? $number(title) : (title and title != '' ? title : undefined), 'imageUrl': cover, 'alternativeTitle': share_copy and share_copy != '' ? [share_copy] : undefined }]"
+    },
+    {
+      "when": "$exists(bvid) and $not($exists(seasonId))",
+      "inputs": ["bvid"],
+      "steps": [
+        {
+          "type": "http",
+          "id": "view",
+          "request": {
+            "method": "GET",
+            "url": "'https://api.bilibili.com/x/web-interface/view'",
+            "query": "{ 'bvid': bvid }",
+            "credentials": "include",
+            "rewriteHeaders": { "Referer": "'https://www.bilibili.com/'" }
+          }
+        }
+      ],
+      "output": "($d := view.data; $exists($d.ugc_season) ? [$d.ugc_season.sections.episodes#$i.{ 'providerIds': { 'cid': cid, 'aid': aid, 'bvid': bvid }, 'indexedId': $string(cid), 'title': title, 'episodeNumber': $i + 1, 'imageUrl': 'https:' & $replace(arc.pic, /^https?:/, '') }] : [$d.pages.{ 'providerIds': { 'cid': cid, 'aid': $d.aid, 'bvid': $d.bvid }, 'indexedId': $string(cid), 'title': part, 'episodeNumber': page, 'imageUrl': 'https:' & $replace($d.pic, /^https?:/, '') }])"
+    }
+  ],
+  "season": [
+    {
+      "inputs": ["seasonId"],
+      "steps": [
+        {
+          "type": "http",
+          "id": "season",
+          "request": {
+            "method": "GET",
+            "url": "'https://api.bilibili.com/pgc/view/web/season'",
+            "query": "{ 'season_id': $string(seasonId) }",
+            "credentials": "include",
+            "rewriteHeaders": { "Referer": "'https://www.bilibili.com/'" }
+          }
+        }
+      ],
+      "output": "season.result ? { 'providerIds': { 'seasonId': season.result.season_id, 'mediaId': season.result.media_id }, 'indexedId': $string(season.result.season_id), 'title': $replace(season.result.title, /<[^>]+>/, ''), 'type': season.result.season_type_name ? season.result.season_type_name : $string(season.result.type), 'imageUrl': season.result.cover, 'episodeCount': $count(season.result.episodes[$not($contains(badge ? badge : '', '预告'))]) } : undefined"
+    },
+    {
+      "when": "$exists(bvid) and $not($exists(seasonId))",
+      "inputs": ["bvid"],
+      "steps": [
+        {
+          "type": "http",
+          "id": "view",
+          "request": {
+            "method": "GET",
+            "url": "'https://api.bilibili.com/x/web-interface/view'",
+            "query": "{ 'bvid': bvid }",
+            "credentials": "include",
+            "rewriteHeaders": { "Referer": "'https://www.bilibili.com/'" }
+          }
+        }
+      ],
+      "output": "($d := view.data; $exists($d) ? { 'providerIds': { 'bvid': $d.bvid, 'aid': $d.aid }, 'indexedId': $d.bvid, 'title': $d.title, 'type': $d.tname ? $d.tname : undefined, 'imageUrl': 'https:' & $replace($d.pic, /^https?:/, ''), 'episodeCount': $exists($d.ugc_season) ? $count($d.ugc_season.sections.episodes) : $count($d.pages) } : undefined)"
+    }
+  ],
   "danmaku": [
     {
       "when": "danmakuFormat = 'xml'",
@@ -207,28 +278,48 @@
     ],
     "output": "nav.data.isLogin = true"
   },
-  "parseUrl": {
-    "inputs": [],
-    "steps": [
-      {
-        "type": "http",
-        "id": "season",
-        "request": {
-          "method": "GET",
-          "url": "'https://api.bilibili.com/pgc/view/web/season'",
-          "query": "{ 'season_id': ssid ? $string(ssid) : undefined, 'ep_id': epid ? $string(epid) : undefined }",
-          "credentials": "include",
-          "rewriteHeaders": { "Referer": "'https://www.bilibili.com/'" }
+  "parseUrl": [
+    {
+      "inputs": [],
+      "steps": [
+        {
+          "type": "http",
+          "id": "season",
+          "request": {
+            "method": "GET",
+            "url": "'https://api.bilibili.com/pgc/view/web/season'",
+            "query": "{ 'season_id': ssid ? $string(ssid) : undefined, 'ep_id': epid ? $string(epid) : undefined }",
+            "credentials": "include",
+            "rewriteHeaders": { "Referer": "'https://www.bilibili.com/'" }
+          }
+        },
+        {
+          "type": "assign",
+          "id": "picked",
+          "values": {
+            "ep": "epid ? ($epIdNum := $number(epid); season.result.episodes[id = $epIdNum]) : season.result.episodes[0]"
+          }
         }
-      },
-      {
-        "type": "assign",
-        "id": "picked",
-        "values": {
-          "ep": "epid ? ($epIdNum := $number(epid); season.result.episodes[id = $epIdNum]) : season.result.episodes[0]"
+      ],
+      "output": "{ 'seasonInsert': { 'providerIds': { 'seasonId': season.result.season_id }, 'indexedId': $string(season.result.season_id), 'title': $replace(season.result.title, /<[^>]+>/, ''), 'type': $string(season.result.type), 'imageUrl': season.result.cover, 'episodeCount': $count(season.result.episodes) }, 'episodeMeta': $exists(picked.ep) ? { 'providerIds': { 'cid': picked.ep.cid, 'aid': picked.ep.aid, 'bvid': picked.ep.bvid, 'epid': picked.ep.id }, 'indexedId': $string(picked.ep.cid), 'title': picked.ep.long_title and picked.ep.long_title != '' ? picked.ep.long_title : picked.ep.show_title, 'episodeNumber': $match(picked.ep.title, /^\\d+$/) ? $number(picked.ep.title) : (picked.ep.title and picked.ep.title != '' ? picked.ep.title : undefined), 'imageUrl': picked.ep.cover, 'externalLink': picked.ep.link } : undefined }"
+    },
+    {
+      "when": "$exists(bvid) or $exists(aid)",
+      "inputs": [],
+      "steps": [
+        {
+          "type": "http",
+          "id": "view",
+          "request": {
+            "method": "GET",
+            "url": "'https://api.bilibili.com/x/web-interface/view'",
+            "query": "{ 'bvid': bvid ? bvid : undefined, 'aid': aid ? $string(aid) : undefined }",
+            "credentials": "include",
+            "rewriteHeaders": { "Referer": "'https://www.bilibili.com/'" }
+          }
         }
-      }
-    ],
-    "output": "{ 'seasonInsert': { 'providerIds': { 'seasonId': season.result.season_id }, 'indexedId': $string(season.result.season_id), 'title': $replace(season.result.title, /<[^>]+>/, ''), 'type': $string(season.result.type), 'imageUrl': season.result.cover, 'episodeCount': $count(season.result.episodes) }, 'episodeMeta': $exists(picked.ep) ? { 'providerIds': { 'cid': picked.ep.cid, 'aid': picked.ep.aid, 'bvid': picked.ep.bvid, 'epid': picked.ep.id }, 'indexedId': $string(picked.ep.cid), 'title': picked.ep.long_title and picked.ep.long_title != '' ? picked.ep.long_title : picked.ep.show_title, 'episodeNumber': $match(picked.ep.title, /^\\d+$/) ? $number(picked.ep.title) : (picked.ep.title and picked.ep.title != '' ? picked.ep.title : undefined), 'imageUrl': picked.ep.cover, 'externalLink': picked.ep.link } : undefined }"
-  }
+      ],
+      "output": "($d := view.data; $eps := $d.ugc_season.sections.episodes; { 'seasonInsert': { 'providerIds': { 'bvid': $d.bvid, 'aid': $d.aid }, 'indexedId': $d.bvid, 'title': $d.title, 'type': $d.tname ? $d.tname : undefined, 'imageUrl': 'https:' & $replace($d.pic, /^https?:/, ''), 'episodeCount': $exists($d.ugc_season) ? $count($d.ugc_season.sections.episodes) : $count($d.pages) }, 'episodeMeta': { 'providerIds': { 'cid': $d.cid, 'aid': $d.aid, 'bvid': $d.bvid }, 'indexedId': $string($d.cid), 'title': $d.title, 'episodeNumber': $exists($eps) ? ($eps#$i[bvid = $d.bvid].($i + 1))[0] : 1, 'imageUrl': 'https:' & $replace($d.pic, /^https?:/, ''), 'externalLink': 'https://www.bilibili.com/video/' & $d.bvid } })"
+    }
+  ]
 }

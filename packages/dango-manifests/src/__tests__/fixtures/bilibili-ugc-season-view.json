@@ -1,0 +1,104 @@
+{
+  "code": 0,
+  "message": "0",
+  "ttl": 1,
+  "data": {
+    "bvid": "BV1anhG6KEaC",
+    "aid": 117155483944935,
+    "videos": 1,
+    "tid": 130,
+    "tname": "",
+    "tname_v2": "",
+    "copyright": 3,
+    "pic": "http://i1.hdslb.com/bfs/archive/41e37f37c129b40522d167cccb53057324ba9bbc.jpg",
+    "title": "“妇女顶起半边天，战士扛起万重山”【红色高跟鞋DJ-变速】【捐躯赴义の小曲】",
+    "pubdate": 1787655600,
+    "ctime": 1787651124,
+    "desc": "-----------",
+    "state": 0,
+    "duration": 291,
+    "cid": 41251442543,
+    "owner": {
+      "mid": 676239823,
+      "name": "早睡起大王",
+      "face": "https://i1.hdslb.com/bfs/face/ff92ee2eabf8a0a17bb83581476b84beb86692bd.jpg"
+    },
+    "pages": [
+      {
+        "cid": 41251442543,
+        "page": 1,
+        "from": "vupload",
+        "part": "“妇女顶起半边天，战士扛起万重山”【红色高跟鞋DJ-变速】【捐躯赴义の小曲】",
+        "duration": 291
+      }
+    ],
+    "ugc_season": {
+      "id": 5134422,
+      "title": "合集不循环",
+      "cover": "https://archive.biliimg.com/bfs/archive/3e9fd1bc51fb1a00dc96deba1f4e65fd84b1f729.jpg",
+      "mid": 676239823,
+      "intro": "0",
+      "attribute": 140,
+      "sections": [
+        {
+          "season_id": 5134422,
+          "id": 5713671,
+          "title": "正片",
+          "type": 1,
+          "episodes": [
+            {
+              "season_id": 5134422,
+              "section_id": 5713671,
+              "id": 218685318,
+              "aid": 117155299395681,
+              "cid": 41249669654,
+              "title": "“方舟带来了所有希望，黎明打破了所有黑暗”【我的歌声里DJ-变速】【真明星の小曲】",
+              "attribute": 0,
+              "arc": {
+                "aid": 117155299395681,
+                "pic": "http://i2.hdslb.com/bfs/archive/7acfbd43e821960ca0566463becd2b4953eda232.jpg",
+                "title": "“方舟带来了所有希望，黎明打破了所有黑暗”【我的歌声里DJ-变速】【真明星の小曲】",
+                "pubdate": 1787652000,
+                "duration": 157
+              },
+              "page": {
+                "cid": 41249669654,
+                "page": 1,
+                "from": "vupload",
+                "part": "“方舟带来了所有希望，黎明打破了所有黑暗”【我的歌声里DJ-变速】【真明星の小曲】",
+                "duration": 157
+              },
+              "bvid": "BV15dhG6GEhd"
+            },
+            {
+              "season_id": 5134422,
+              "section_id": 5713671,
+              "id": 218696208,
+              "aid": 117155483944935,
+              "cid": 41251442543,
+              "title": "“妇女顶起半边天，战士扛起万重山”【红色高跟鞋DJ-变速】【捐躯赴义の小曲】",
+              "attribute": 0,
+              "arc": {
+                "aid": 117155483944935,
+                "pic": "http://i1.hdslb.com/bfs/archive/41e37f37c129b40522d167cccb53057324ba9bbc.jpg",
+                "title": "“妇女顶起半边天，战士扛起万重山”【红色高跟鞋DJ-变速】【捐躯赴义の小曲】",
+                "pubdate": 1787655600,
+                "duration": 291
+              },
+              "page": {
+                "cid": 41251442543,
+                "page": 1,
+                "from": "vupload",
+                "part": "“妇女顶起半边天，战士扛起万重山”【红色高跟鞋DJ-变速】【捐躯赴义の小曲】",
+                "duration": 291
+              },
+              "bvid": "BV1anhG6KEaC"
+            }
+          ]
+        }
+      ],
+      "ep_count": 376,
+      "season_type": 1
+    }
+  }
+}
