@@ -15,6 +15,23 @@ The engine version and the manifest `apiVersion` are tracked independently.
 
 ### Added
 
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [0.8.2] - 2026-08-26
+
+An opt-in bilibili option: search user uploads, not only the official bangumi
+catalogue. Engine untouched.
+
+### Added
+
 - `@mr-quin/dango-manifests`: bilibili search can now include user-uploaded
   (UGC) videos, behind an opt-in `includeUserUploads` config flag (boolean,
   default `false`). Anime and shows that exist only as user uploads were
@@ -26,16 +43,6 @@ The engine version and the manifest `apiVersion` are tracked independently.
   `urlMatch` also claims `/video/BV…` and `/video/av…` pages, which is not
   gated by the flag. Danmaku is unchanged; both branches resolve to a `cid`.
   (bilibili manifest `0.5.0` → `0.6.0`.)
-
-### Changed
-
-### Deprecated
-
-### Removed
-
-### Fixed
-
-### Security
 
 ## [0.8.1] - 2026-07-25
 
