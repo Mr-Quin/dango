@@ -8,7 +8,7 @@
       "name": "芒果TV"
     }
   },
-  "version": "0.7.0",
+  "version": "0.7.1",
   "hosts": [
     "mobileso.bz.mgtv.com",
     "pcweb.api.mgtv.com",
@@ -54,7 +54,7 @@
           "rewriteHeaders": { "Referer": "'https://www.mgtv.com/'" }
         },
         "extract": {
-          "months": "data.tab_m.m"
+          "months": "[data.tab_m.m]"
         }
       },
       {

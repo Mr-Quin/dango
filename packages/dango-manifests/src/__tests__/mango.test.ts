@@ -107,6 +107,37 @@ describe('mango manifest', () => {
     ])
   })
 
+  it('episodes: handles a show whose showlist has a single month tab', async () => {
+    const singleMonthBootstrap = {
+      ...showlistBootstrap,
+      data: { ...showlistBootstrap.data, tab_m: [{ m: '202309' }] },
+    }
+    const { fetcher, calls } = mockFetcher({
+      'https://pcweb.api.mgtv.com/variety/showlist': (url) => {
+        const month = new URL(url).searchParams.get('month') ?? ''
+        if (month === '') {
+          return { body: JSON.stringify(singleMonthBootstrap) }
+        }
+        return { body: JSON.stringify(showlistMonth) }
+      },
+    })
+    const runner = new ManifestRunner(zManifest.parse(builtinMango), {
+      fetcher,
+    })
+
+    const result = await runner.runEpisodes({ collectionId: '444555' })
+
+    expect(calls).toHaveLength(2)
+    expect(result).toEqual([
+      {
+        providerIds: { vid: 'v1', cid: '444555' },
+        indexedId: 'v1',
+        title: '第1集 相遇',
+        episodeNumber: 1,
+      },
+    ])
+  })
+
   it('danmaku: derives segment count from duration and emits canonical {p, m}', async () => {
     const { fetcher, calls } = mockFetcher({
       'https://pcweb.api.mgtv.com/video/info': {

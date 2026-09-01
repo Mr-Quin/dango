@@ -120,6 +120,40 @@ describe('youku manifest', () => {
     expect(calls).toHaveLength(2)
   })
 
+  it('danmaku: handles a video short enough to need a single segment', async () => {
+    const { fetcher, calls } = mockFetcher({
+      'https://openapi.youku.com/v2/videos/show.json': {
+        body: JSON.stringify({ duration: '30' }),
+      },
+      'https://log.mmstat.com/eg.js': {
+        body: '',
+        headers: { etag: '"cna-guid-value"' },
+      },
+      'https://acs.youku.com/h5/mtop.com.youku.aplatform.weakget/1.0/': {
+        body: '{}',
+        headers: {
+          'set-cookie':
+            '_m_h5_tk=abcdef0123456789abcdef0123456789_1700000000000; path=/',
+        },
+      },
+      'https://acs.youku.com/h5/mopen.youku.danmu.list/1.0/': {
+        body: JSON.stringify(danmakuSeg0),
+      },
+    })
+    const runner = new ManifestRunner(zManifest.parse(builtinYouku), {
+      fetcher,
+    })
+
+    const result = await runner.runDanmaku({ vid: 'vid_1' })
+
+    // floor(30/60)+1 = 1 → info + cna + tkEnc + 1 segment POST
+    expect(calls).toHaveLength(4)
+    expect(result).toEqual([
+      { p: '5,1,16777215,100', m: 'hello youku' },
+      { p: '12.345,1,16777215,101', m: 'second' },
+    ])
+  })
+
   it('danmaku: runs the signed multi-step flow and emits canonical {p, m}', async () => {
     let segmentCall = 0
     const { fetcher, calls } = mockFetcher({
