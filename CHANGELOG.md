@@ -25,6 +25,25 @@ The engine version and the manifest `apiVersion` are tracked independently.
 
 ### Security
 
+## [0.8.3] - 2026-09-01
+
+Two manifest fixes for the same JSONata trap: a `forEach` whose input list
+collapsed to a bare value when upstream returned exactly one row.
+
+### Fixed
+
+- `@mr-quin/dango-manifests`: mango (芒果TV) episodes threw
+  `forEach.in must evaluate to an array, got string` for a show whose showlist
+  carries a single month tab, because JSONata unwraps a single-element
+  projection. A newly launched variety show failed until it ran into a second
+  month, at which point the projection became an array again and the failure
+  disappeared on its own. The month extract is now wrapped in `[...]`.
+  (mango manifest `0.7.0` → `0.7.1`.)
+- `@mr-quin/dango-manifests`: youku danmaku had the same shape through `$map`,
+  which returns a bare object rather than a one-element array for a video short
+  enough to need a single segment. The `iters` expression is now wrapped in
+  `[...]`. (youku manifest `0.5.1` → `0.5.2`.)
+
 ## [0.8.2] - 2026-08-26
 
 An opt-in bilibili option: search user uploads, not only the official bangumi
