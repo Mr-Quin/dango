@@ -1,5 +1,22 @@
 import { z } from 'zod'
 import { isPrivateHostPattern } from '../engine/host-policy.js'
+import {
+  ArtplayerMetadata,
+  BahaMetadata,
+  BiliCommandGrpcMetadata,
+  BiliGrpcMetadata,
+  BiliUpMetadata,
+  BiliXmlMetadata,
+  DanuniJsonMetadata,
+  DanuniPbMetadata,
+  DdplayMetadata,
+  DplayerMetadata,
+  IqiyiMetadata,
+  MgtvMetadata,
+  TencentMetadata,
+  VodMetadata,
+  YoukuMetadata,
+} from '@dan-uni/dan-any/adapters'
 
 /** A JSONata expression evaluated against the pipeline context. */
 const zExpr = z.string()
@@ -9,7 +26,25 @@ const zExpr = z.string()
 const zString = zExpr
 
 const zHttpMethod = z.enum(['GET', 'POST'])
-const zResponseFormat = z.enum(['json', 'xml', 'text', 'jsonp', 'proto'])
+export const zResponseFormat = z.enum(['json', 'xml', 'text', 'jsonp', 'proto'])
+const DAN_ANY_FORMAT_TYPES = [
+  BiliXmlMetadata.type,
+  BiliGrpcMetadata.type,
+  BiliCommandGrpcMetadata.type,
+  BiliUpMetadata.type,
+  DanuniJsonMetadata.type,
+  DanuniPbMetadata.type,
+  ArtplayerMetadata.type,
+  BahaMetadata.type,
+  DplayerMetadata.type,
+  DdplayMetadata.type,
+  IqiyiMetadata.type,
+  MgtvMetadata.type,
+  TencentMetadata.type,
+  VodMetadata.type,
+  YoukuMetadata.type,
+] as const
+export const zDanAnyFormat = z.enum(DAN_ANY_FORMAT_TYPES)
 
 // Headers allowed in `rewriteHeaders`. Auth-bearing names (Cookie, Auth) are
 // forbidden everywhere; these three are the ones the host applies via DNR.
@@ -46,13 +81,22 @@ export const zRequestSpec = z.object({
   query: zExpr.optional(),
   /** Expression evaluating to an object (JSON-encoded), string, or null. */
   body: zExpr.optional(),
-  format: zResponseFormat.default('json'),
+  /**
+   * Format of the response body.
+   * When it is the metadata.type from `@dan-uni/dan-any/adapters`, the engine decodes the body with the corresponding adapter and exposes the result as a UDanmaku[] object.
+   */
+  format: z.union([zResponseFormat, zDanAnyFormat]).default('json'),
   /** Browser-context only. Lets the browser attach cookies for the host. */
   credentials: z.enum(['include', 'omit']).default('omit'),
   /** Key in Manifest.protoDescriptors; required when format is 'proto'. */
   protoSchema: z.string().optional(),
   /** Fully-qualified protobuf type (e.g. `pkg.SubMsg`); required when format is 'proto'. */
   protoMessage: z.string().optional(),
+  /**
+   * Parameters to pass to the adapter of `@dan-uni/dan-any`.
+   * Can be string-type expr (will be parsed by evalExpr)
+   */
+  dananyParams: z.array(z.string()).optional(),
   /** Host-applied overrides for headers fetch can't set (Origin/Referer/UA). */
   rewriteHeaders: zRewriteHeaders.optional(),
   /**

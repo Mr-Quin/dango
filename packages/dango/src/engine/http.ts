@@ -1,9 +1,15 @@
 import { XMLParser } from 'fast-xml-parser'
 import { helpers } from '../helpers/registry.js'
-import type { RequestSpec } from '../manifest/schema.js'
+import {
+  zDanAnyFormat,
+  zResponseFormat,
+  type RequestSpec,
+} from '../manifest/schema.js'
 import { isPrivateHost } from './host-policy.js'
 import { evalExpr, evalString } from './jsonata-eval.js'
 import type { ProtoRegistry } from './proto.js'
+import { parseDanAnyBody } from './dan-uni.js'
+import { fileParser } from '@dan-uni/dan-any/utils'
 
 /**
  * Hard ceiling on a response body, in bytes. A request may opt into a smaller
@@ -157,6 +163,20 @@ function parseTextBody(format: string, raw: string): unknown {
   }
 }
 
+async function parseBodyUnion(
+  spec: RequestSpec,
+  raw: Uint8Array,
+  context: unknown
+) {
+  if (zDanAnyFormat.safeParse(spec.format).success) {
+    const ps = []
+    for (const p of spec.dananyParams ?? []) ps.push(await evalExpr(p, context))
+    return parseDanAnyBody(spec.format, raw, ps as [any, any])
+  } else if (zResponseFormat.safeParse(spec.format).success)
+    return parseTextBody(spec.format, await fileParser(raw, 'string'))
+  else throw new Error(`unknown format: ${spec.format}`)
+}
+
 // Headers manifests can't set via `request.headers`: auth (Cookie/Auth/
 // Set-Cookie) and the fetch-spec forbidden set (Origin/Referer/UA/Host ,
 // silently dropped by browser fetch; manifests must use rewriteHeaders).
@@ -301,7 +321,7 @@ export async function executeRequest(
   res.headers.forEach((v, k) => {
     responseHeaders[k.toLowerCase()] = v
   })
-  const parsedBody = await parseBody(spec, res, options)
+  const parsedBody = await parseBody(spec, res, context, options)
   return { body: parsedBody, headers: responseHeaders, status: res.status }
 }
 
@@ -317,20 +337,22 @@ function assertWithinCap(body: Uint8Array | string, cap: number): void {
 async function decompressBytes(
   bytes: Uint8Array,
   format: 'deflate' | 'deflate-raw' | 'gzip'
-): Promise<string> {
+) {
   const blob = new Blob([bytes as BlobPart])
   const stream = blob.stream()
   const decoded = stream.pipeThrough(new DecompressionStream(format))
-  return new Response(decoded).text()
+  return new Response(decoded).bytes()
 }
 
 async function parseBody(
   spec: RequestSpec,
   res: HttpResponse,
+  context: unknown,
   options: HttpRunOptions
 ): Promise<unknown> {
   const cap = resolveBodyCap(options.maxBodyBytes)
   if (spec.format === 'proto') {
+    // FIXME: the proto raw may be compressed, so we need to decompress first before decoding.
     if (options.protoRegistry === undefined) {
       throw new Error(
         `request specifies format: 'proto' but no protoRegistry was provided`
@@ -352,13 +374,13 @@ async function parseBody(
   if (spec.decompress) {
     const bytes = await res.bytes()
     assertWithinCap(bytes, cap)
-    const text = await decompressBytes(bytes, spec.decompress)
-    assertWithinCap(text, cap)
-    return parseTextBody(spec.format, text)
+    const dec = await decompressBytes(bytes, spec.decompress)
+    assertWithinCap(dec, cap)
+    return parseBodyUnion(spec, dec, context)
   }
-  const text = await res.text()
-  assertWithinCap(text, cap)
-  return parseTextBody(spec.format, text)
+  const bytes = await res.bytes()
+  assertWithinCap(bytes, cap)
+  return parseBodyUnion(spec, bytes, context)
 }
 
 const defaultFetcher: FetchLike = async (input, init) => {

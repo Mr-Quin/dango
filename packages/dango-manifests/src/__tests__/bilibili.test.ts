@@ -223,13 +223,13 @@ describe('bilibili manifest', () => {
     // p is `${seconds},${mode},${color},${midHash}`; mode 2/3 collapse to 1
     // because the danmaku engine only renders modes 1, 4, 5.
     expect(result).toEqual([
-      { p: '12.34,1,16777215,abcd1234', m: '第一条' },
-      { p: '23.45,4,16711680,efgh5678', m: '底部弹幕' },
-      { p: '34.56,5,255,ijkl9012', m: '顶部蓝色' },
-      { p: '45.67,1,16777215,mnop3456', m: '反向弹幕' },
+      { p: '12.34,1,16777215,abcd1234@bili', m: '第一条' },
+      { p: '23.45,4,16711680,efgh5678@bili', m: '底部弹幕' },
+      { p: '34.56,5,255,ijkl9012@bili', m: '顶部蓝色' },
+      { p: '45.67,1,16777215,mnop3456@bili', m: '反向弹幕' },
       // Purely numeric text must stay a string, not be coerced to the number
       // 666 (which would crash the host's `text.includes(...)` collapse pass).
-      { p: '56.78,1,16777215,qrst7890', m: '666' },
+      { p: '56.78,1,16777215,qrst7890@bili', m: '666' },
     ])
     expect(calls).toHaveLength(1)
   })
@@ -280,8 +280,8 @@ describe('bilibili manifest', () => {
     })) as Array<{ p: string; m: string }>
 
     expect(result).toHaveLength(3)
-    expect(result[0]).toEqual({ p: '12.34,1,16777215,h1', m: 'proto 1' })
-    expect(result[2]).toEqual({ p: '365,5,255,h3', m: 'proto 顶部' })
+    expect(result[0]).toEqual({ p: '12.34,1,16777215,h1@bili', m: 'proto 1' })
+    expect(result[2]).toEqual({ p: '365,5,255,h3@bili', m: 'proto 顶部' })
     // segs 1,2 have content; 3,4,5 empty (3 in a row) → stop.
     expect(calls.length).toBe(5)
   })
@@ -332,7 +332,7 @@ describe('bilibili manifest', () => {
     })) as Array<{ p: string; m: string }>
 
     expect(result).toHaveLength(1)
-    expect(result[0]).toEqual({ p: '1,1,16777215,a', m: 'only one' })
+    expect(result[0]).toEqual({ p: '1,1,16777215,a@bili', m: 'only one' })
   })
 
   it('protobuf variant survives a single transient empty mid-stream', async () => {
@@ -398,8 +398,8 @@ describe('bilibili manifest', () => {
     })) as Array<{ p: string; m: string }>
 
     expect(result).toEqual([
-      { p: '10,1,16777215,a', m: 'mode 2' },
-      { p: '20,1,16777215,b', m: 'mode 3' },
+      { p: '10,1,16777215,a@bili', m: 'mode 2' },
+      { p: '20,1,16777215,b@bili', m: 'mode 3' },
     ])
   })
 

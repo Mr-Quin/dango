@@ -187,9 +187,50 @@ describe('youku manifest', () => {
     // info + cna + tkEnc + 2 segment POSTs = 5 calls.
     expect(calls).toHaveLength(5)
     expect(result).toEqual([
-      { p: '5,1,16777215,100', m: 'hello youku' },
-      { p: '12.345,1,16777215,101', m: 'second' },
-      { p: '65,1,16777215,102', m: 'late one' },
+      {
+        p: '480.606,1,16777215,UMTc0MzA0ODk3NTY=@youku',
+        m: '怎么没人发',
+      },
+      {
+        p: '485.04,1,16777215,UNjA4MTc1Nzk4OA==@youku',
+        m: '没人吗',
+      },
+      {
+        p: '489.39,1,16777215,UMTMyODc0ODU4NTI=@youku',
+        m: '有人哦',
+      },
+      {
+        p: '491,1,16777215,UNDMxOTUwMzE0NA==@youku',
+        m: '有人有人',
+      },
+      {
+        p: '496.89,1,16777215,UMTgzNDk4NDM5MTY=@youku',
+        m: '绿毛也好帅啊',
+      },
+      {
+        p: '496,1,16777215,UNTQzMDYwNzY1Ng==@youku',
+        m: '这是六美的哥哥吧',
+      },
+      {
+        p: '504.546,1,16777215,UMTg0NDk2NTIxODg=@youku',
+        m: '都没人啊。',
+      },
+      {
+        p: '515,1,16777215,UNjA3MDM3NjY1Ng==@youku',
+        m: '我开弹幕了吗？',
+      },
+      {
+        p: '528,1,16777215,UNDMxOTUwMzE0NA==@youku',
+        m: '头小身大的比例…………',
+      },
+      {
+        p: '539.895,1,16524894,UNDczNjAwNTc0OA==@youku',
+        m: '而非通过后即可',
+      },
+      {
+        p: '539.306,1,16432790,UNTgxODg4MTUwOA==@youku',
+        m: '不会是逆天开挂或者后宫吧',
+      },
     ])
   })
 })

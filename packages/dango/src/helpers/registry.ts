@@ -4,6 +4,8 @@ import { aesCbcDecrypt, aesCbcEncrypt } from './aes-cbc.js'
 import { gatewayDecrypt } from './gateway-decrypt.js'
 import { hmacSha256 } from './hmac.js'
 import { sha256Base64 } from './sha256.js'
+import { fromCommentEntity, toCommentEntity, toUniChunk } from './dan-uni.js'
+import { UDanmaku } from '@dan-uni/dan-any/core'
 
 /**
  * Closed namespace callable from JSONata as `$<name>(...)`. Helpers must be
@@ -157,6 +159,12 @@ export const helpers: Record<string, Helper> = {
 
   // structural
   permute: (indices, source) => permute(indices as number[], String(source)),
+
+  // @dan-uni/dan-any
+  da_toCommentEntity: (udanmakus) =>
+    toCommentEntity(toUniChunk(udanmakus as UDanmaku[])),
+  da_fromCommentEntity: (comments) =>
+    fromCommentEntity(comments as { p: string; m: string }[]),
 
   // misc
   now: () => Math.floor(Date.now() / 1000),

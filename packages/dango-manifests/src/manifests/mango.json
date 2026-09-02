@@ -109,21 +109,22 @@
       },
       {
         "type": "forEach",
-        "id": "segments",
+        "id": "udanmakus",
         "in": "(ctl.cdn and ctl.version) ? $range(0, $ceil(info.durationSec / 60)) : []",
         "as": "i",
         "request": {
           "method": "GET",
-          "url": "'https://' & ctl.cdn & '/' & ctl.version & '/' & $string(i) & '.json'"
+          "url": "'https://' & ctl.cdn & '/' & ctl.version & '/' & $string(i) & '.json'",
+          "format": "mgtv.json",
+          "dananyParams": [
+            "vid",
+            "cid"
+          ]
         },
-        "extract": {
-          "items": "data.items"
-        },
-        "collect": "items",
         "throttleMs": 50,
         "concurrency": 4
       }
     ],
-    "output": "[segments.{ 'p': $string($number(time) / 1000) & ',1,16777215,' & $string(uid), 'm': content }]"
+    "output": "$da_toCommentEntity(udanmakus)"
   }
 }
