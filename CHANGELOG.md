@@ -15,15 +15,28 @@ The engine version and the manifest `apiVersion` are tracked independently.
 
 ### Added
 
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [0.9.0] - 2026-10-11
+
+Season identity moves out of the manifest schema: dango describes how to fetch
+and shape rows, and the host decides what makes a season the same season.
+
+### Added
+
 - `@mr-quin/dango`: output row schemas `zSearchRow`, `zSeasonRow`,
   `zEpisodeRow`, `zParseUrlOutput` and `zCommentRow`, with inferred types, for
   hosts that validate pipeline output. Rows are loose objects.
 - `@mr-quin/dango-manifests`: every manifest test now parses its pipeline
   output with those schemas.
-
-### Changed
-
-### Deprecated
 
 ### Removed
 
@@ -37,8 +50,6 @@ The engine version and the manifest `apiVersion` are tracked independently.
 
 - `@mr-quin/dango-manifests`: `hanjutv` search rows no longer carry
   `year: null`; the key is omitted.
-
-### Security
 
 ## [0.8.3] - 2026-09-01
 
