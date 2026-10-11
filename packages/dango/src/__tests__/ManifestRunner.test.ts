@@ -8,7 +8,6 @@ import { mockFetcher } from './fixtures.js'
 // dango-manifests where real source manifests live.
 const ddpManifest = {
   apiVersion: 1,
-  identityFields: [],
   id: 'ddp',
   name: 'DanDanPlay',
   version: '0.1.0',
@@ -85,7 +84,6 @@ describe('ManifestRunner', () => {
 describe('ManifestRunner.runParseUrl', () => {
   const parseUrlManifest = {
     apiVersion: 1,
-    identityFields: [],
     id: 'demo',
     name: 'Demo',
     version: '0.1.0',
@@ -134,7 +132,6 @@ describe('ManifestRunner.runParseUrl', () => {
   it('returns null when the manifest declares no parseUrl pipeline', async () => {
     const noParseUrl = {
       apiVersion: 1,
-      identityFields: [],
       id: 'no-pu',
       name: 'NoParseUrl',
       version: '0.1.0',
@@ -185,7 +182,6 @@ describe('ManifestRunner.canParse', () => {
     const runner = new ManifestRunner(
       zManifest.parse({
         apiVersion: 1,
-        identityFields: [],
         id: 'x',
         name: 'X',
         version: '0.1.0',
@@ -201,7 +197,6 @@ describe('ManifestRunner.canParse', () => {
     const runner = new ManifestRunner(
       zManifest.parse({
         apiVersion: 1,
-        identityFields: [],
         id: 'x',
         name: 'X',
         version: '0.1.0',
@@ -221,7 +216,6 @@ describe('http step extractHeaders', () => {
   it('extracts named values from response headers into context', async () => {
     const manifest = zManifest.parse({
       apiVersion: 1,
-      identityFields: [],
       id: 'header-demo',
       name: 'HeaderDemo',
       version: '0.1.0',
@@ -262,7 +256,6 @@ describe('http step extractHeaders', () => {
   it('mixes extract (body) and extractHeaders into a single bag', async () => {
     const manifest = zManifest.parse({
       apiVersion: 1,
-      identityFields: [],
       id: 'mix',
       name: 'Mix',
       version: '0.1.0',
@@ -303,7 +296,6 @@ describe('ManifestRunner.runLoginProbe', () => {
     const runner = new ManifestRunner(
       zManifest.parse({
         apiVersion: 1,
-        identityFields: [],
         id: 'no-probe',
         name: 'NoProbe',
         version: '0.1.0',
@@ -317,7 +309,6 @@ describe('ManifestRunner.runLoginProbe', () => {
   it('runs the probe pipeline and returns its output', async () => {
     const probeManifest = {
       apiVersion: 1,
-      identityFields: [],
       id: 'probe-demo',
       name: 'ProbeDemo',
       version: '0.1.0',
@@ -363,7 +354,6 @@ describe('ManifestRunner.runLoginProbe', () => {
   it('threads per-call inputs into the probe pipeline', async () => {
     const probeManifest = {
       apiVersion: 1,
-      identityFields: [],
       id: 'probe-inputs',
       name: 'ProbeInputs',
       version: '0.1.0',
@@ -405,7 +395,6 @@ describe('http step cache', () => {
   function cacheManifest() {
     return zManifest.parse({
       apiVersion: 1,
-      identityFields: [],
       id: 'cache-demo',
       name: 'CacheDemo',
       version: '0.1.0',
@@ -485,7 +474,6 @@ describe('http step cache', () => {
   it('fetches every time when the step declares no cache', async () => {
     const noCacheManifest = zManifest.parse({
       apiVersion: 1,
-      identityFields: [],
       id: 'no-cache',
       name: 'NoCache',
       version: '0.1.0',

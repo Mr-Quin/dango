@@ -1,10 +1,10 @@
-import { ManifestRunner, zManifest } from '@mr-quin/dango'
 import { describe, expect, it } from 'bun:test'
 import builtinMaiduidui from '../manifests/maiduidui.json' with { type: 'json' }
 import searchFixture from './fixtures/maiduidui-search.json' with { type: 'json' }
 import sactionsFixture from './fixtures/maiduidui-sactions.json' with { type: 'json' }
 import barrage0 from './fixtures/maiduidui-barrage-0.json' with { type: 'json' }
 import barrage1 from './fixtures/maiduidui-barrage-1.json' with { type: 'json' }
+import { createContractRunner } from './contractRunner.js'
 import { mockFetcher } from './mockFetcher.js'
 
 /**
@@ -31,7 +31,7 @@ describe('maiduidui manifest', () => {
           body: JSON.stringify(searchFixture),
         },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinMaiduidui), {
+    const runner = createContractRunner(builtinMaiduidui, {
       fetcher,
     })
 
@@ -56,7 +56,7 @@ describe('maiduidui manifest', () => {
         body: JSON.stringify(sactionsFixture),
       },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinMaiduidui), {
+    const runner = createContractRunner(builtinMaiduidui, {
       fetcher,
     })
 
@@ -105,7 +105,7 @@ describe('maiduidui manifest', () => {
         return { body: JSON.stringify({ data: { barrageList: [] } }) }
       },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinMaiduidui), {
+    const runner = createContractRunner(builtinMaiduidui, {
       fetcher,
     })
 

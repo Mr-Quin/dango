@@ -1,6 +1,5 @@
 {
   "apiVersion": 1,
-  "identityFields": [],
   "id": "tencent",
   "name": "Tencent Video",
   "locales": {

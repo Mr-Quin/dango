@@ -10,7 +10,6 @@ import { mockFetcher } from './fixtures.js'
 
 const variantManifest = {
   apiVersion: 1,
-  identityFields: [],
   id: 'bilibili-like',
   name: 'Bilibili-like',
   version: '0.1.0',
@@ -159,7 +158,6 @@ describe('Pipeline variants', () => {
     // This is the common shape used by every existing manifest in the POC.
     const single = {
       apiVersion: 1,
-      identityFields: [],
       id: 'single-pipeline',
       name: 'Single Pipeline',
       version: '0.1.0',

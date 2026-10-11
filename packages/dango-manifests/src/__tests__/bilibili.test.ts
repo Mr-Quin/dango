@@ -8,7 +8,6 @@ import {
 } from '@bufbuild/protobuf'
 import { FileDescriptorSetSchema } from '@bufbuild/protobuf/wkt'
 import { base64Decode } from '@bufbuild/protobuf/wire'
-import { ManifestRunner, zManifest } from '@mr-quin/dango'
 import { describe, expect, it } from 'bun:test'
 import builtinBilibili from '../manifests/bilibili.json' with { type: 'json' }
 import bangumiFixture from './fixtures/bilibili-search-bangumi.json' with { type: 'json' }
@@ -17,6 +16,7 @@ import seasonFixture from './fixtures/bilibili-season.json' with { type: 'json' 
 import ugcSearchFixture from './fixtures/bilibili-search-video.json' with { type: 'json' }
 import ugcSeasonViewFixture from './fixtures/bilibili-ugc-season-view.json' with { type: 'json' }
 import ugcViewFixture from './fixtures/bilibili-ugc-view.json' with { type: 'json' }
+import { createContractRunner } from './contractRunner.js'
 import { mockFetcher } from './mockFetcher.js'
 
 const XML_FIXTURE = readFileSync(
@@ -91,7 +91,7 @@ describe('bilibili manifest', () => {
         return { body: JSON.stringify(body) }
       },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinBilibili), {
+    const runner = createContractRunner(builtinBilibili, {
       fetcher,
     })
 
@@ -146,7 +146,7 @@ describe('bilibili manifest', () => {
         body: JSON.stringify(seasonFixture),
       },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinBilibili), {
+    const runner = createContractRunner(builtinBilibili, {
       fetcher,
     })
 
@@ -188,7 +188,7 @@ describe('bilibili manifest', () => {
         body: JSON.stringify(seasonFixture),
       },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinBilibili), {
+    const runner = createContractRunner(builtinBilibili, {
       fetcher,
     })
 
@@ -211,7 +211,7 @@ describe('bilibili manifest', () => {
         body: XML_FIXTURE,
       },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinBilibili), {
+    const runner = createContractRunner(builtinBilibili, {
       fetcher,
     })
 
@@ -270,7 +270,7 @@ describe('bilibili manifest', () => {
         return { body: emptySeg }
       },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinBilibili), {
+    const runner = createContractRunner(builtinBilibili, {
       fetcher,
     })
 
@@ -291,7 +291,7 @@ describe('bilibili manifest', () => {
     const { fetcher, calls } = mockFetcher({
       'https://api.bilibili.com/x/v2/dm/web/seg.so': { body: emptySeg },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinBilibili), {
+    const runner = createContractRunner(builtinBilibili, {
       fetcher,
     })
     // No danmakuFormat input, should pick the no-`when` (default) variant.
@@ -322,7 +322,7 @@ describe('bilibili manifest', () => {
         return { status: 304, body: new Uint8Array(0) }
       },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinBilibili), {
+    const runner = createContractRunner(builtinBilibili, {
       fetcher,
     })
 
@@ -351,7 +351,7 @@ describe('bilibili manifest', () => {
         return { body: emptySeg }
       },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinBilibili), {
+    const runner = createContractRunner(builtinBilibili, {
       fetcher,
     })
     const result = (await runner.runDanmaku({
@@ -388,7 +388,7 @@ describe('bilibili manifest', () => {
         return { body: segIdx === '1' ? seg1 : emptySeg }
       },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinBilibili), {
+    const runner = createContractRunner(builtinBilibili, {
       fetcher,
     })
 
@@ -409,7 +409,7 @@ describe('bilibili manifest', () => {
         body: JSON.stringify(seasonFixture),
       },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinBilibili), {
+    const runner = createContractRunner(builtinBilibili, {
       fetcher,
     })
 
@@ -440,7 +440,7 @@ describe('bilibili manifest', () => {
         body: JSON.stringify(seasonFixture),
       },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinBilibili), {
+    const runner = createContractRunner(builtinBilibili, {
       fetcher,
     })
 
@@ -462,7 +462,7 @@ describe('bilibili manifest', () => {
 
   it('parseUrl returns null when the URL host does not match', async () => {
     const { fetcher } = mockFetcher({})
-    const runner = new ManifestRunner(zManifest.parse(builtinBilibili), {
+    const runner = createContractRunner(builtinBilibili, {
       fetcher,
     })
     expect(await runner.runParseUrl('https://example.com/whatever')).toBeNull()
@@ -479,7 +479,7 @@ describe('bilibili manifest', () => {
         }),
       },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinBilibili), {
+    const runner = createContractRunner(builtinBilibili, {
       fetcher,
     })
 
@@ -502,7 +502,7 @@ describe('bilibili manifest', () => {
         }),
       },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinBilibili), {
+    const runner = createContractRunner(builtinBilibili, {
       fetcher,
     })
 
@@ -515,7 +515,7 @@ describe('bilibili manifest', () => {
         body: JSON.stringify(seasonFixture),
       },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinBilibili), {
+    const runner = createContractRunner(builtinBilibili, {
       fetcher,
     })
 
@@ -546,7 +546,7 @@ describe('bilibili manifest', () => {
         }
       },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinBilibili), {
+    const runner = createContractRunner(builtinBilibili, {
       fetcher,
     })
 
@@ -575,7 +575,7 @@ describe('bilibili manifest', () => {
         return { body: JSON.stringify(ugcSearchFixture) }
       },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinBilibili), {
+    const runner = createContractRunner(builtinBilibili, {
       fetcher,
     })
 
@@ -618,7 +618,7 @@ describe('bilibili manifest', () => {
         body: JSON.stringify(ugcViewFixture),
       },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinBilibili), {
+    const runner = createContractRunner(builtinBilibili, {
       fetcher,
     })
 
@@ -649,7 +649,7 @@ describe('bilibili manifest', () => {
         body: JSON.stringify(ugcSeasonViewFixture),
       },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinBilibili), {
+    const runner = createContractRunner(builtinBilibili, {
       fetcher,
     })
 
@@ -673,7 +673,7 @@ describe('bilibili manifest', () => {
         body: JSON.stringify(seasonFixture),
       },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinBilibili), {
+    const runner = createContractRunner(builtinBilibili, {
       fetcher,
     })
 
@@ -688,7 +688,7 @@ describe('bilibili manifest', () => {
         body: JSON.stringify(ugcSeasonViewFixture),
       },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinBilibili), {
+    const runner = createContractRunner(builtinBilibili, {
       fetcher,
     })
 
@@ -709,7 +709,7 @@ describe('bilibili manifest', () => {
         body: JSON.stringify(ugcSeasonViewFixture),
       },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinBilibili), {
+    const runner = createContractRunner(builtinBilibili, {
       fetcher,
     })
 
@@ -742,7 +742,7 @@ describe('bilibili manifest', () => {
         body: JSON.stringify(ugcViewFixture),
       },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinBilibili), {
+    const runner = createContractRunner(builtinBilibili, {
       fetcher,
     })
 

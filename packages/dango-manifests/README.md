@@ -127,7 +127,7 @@ The smoke fetcher keeps a per-host cookie jar so bilibili's anti-bot wall lets u
 2. Capture representative responses from the source's API to `src/__tests__/fixtures/`.
 3. Write a per-manifest test that:
    - Parses the manifest against `zManifest` (catches schema drift)
-   - Runs each pipeline with a mocked `FetchLike` against the captured fixtures
+   - Runs each pipeline with a mocked `FetchLike` against the captured fixtures, through `createContractRunner` so the output is also checked against the engine's row schemas
    - Asserts the canonical shape the engine emits
 4. (Optional) Add a section to `scripts/smoke-test.ts` to exercise the new manifest against a live endpoint.
 

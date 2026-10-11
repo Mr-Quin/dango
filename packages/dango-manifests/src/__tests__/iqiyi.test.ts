@@ -1,4 +1,3 @@
-import { ManifestRunner, zManifest } from '@mr-quin/dango'
 import { describe, expect, it } from 'bun:test'
 import builtinIqiyi from '../manifests/iqiyi.json' with { type: 'json' }
 import searchFixture from './fixtures/iqiyi-search.json' with { type: 'json' }
@@ -6,6 +5,7 @@ import decodeFixture from './fixtures/iqiyi-decode.json' with { type: 'json' }
 import episodesFixture from './fixtures/iqiyi-episodes.json' with { type: 'json' }
 import infoFixture from './fixtures/iqiyi-info.json' with { type: 'json' }
 import segmentFixture from './fixtures/iqiyi-segment.json' with { type: 'json' }
+import { createContractRunner } from './contractRunner.js'
 import { mockFetcher } from './mockFetcher.js'
 
 /**
@@ -29,7 +29,7 @@ describe('iqiyi manifest', () => {
         body: JSON.stringify(searchFixture),
       },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinIqiyi), {
+    const runner = createContractRunner(builtinIqiyi, {
       fetcher,
     })
 
@@ -59,7 +59,7 @@ describe('iqiyi manifest', () => {
         body: JSON.stringify(episodesFixture),
       },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinIqiyi), {
+    const runner = createContractRunner(builtinIqiyi, {
       fetcher,
     })
 
@@ -90,7 +90,7 @@ describe('iqiyi manifest', () => {
         body: segmentBytes,
       },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinIqiyi), {
+    const runner = createContractRunner(builtinIqiyi, {
       fetcher,
     })
 

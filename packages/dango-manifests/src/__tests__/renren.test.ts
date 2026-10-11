@@ -1,9 +1,9 @@
-import { ManifestRunner, zManifest } from '@mr-quin/dango'
 import { describe, expect, it } from 'bun:test'
 import builtinRenren from '../manifests/renren.json' with { type: 'json' }
 import searchFixture from './fixtures/renren-search.json' with { type: 'json' }
 import detailsFixture from './fixtures/renren-details.json' with { type: 'json' }
 import danmuFixture from './fixtures/renren-danmu.json' with { type: 'json' }
+import { createContractRunner } from './contractRunner.js'
 import { mockFetcher } from './mockFetcher.js'
 
 /**
@@ -22,7 +22,7 @@ describe('renren manifest', () => {
         body: JSON.stringify(searchFixture),
       },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinRenren), {
+    const runner = createContractRunner(builtinRenren, {
       fetcher,
     })
 
@@ -57,7 +57,7 @@ describe('renren manifest', () => {
         body: JSON.stringify(detailsFixture),
       },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinRenren), {
+    const runner = createContractRunner(builtinRenren, {
       fetcher,
     })
 
@@ -86,7 +86,7 @@ describe('renren manifest', () => {
         body: JSON.stringify(danmuFixture),
       },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinRenren), {
+    const runner = createContractRunner(builtinRenren, {
       fetcher,
     })
 

@@ -122,13 +122,19 @@ bump (tagged `**BREAKING:**` in `CHANGELOG.md`). The table below is the surface
 `1.0.0` is intended to freeze and what a host should depend on; treat everything
 else as unstable.
 
-| Export                  | Kind  | Role                                                 |
-| ----------------------- | ----- | ---------------------------------------------------- |
-| `ManifestRunner`        | value | construction entry point                             |
-| `ManifestRunnerOptions` | type  | `{ fetcher?, signal? }` passed at construction       |
-| `FetchLike`             | type  | injected fetcher signature                           |
-| `Manifest`              | type  | the parsed-manifest shape the host stores and passes |
-| `zManifest`             | value | the host's `safeParse` gate                          |
+| Export                                                                 | Kind  | Role                                                  |
+| ---------------------------------------------------------------------- | ----- | ----------------------------------------------------- |
+| `ManifestRunner`                                                       | value | construction entry point                              |
+| `ManifestRunnerOptions`                                                | type  | `{ fetcher?, signal? }` passed at construction        |
+| `FetchLike`                                                            | type  | injected fetcher signature                            |
+| `Manifest`                                                             | type  | the parsed-manifest shape the host stores and passes  |
+| `zManifest`                                                            | value | the host's `safeParse` gate                           |
+| `zSearchRow`                                                           | value | schema for one `search` row                           |
+| `zSeasonRow`                                                           | value | schema for the `season` result (same shape as search) |
+| `zEpisodeRow`                                                          | value | schema for one `episodes` row                         |
+| `zParseUrlOutput`                                                      | value | schema for the `parseUrl` result                      |
+| `zCommentRow`                                                          | value | schema for one `danmaku` row                          |
+| `SearchRow`, `SeasonRow`, `EpisodeRow`, `ParseUrlOutput`, `CommentRow` | type  | inferred from the schemas above                       |
 
 Everything else exported from the root is not part of the stable surface and may
 change in a minor release without a major bump. Notably, but not limited to:

@@ -1,4 +1,3 @@
-import { ManifestRunner, zManifest } from '@mr-quin/dango'
 import { describe, expect, it } from 'bun:test'
 import builtinYouku from '../manifests/youku.json' with { type: 'json' }
 import searchFixture from './fixtures/youku-search.json' with { type: 'json' }
@@ -6,6 +5,7 @@ import episodesFixture from './fixtures/youku-episodes.json' with { type: 'json'
 import videoInfo from './fixtures/youku-video-info.json' with { type: 'json' }
 import danmakuSeg0 from './fixtures/youku-danmaku-0.json' with { type: 'json' }
 import danmakuSeg1 from './fixtures/youku-danmaku-1.json' with { type: 'json' }
+import { createContractRunner } from './contractRunner.js'
 import { mockFetcher } from './mockFetcher.js'
 
 /**
@@ -27,7 +27,7 @@ describe('youku manifest', () => {
         body: JSON.stringify(searchFixture),
       },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinYouku), {
+    const runner = createContractRunner(builtinYouku, {
       fetcher,
     })
 
@@ -53,7 +53,7 @@ describe('youku manifest', () => {
         body: JSON.stringify(episodesFixture),
       },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinYouku), {
+    const runner = createContractRunner(builtinYouku, {
       fetcher,
     })
 
@@ -93,7 +93,7 @@ describe('youku manifest', () => {
         return { body: JSON.stringify({ videos }) }
       },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinYouku), {
+    const runner = createContractRunner(builtinYouku, {
       fetcher,
     })
 
@@ -140,7 +140,7 @@ describe('youku manifest', () => {
         body: JSON.stringify(danmakuSeg0),
       },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinYouku), {
+    const runner = createContractRunner(builtinYouku, {
       fetcher,
     })
 
@@ -177,7 +177,7 @@ describe('youku manifest', () => {
         return { body: JSON.stringify(body) }
       },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinYouku), {
+    const runner = createContractRunner(builtinYouku, {
       fetcher,
     })
 

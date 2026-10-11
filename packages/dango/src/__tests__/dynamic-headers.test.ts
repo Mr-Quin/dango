@@ -12,7 +12,6 @@ import { mockFetcher } from './fixtures.js'
 
 const baseManifest = {
   apiVersion: 1,
-  identityFields: [],
   id: 'dynamic-headers',
   name: 'Dynamic headers',
   version: '0.0.0',

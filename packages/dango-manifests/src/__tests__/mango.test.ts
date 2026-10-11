@@ -1,4 +1,3 @@
-import { ManifestRunner, zManifest } from '@mr-quin/dango'
 import { describe, expect, it } from 'bun:test'
 import builtinMango from '../manifests/mango.json' with { type: 'json' }
 import searchFixture from './fixtures/mango-search.json' with { type: 'json' }
@@ -9,6 +8,7 @@ import videoInfo from './fixtures/mango-video-info.json' with { type: 'json' }
 import getctl from './fixtures/mango-getctl.json' with { type: 'json' }
 import danmakuSeg0 from './fixtures/mango-danmaku-0.json' with { type: 'json' }
 import danmakuSeg1 from './fixtures/mango-danmaku-1.json' with { type: 'json' }
+import { createContractRunner } from './contractRunner.js'
 import { mockFetcher } from './mockFetcher.js'
 
 /**
@@ -29,7 +29,7 @@ describe('mango manifest', () => {
         body: JSON.stringify(searchFixture),
       },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinMango), {
+    const runner = createContractRunner(builtinMango, {
       fetcher,
     })
 
@@ -83,7 +83,7 @@ describe('mango manifest', () => {
         return { body: JSON.stringify(showlistMonth2) }
       },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinMango), {
+    const runner = createContractRunner(builtinMango, {
       fetcher,
     })
 
@@ -121,7 +121,7 @@ describe('mango manifest', () => {
         return { body: JSON.stringify(showlistMonth) }
       },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinMango), {
+    const runner = createContractRunner(builtinMango, {
       fetcher,
     })
 
@@ -153,7 +153,7 @@ describe('mango manifest', () => {
         body: JSON.stringify(danmakuSeg1),
       },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinMango), {
+    const runner = createContractRunner(builtinMango, {
       fetcher,
     })
 
@@ -177,7 +177,7 @@ describe('mango manifest', () => {
         body: JSON.stringify({ data: { cdn_list: '', cdn_version: '' } }),
       },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinMango), {
+    const runner = createContractRunner(builtinMango, {
       fetcher,
     })
 
