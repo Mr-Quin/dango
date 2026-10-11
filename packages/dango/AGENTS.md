@@ -26,6 +26,7 @@ A `Manifest` is JSON validated by zod. Each manifest declares up to three `Pipel
 ## Files
 
 - `src/manifest/schema.ts`: zod schema. Source of truth for what's allowed in a manifest.
+- `src/manifest/output.ts`: zod schemas for the rows a pipeline must emit (`zSearchRow`, `zSeasonRow`, `zEpisodeRow`, `zParseUrlOutput`, `zCommentRow`). Exported from the package root; hosts parse pipeline output with them.
 - `src/engine/runner.ts`: pipeline executor. Handles variant selection, step dispatch, concurrency/throttle, abort.
 - `src/engine/ManifestRunner.ts`: public class wrapping a parsed manifest. Builds a `ProtoRegistry` at construction.
 - `src/engine/jsonata-eval.ts`: `JsonataEvaluator` with an LRU-bounded compile cache and a per-expression evaluation timeout.
@@ -47,6 +48,8 @@ A `Manifest` is JSON validated by zod. Each manifest declares up to three `Pipel
 - **`forEach.breakOn`** lets a forEach iteration stop the loop early. Sequential-only (the schema rejects `breakOn` + `concurrency > 1`). The predicate is evaluated against the per-iteration collected result after each iteration; truthy stops AFTER including the current iteration. Used for cursor-style pagination ("stop when this page is partial") in `tencent`'s episodes pipeline.
 - **`forEach` failure handling** is a host policy (RunOption), not a manifest field. By default a forEach fails fast: the first iteration failure cancels the in-flight siblings (via an `AbortController` linked to the run's signal) and rejects. The `continueOnError` RunOption (threaded through `ManifestRunner` per call) instead skips failed iterations and returns partial results; a genuine abort always propagates. Hosts typically set it only on `runDanmaku`.
 - **Protobuf descriptors** are carried in the manifest's `protoDescriptors` map as base64 `google.protobuf.FileDescriptorSet`s (generate from `.proto` via `dango-manifests/scripts/gen-proto-descriptors.ts`). Each `ManifestRunner` owns one `ProtoRegistry`; a descriptor decodes into a `FileRegistry` on first use, then caches.
+- **Identity is the host's concern.** The engine and the manifests say nothing about which configuration a season belongs to. `zManifest` strips unknown keys, so an older manifest that still carries `identityFields` parses and the key is dropped.
+- **Output rows are a contract.** Rows are loose objects (extra fields pass through) with a string `indexedId`, a string `title` and an object `providerIds`; URLs are plain strings. A pipeline that emits `year: null` or a numeric `indexedId` fails the schema, so omit the key or wrap the value in `$string(...)`. Changing a required field is a breaking change for every host.
 - **Step IDs must be JS identifiers** and cannot be `__proto__` / `constructor` / `prototype`.
 - **Backend testing**: `mockFetcher` accepts both `string` and `Uint8Array` bodies, bytes for `format: 'proto'`.
 

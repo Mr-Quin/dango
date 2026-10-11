@@ -50,6 +50,20 @@ Lower-level entry points:
 
 See [`src/index.ts`](src/index.ts) for the complete export surface.
 
+## Output contract
+
+A pipeline's result is `unknown` to the engine. The package root exports zod schemas for what each pipeline must emit, so a host can validate before it stores anything:
+
+| Pipeline   | Schema                                               |
+| ---------- | ---------------------------------------------------- |
+| `search`   | `z.array(zSearchRow)`                                |
+| `season`   | `zSeasonRow`                                         |
+| `episodes` | `z.array(zEpisodeRow)`                               |
+| `parseUrl` | `zParseUrlOutput` (`{ seasonInsert, episodeMeta? }`) |
+| `danmaku`  | `z.array(zCommentRow)`                               |
+
+Rows require a string `indexedId`, a string `title` and an object `providerIds`; everything else is optional, extra fields pass through, and URLs are plain strings. Which configuration a row belongs to is the host's concern; the engine and manifests carry no identity metadata.
+
 ## Trust model
 
 Dango assumes manifests are **trusted code**. Official manifests are vetted by the project; user-installed manifests must be presented to the user with an explicit warning that they're third-party code and carry the same risks as running any untrusted code. Dango is not a sandbox: there is no JSONata evaluation timeout and no regex input caps, so a hostile manifest can still burn CPU. It does enforce a set of fixed safety and correctness guards that don't depend on trust:

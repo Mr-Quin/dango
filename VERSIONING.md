@@ -136,8 +136,11 @@ change in a minor release without a major bump. Notably, but not limited to:
 `ManifestInputs`, `JsonataEvaluator`, `ProtoRegistry`, `runPipeline`, `RunOptions`,
 `MAX_FOR_EACH_ITEMS`, `HttpCacheEntry`, `HttpStepCache`, `PipelineInput`,
 `findManifestForUrl`, `findManifestMatchForUrl`, `matchUrl`, `urlMatches`,
-`UrlMatchResult`, `helpers`, `zRequestSpec`, `zStep`, `SUPPORTED_API_VERSIONS`, and
-the types `ConfigSchema`, `Pipeline`, `RequestSpec`, `Step`, `VariantPipeline`.
+`UrlMatchResult`, `helpers`, `zRequestSpec`, `zStep`, `SUPPORTED_API_VERSIONS`, the
+output row schemas `zSearchRow`, `zSeasonRow`, `zEpisodeRow`, `zParseUrlOutput`,
+`zCommentRow`, and the types `ConfigSchema`, `Pipeline`, `RequestSpec`, `Step`,
+`VariantPipeline`, `SearchRow`, `SeasonRow`, `EpisodeRow`, `ParseUrlOutput`,
+`CommentRow`.
 
 Deep imports (`@mr-quin/dango/dist/...`), anything marked `@internal`, names
 prefixed `_`, and undocumented behavior are never public API. Do not import them.

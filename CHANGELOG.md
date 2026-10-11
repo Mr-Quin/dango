@@ -15,13 +15,28 @@ The engine version and the manifest `apiVersion` are tracked independently.
 
 ### Added
 
+- `@mr-quin/dango`: output row schemas `zSearchRow`, `zSeasonRow`,
+  `zEpisodeRow`, `zParseUrlOutput` and `zCommentRow`, with inferred types, for
+  hosts that validate pipeline output. Rows are loose objects.
+- `@mr-quin/dango-manifests`: every manifest test now parses its pipeline
+  output with those schemas.
+
 ### Changed
 
 ### Deprecated
 
 ### Removed
 
+- **BREAKING:** `@mr-quin/dango`: `identityFields` is no longer part of the
+  manifest schema, and `ManifestRunner.identityFields()` is removed. Season
+  identity belongs to the host. `zManifest` strips unknown keys, so manifests
+  that still carry the field parse.
+- `@mr-quin/dango-manifests`: `identityFields` is removed from every manifest.
+
 ### Fixed
+
+- `@mr-quin/dango-manifests`: `hanjutv` search rows no longer carry
+  `year: null`; the key is omitted.
 
 ### Security
 
