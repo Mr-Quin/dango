@@ -1,10 +1,10 @@
-import { ManifestRunner, zManifest } from '@mr-quin/dango'
 import { describe, expect, it } from 'bun:test'
 import builtinSohu from '../manifests/sohu.json' with { type: 'json' }
 import searchFixture from './fixtures/sohu-search.json' with { type: 'json' }
 import albumFixture from './fixtures/sohu-album.json' with { type: 'json' }
 import dmList0 from './fixtures/sohu-dmlist-0.json' with { type: 'json' }
 import dmList1 from './fixtures/sohu-dmlist-1.json' with { type: 'json' }
+import { createContractRunner } from './contractRunner.js'
 import { mockFetcher } from './mockFetcher.js'
 
 /**
@@ -24,7 +24,7 @@ describe('sohu manifest', () => {
         body: JSON.stringify(searchFixture),
       },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinSohu), {
+    const runner = createContractRunner(builtinSohu, {
       fetcher,
     })
 
@@ -61,7 +61,7 @@ describe('sohu manifest', () => {
         body: JSON.stringify(albumFixture),
       },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinSohu), {
+    const runner = createContractRunner(builtinSohu, {
       fetcher,
     })
 
@@ -104,7 +104,7 @@ describe('sohu manifest', () => {
         }
       },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinSohu), {
+    const runner = createContractRunner(builtinSohu, {
       fetcher,
     })
 

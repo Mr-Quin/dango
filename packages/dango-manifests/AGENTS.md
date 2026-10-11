@@ -115,6 +115,10 @@ Renren (`api.gorafie.com` + `static-dm.qwdjapp.com`), strong on foreign drama. D
 
 Sohu TV (`*.sohu.com`). Search filters to `site=1` albums and strips `<<<>>>` markers from titles. Danmaku paginates `dmListAll` by `time_begin` (300s windows). Color quirk: `t.c` is a **decimal** RGB string for most comments but a `#RRGGBB` **hex** string for some, so the manifest branches on a leading `#` (`$contains($cr, '#') ? $hexToInt(...) : $number(...)`). Treating every value as hex overflows past `0xFFFFFF`.
 
+## CI and the engine
+
+`dango-manifests` depends on `@mr-quin/dango` through `workspace:*`, which `bun install` symlinks to `packages/dango`, and the engine's `exports` point at `dist`. `.github/workflows/ci.yml` runs `bun run build` before `bun test`, so the manifests tests run against the engine built from the same checkout. The release workflow does the same on the tag, so every manifest in tag X is tested against engine X. A host that bundles engine X can rely on that and refuse a catalog whose `packageVersion` is newer than its engine.
+
 ## Localization
 
 Display strings (`name`, `configSchema` `title`/`description` at any depth, and `cookieSet.title`) are localized through an optional top-level `locales` block. Keys are BCP-47 locale tags, then the **dotted path** to the field; only strings that differ from the source language are listed.
@@ -136,7 +140,7 @@ Top-level fields stay the source / fallback language (English here), so a manife
 - Manifests use **raw JSON, not pre-parsed**. Consumers wrap with `zManifest.parse()` at startup. Pre-parsing in this package would force a dango type dependency to flow through and tie shipping versions tighter than needed.
 - One manifest per file.
 - Manifest `id` is the bare `<source>` for anything shipped here.
-- Tests must (1) parse against `zManifest`, (2) mock `FetchLike` with captured fixtures per pipeline, (3) assert the exact canonical output shape. Use exact URL match in the mock fetcher, silent query-string mismatches should surface as test failures.
+- Tests must (1) parse against `zManifest`, (2) mock `FetchLike` with captured fixtures per pipeline, (3) assert the exact canonical output shape. Build the runner with `createContractRunner(manifestJson, { fetcher })` from `src/__tests__/contractRunner.ts`: it also parses every search, season, episodes, parseUrl and danmaku result with the engine's exported row schemas, so a manifest that emits a shape a host would reject fails its own test. Use exact URL match in the mock fetcher, silent query-string mismatches should surface as test failures.
 - Fixtures are captured responses, edited only to redact noise. Keep representative shape and value types.
 
 ## Gotchas
@@ -152,7 +156,7 @@ Top-level fields stay the source / fallback language (English here), so a manife
 2. Capture a fixture per pipeline to `src/__tests__/fixtures/`.
 3. Add `src/__tests__/<source>.test.ts` covering all three pipelines.
 4. (Optional) Extend `scripts/smoke-test.ts` so the new manifest can be exercised live.
-5. Run `bun test`.
+5. Run `bun run build && bun test`.
 
 ## Conventions (code style)
 

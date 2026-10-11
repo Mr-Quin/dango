@@ -1,11 +1,11 @@
 import type { FetchLike } from '@mr-quin/dango'
-import { ManifestRunner, zManifest } from '@mr-quin/dango'
 import { describe, expect, it } from 'bun:test'
 import builtinMigu from '../manifests/migu.json' with { type: 'json' }
 import contentInfoFixture from './fixtures/migu-content-info.json' with { type: 'json' }
 import danmakuSegments from './fixtures/migu-danmaku-segments.json' with { type: 'json' }
 import episodesFixture from './fixtures/migu-episodes.json' with { type: 'json' }
 import searchFixture from './fixtures/migu-search.json' with { type: 'json' }
+import { createContractRunner } from './contractRunner.js'
 
 /**
  * Pins the migu reference manifest end-to-end: parse + canonical output for
@@ -53,7 +53,7 @@ describe('migu manifest', () => {
         body: JSON.stringify(searchFixture),
       },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinMigu), { fetcher })
+    const runner = createContractRunner(builtinMigu, { fetcher })
 
     const result = await runner.runSearch({ q: '示例' })
 
@@ -86,7 +86,7 @@ describe('migu manifest', () => {
         body: JSON.stringify(episodesFixture),
       },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinMigu), { fetcher })
+    const runner = createContractRunner(builtinMigu, { fetcher })
 
     const result = await runner.runEpisodes({ epsId: '600000010' })
 
@@ -119,7 +119,7 @@ describe('migu manifest', () => {
       'https://webapi.miguvideo.com/gateway/live_barrage/videox/barrage/v2/list/600000010/600000011/30/45/020':
         { body: seg1.ct },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinMigu), { fetcher })
+    const runner = createContractRunner(builtinMigu, { fetcher })
 
     const result = await runner.runDanmaku({
       epsId: '600000010',

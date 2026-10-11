@@ -1,7 +1,8 @@
 import type { FetchLike } from '@mr-quin/dango'
-import { ManifestRunner, zManifest } from '@mr-quin/dango'
+import { zManifest } from '@mr-quin/dango'
 import { describe, expect, it } from 'bun:test'
 import builtinTencent from '../manifests/tencent.json' with { type: 'json' }
+import { ContractRunner, createContractRunner } from './contractRunner.js'
 
 interface MockResponse {
   status?: number
@@ -166,7 +167,7 @@ describe('tencent manifest', () => {
           body: JSON.stringify(searchFixture),
         },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinTencent), {
+    const runner = createContractRunner(builtinTencent, {
       fetcher,
     })
 
@@ -237,7 +238,7 @@ describe('tencent manifest', () => {
           body: JSON.stringify(noMainNeed),
         },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinTencent), {
+    const runner = createContractRunner(builtinTencent, {
       fetcher,
     })
 
@@ -265,7 +266,7 @@ describe('tencent manifest', () => {
           throw new Error('unexpected extra page call')
         },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinTencent), {
+    const runner = createContractRunner(builtinTencent, {
       fetcher,
     })
 
@@ -305,7 +306,7 @@ describe('tencent manifest', () => {
           return { body: JSON.stringify(makeEpisodePage(101, 0)) }
         },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinTencent), {
+    const runner = createContractRunner(builtinTencent, {
       fetcher,
     })
 
@@ -330,7 +331,7 @@ describe('tencent manifest', () => {
         body: JSON.stringify(danmakuSegment1),
       },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinTencent), {
+    const runner = createContractRunner(builtinTencent, {
       fetcher,
     })
 
@@ -384,10 +385,10 @@ describe('tencent manifest', () => {
       },
     })
 
-    const mapResult = await new ManifestRunner(parsed, {
+    const mapResult = await new ContractRunner(parsed, {
       fetcher: mockFetcher(handlers).fetcher,
     }).runDanmaku({ vid })
-    const projectionResult = await new ManifestRunner(projectionManifest, {
+    const projectionResult = await new ContractRunner(projectionManifest, {
       fetcher: mockFetcher(handlers).fetcher,
     }).runDanmaku({ vid })
 
@@ -405,7 +406,7 @@ describe('tencent manifest', () => {
           }),
         },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinTencent), {
+    const runner = createContractRunner(builtinTencent, {
       fetcher,
     })
 
@@ -429,7 +430,7 @@ describe('tencent manifest', () => {
       'https://pbaccess.video.qq.com/trpc.universal_backend_service.page_server_rpc.PageServer/GetPageData?video_appid=3000010&vversion_name=8.2.96&vversion_platform=2':
         { body: JSON.stringify({ ret: -1100001, msg: 'need login' }) },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinTencent), {
+    const runner = createContractRunner(builtinTencent, {
       fetcher,
     })
 
@@ -475,7 +476,7 @@ describe('tencent manifest', () => {
         body: JSON.stringify(segment),
       },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinTencent), {
+    const runner = createContractRunner(builtinTencent, {
       fetcher,
     })
 

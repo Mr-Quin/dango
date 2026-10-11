@@ -1,10 +1,10 @@
 import type { FetchLike } from '@mr-quin/dango'
-import { ManifestRunner, zManifest } from '@mr-quin/dango'
 import { describe, expect, it } from 'bun:test'
 import builtinHanjutv from '../manifests/hanjutv.json' with { type: 'json' }
 import danmuFixture from './fixtures/hanjutv-danmu.json' with { type: 'json' }
 import detailFixture from './fixtures/hanjutv-detail.json' with { type: 'json' }
 import searchFixture from './fixtures/hanjutv-search.json' with { type: 'json' }
+import { createContractRunner } from './contractRunner.js'
 
 /**
  * Pins the hanjutv reference manifest end-to-end. The search test exercises
@@ -53,7 +53,7 @@ describe('hanjutv manifest', () => {
       'https://hxqapi.hiyun.tv/api/search/s5?k=%E7%A4%BA%E4%BE%8B&srefer=search_input&type=0&page=1':
         { body: JSON.stringify(searchFixture) },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinHanjutv), {
+    const runner = createContractRunner(builtinHanjutv, {
       fetcher,
     })
 
@@ -68,7 +68,6 @@ describe('hanjutv manifest', () => {
         typeDescription: '韩剧',
         imageUrl: 'https://hxqapi.hiyun.tv/asset/12345/poster.jpg',
         episodeCount: 0,
-        year: null,
       },
       {
         providerIds: { sid: 'hjtv-67890' },
@@ -78,7 +77,6 @@ describe('hanjutv manifest', () => {
         typeDescription: '韩剧',
         imageUrl: 'https://hxqapi.hiyun.tv/asset/67890/poster.jpg',
         episodeCount: 0,
-        year: null,
       },
     ])
     // Warm-up (configs) then the signed s5 request.
@@ -103,7 +101,7 @@ describe('hanjutv manifest', () => {
         body: JSON.stringify(detailFixture),
       },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinHanjutv), {
+    const runner = createContractRunner(builtinHanjutv, {
       fetcher,
     })
 
@@ -138,7 +136,7 @@ describe('hanjutv manifest', () => {
       'https://hxqapi.hiyun.tv/api/danmu/playItem/list?pid=hjtv-ep-001&prevId=0&fromAxis=60000&toAxis=120000&offset=0':
         { body: JSON.stringify({ danmus: [] }) },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinHanjutv), {
+    const runner = createContractRunner(builtinHanjutv, {
       fetcher,
     })
 

@@ -1,4 +1,3 @@
-import { ManifestRunner, zManifest } from '@mr-quin/dango'
 import {
   afterAll,
   beforeAll,
@@ -11,6 +10,7 @@ import builtinDandanplay from '../manifests/dandanplay.json' with { type: 'json'
 import bangumiFixture from './fixtures/ddp-bangumi.json' with { type: 'json' }
 import commentsFixture from './fixtures/ddp-comments.json' with { type: 'json' }
 import searchFixture from './fixtures/ddp-search.json' with { type: 'json' }
+import { createContractRunner } from './contractRunner.js'
 import { mockFetcher } from './mockFetcher.js'
 
 /**
@@ -46,7 +46,7 @@ describe('dandanplay manifest', () => {
         body: JSON.stringify(searchFixture),
       },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinDandanplay), {
+    const runner = createContractRunner(builtinDandanplay, {
       fetcher,
     })
 
@@ -103,7 +103,7 @@ describe('dandanplay manifest', () => {
         body: JSON.stringify(bangumiFixture),
       },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinDandanplay), {
+    const runner = createContractRunner(builtinDandanplay, {
       fetcher,
     })
 
@@ -158,7 +158,7 @@ describe('dandanplay manifest', () => {
         body: JSON.stringify(commentsFixture),
       },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinDandanplay), {
+    const runner = createContractRunner(builtinDandanplay, {
       fetcher,
     })
 
@@ -189,7 +189,7 @@ describe('dandanplay manifest', () => {
         body: JSON.stringify(commentsFixture),
       },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinDandanplay), {
+    const runner = createContractRunner(builtinDandanplay, {
       fetcher,
     })
 
@@ -208,7 +208,7 @@ describe('dandanplay manifest', () => {
     const { fetcher, calls } = mockFetcher({
       [`${proxy}/api/v2/search/anime`]: { body: JSON.stringify(searchFixture) },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinDandanplay), {
+    const runner = createContractRunner(builtinDandanplay, {
       fetcher,
     })
 
@@ -226,7 +226,7 @@ describe('dandanplay manifest', () => {
         body: JSON.stringify(searchFixture),
       },
     })
-    const runner = new ManifestRunner(zManifest.parse(builtinDandanplay), {
+    const runner = createContractRunner(builtinDandanplay, {
       fetcher,
     })
 
