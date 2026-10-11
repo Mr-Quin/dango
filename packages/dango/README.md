@@ -105,9 +105,11 @@ Only the exports from the package root (`@mr-quin/dango`) are public API. Deep
 imports (`@mr-quin/dango/dist/...`) and anything marked `@internal` may change at
 any time.
 
-Even within the root exports, five are the surface `1.0.0` is intended to freeze
+Even within the root exports, a few are the surface `1.0.0` is intended to freeze
 and what a host should depend on: `ManifestRunner`, `ManifestRunnerOptions`,
-`FetchLike`, the `Manifest` type, and `zManifest`. Everything else exported from
+`FetchLike`, the `Manifest` type, `zManifest`, and the output row schemas
+(`zSearchRow`, `zSeasonRow`, `zEpisodeRow`, `zParseUrlOutput`, `zCommentRow`) with
+their inferred types. Everything else exported from
 the root (notably, but not limited to, `runPipeline`, `JsonataEvaluator`,
 `ProtoRegistry`, the URL-match helpers, `helpers`, `zRequestSpec`, `zStep`,
 `SUPPORTED_API_VERSIONS`, the cap constants, and the remaining types) is not part
