@@ -41,6 +41,18 @@ export {
   getDisplayStrings,
   type ResolvedDisplayStrings,
 } from './manifest/localization.js'
+export {
+  type CommentRow,
+  type EpisodeRow,
+  type ParseUrlOutput,
+  type SearchRow,
+  type SeasonRow,
+  zCommentRow,
+  zEpisodeRow,
+  zParseUrlOutput,
+  zSearchRow,
+  zSeasonRow,
+} from './manifest/output.js'
 export type {
   ConfigSchema,
   Manifest,
