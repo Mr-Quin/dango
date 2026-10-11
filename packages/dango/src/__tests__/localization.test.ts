@@ -15,7 +15,6 @@ function parse(raw: unknown): Manifest {
 
 const base = {
   apiVersion: 1,
-  identityFields: [],
   id: 'sample',
   name: 'Sample',
   version: '1.0.0',
@@ -110,7 +109,6 @@ describe('getDisplayStrings', () => {
   it('applies a configSchema override even when the source field is absent', () => {
     const m = parse({
       apiVersion: 1,
-      identityFields: [],
       id: 'sample',
       name: 'Sample',
       version: '1.0.0',
@@ -163,7 +161,6 @@ describe('getDisplayStrings', () => {
   it('omits configSchema and cookieSet when the manifest has none', () => {
     const m = parse({
       apiVersion: 1,
-      identityFields: [],
       id: 'bare',
       name: 'Bare',
       version: '1.0.0',
