@@ -6,13 +6,14 @@
     "zh-CN": {
       "name": "B站",
       "configSchema.properties.danmakuFormat.title": "弹幕格式",
-      "configSchema.properties.danmakuFormat.description": "xml 是旧版接口，最多约 3000 条弹幕；protobuf 分页返回全部弹幕",
+      "configSchema.properties.danmakuFormat.oneOf.0.title": "Protobuf：获取全部弹幕，视频越长越慢",
+      "configSchema.properties.danmakuFormat.oneOf.1.title": "XML：获取较快，最多约 3000 条弹幕",
       "cookieSet.title": "登录B站",
       "configSchema.properties.includeUserUploads.title": "包含用户投稿",
       "configSchema.properties.includeUserUploads.description": "搜索时一并返回用户投稿（UGC）视频，而不仅是官方番剧库。默认关闭：UGC 结果较杂，且多为切片。"
     }
   },
-  "version": "0.6.0",
+  "version": "0.7.0",
   "hosts": ["api.bilibili.com"],
   "urlMatch": [
     {
@@ -38,9 +39,18 @@
       "danmakuFormat": {
         "type": "string",
         "enum": ["xml", "protobuf"],
+        "oneOf": [
+          {
+            "const": "protobuf",
+            "title": "Protobuf: every comment, slower for long videos"
+          },
+          {
+            "const": "xml",
+            "title": "XML: faster, capped at about 3000 comments"
+          }
+        ],
         "default": "protobuf",
-        "title": "Danmaku format",
-        "description": "xml is the legacy endpoint capped at ~3000 comments; protobuf paginates and returns everything"
+        "title": "Danmaku format"
       },
       "includeUserUploads": {
         "type": "boolean",

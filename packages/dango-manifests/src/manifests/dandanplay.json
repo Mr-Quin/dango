@@ -17,11 +17,13 @@
       "configSchema.properties.auth.properties.headers.title": "请求头",
       "configSchema.properties.auth.properties.headers.items.properties.key.title": "请求头名称",
       "configSchema.properties.auth.properties.headers.items.properties.value.title": "值",
-      "configSchema.properties.chConvert.title": "中文转换",
-      "configSchema.properties.chConvert.description": "0 = 不转换，1 = 转为简体，2 = 转为繁体"
+      "configSchema.properties.chConvert.title": "简繁转换",
+      "configSchema.properties.chConvert.oneOf.0.title": "不转换",
+      "configSchema.properties.chConvert.oneOf.1.title": "转换成简体",
+      "configSchema.properties.chConvert.oneOf.2.title": "转换成繁体"
     }
   },
-  "version": "0.5.0",
+  "version": "0.6.0",
   "hosts": ["*"],
   "configSchema": {
     "type": "object",
@@ -68,9 +70,13 @@
       "chConvert": {
         "type": "integer",
         "enum": [0, 1, 2],
+        "oneOf": [
+          { "const": 0, "title": "No conversion" },
+          { "const": 1, "title": "Convert to simplified" },
+          { "const": 2, "title": "Convert to traditional" }
+        ],
         "default": 0,
-        "title": "Chinese conversion",
-        "description": "0 = no conversion, 1 = convert to simplified, 2 = convert to traditional"
+        "title": "Chinese conversion"
       }
     }
   },
