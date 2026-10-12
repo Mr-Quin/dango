@@ -15,6 +15,19 @@ The engine version and the manifest `apiVersion` are tracked independently.
 
 ### Added
 
+- `getDisplayStrings` (engine) localizes the `title`/`description` of
+  `configSchema` `oneOf`/`anyOf` branches, addressed by index
+  (`configSchema.properties.<field>.oneOf.<i>.title`), so a labelled enum
+  (`oneOf: [{ const, title }]`) can be translated like any other field. Older
+  engines pass the branches through in the source language. `apiVersion`
+  stays `1` (engine accepts 1).
+- `@mr-quin/dango-manifests`: labelled options for every enum field, with
+  zh-CN titles: dandanplay `chConvert` (no conversion / simplified /
+  traditional) and bilibili `danmakuFormat` (protobuf / xml). The `enum`
+  stays alongside, so hosts that only read `enum` keep their select. The
+  descriptions that spelled out the raw values are dropped. (dandanplay
+  manifest `0.5.0` → `0.6.0`, bilibili `0.6.0` → `0.7.0`.)
+
 ### Changed
 
 ### Deprecated

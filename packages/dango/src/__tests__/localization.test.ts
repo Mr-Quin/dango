@@ -5,8 +5,9 @@ import { type Manifest, zManifest } from '../manifest/schema.js'
 /**
  * Tests getDisplayStrings: exact-locale hit, BCP-47 narrowing (zh-TW → zh),
  * per-key fallback to the source language, no-locale / no-match behaviour,
- * nested configSchema paths (properties + items), unknown-key tolerance, and
- * that the source manifest is not mutated.
+ * nested configSchema paths (properties, items, and labelled enum options
+ * under oneOf/anyOf), unknown-key tolerance, and that the source manifest is
+ * not mutated.
  */
 
 function parse(raw: unknown): Manifest {
@@ -127,6 +128,50 @@ describe('getDisplayStrings', () => {
     expect(
       getDisplayStrings(m, 'zh-CN').configSchema?.properties?.fmt?.title
     ).toBe('格式')
+  })
+
+  it('localizes labelled enum options under oneOf and anyOf by index', () => {
+    const m = parse({
+      apiVersion: 1,
+      id: 'sample',
+      name: 'Sample',
+      version: '1.0.0',
+      hosts: ['api.example.com'],
+      configSchema: {
+        type: 'object',
+        properties: {
+          mode: {
+            type: 'integer',
+            enum: [0, 1],
+            oneOf: [
+              { const: 0, title: 'Off' },
+              { const: 1, title: 'On' },
+            ],
+          },
+          fmt: {
+            type: 'string',
+            anyOf: [{ const: 'xml', title: 'XML' }],
+          },
+        },
+      },
+      locales: {
+        'zh-CN': {
+          'configSchema.properties.mode.oneOf.1.title': '开',
+          'configSchema.properties.fmt.anyOf.0.title': '旧版 XML',
+        },
+      },
+    })
+
+    const props = getDisplayStrings(m, 'zh-CN').configSchema?.properties
+    expect(props?.mode?.oneOf).toEqual([
+      { const: 0, title: 'Off' },
+      { const: 1, title: '开' },
+    ])
+    expect(props?.fmt?.anyOf).toEqual([{ const: 'xml', title: '旧版 XML' }])
+    expect(m.configSchema?.properties?.mode?.oneOf).toEqual([
+      { const: 0, title: 'Off' },
+      { const: 1, title: 'On' },
+    ])
   })
 
   it('ignores unknown keys in a locale map', () => {
