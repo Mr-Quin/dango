@@ -15,6 +15,23 @@ The engine version and the manifest `apiVersion` are tracked independently.
 
 ### Added
 
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [0.9.1] - 2026-10-12
+
+Labelled enum options: hosts can show a readable, translated label for each
+choice instead of the raw value.
+
+### Added
+
 - `getDisplayStrings` (engine) localizes the `title`/`description` of
   `configSchema` `oneOf`/`anyOf` branches, addressed by index
   (`configSchema.properties.<field>.oneOf.<i>.title`), so a labelled enum
@@ -32,16 +49,6 @@ The engine version and the manifest `apiVersion` are tracked independently.
   (`anyOf: [{ required: [...] }]`), so a host form can refuse a config that
   can reach no server. The `baseUrl` description now says what an empty value
   means instead of reading as the default.
-
-### Changed
-
-### Deprecated
-
-### Removed
-
-### Fixed
-
-### Security
 
 ## [0.9.0] - 2026-10-11
 
