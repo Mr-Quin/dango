@@ -344,7 +344,8 @@ export const zManifest = z.object({
    * Translations for display strings, keyed by BCP-47 locale then by dotted
    * path to the field (`name`, `cookieSet.title`, and `configSchema`
    * `title`/`description` at any depth, e.g.
-   * `configSchema.properties.danmakuFormat.title`). Top-level fields are the
+   * `configSchema.properties.danmakuFormat.title`; a labelled enum option is
+   * `configSchema.properties.danmakuFormat.oneOf.0.title`). Top-level fields are the
    * source/fallback language; only differing strings are listed. Presentation
    * only — the pipeline never reads this; resolve via `getDisplayStrings`.
    */

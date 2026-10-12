@@ -70,7 +70,11 @@ function buildOverrides(
   return merged
 }
 
-/** Deep-copy a configSchema, overriding `title`/`description` from the locale. */
+/**
+ * Deep-copy a configSchema, overriding `title`/`description` from the locale.
+ * `oneOf`/`anyOf` branches are addressed by index, so a labelled enum option
+ * is `<field>.oneOf.<i>.title`.
+ */
 function localizeConfigSchema(
   node: ConfigSchema,
   path: string,
@@ -99,5 +103,20 @@ function localizeConfigSchema(
     out.items = localizeConfigSchema(out.items, `${path}.items`, pick)
   }
 
+  for (const key of ['oneOf', 'anyOf'] as const) {
+    const branches = out[key]
+    if (Array.isArray(branches)) {
+      out[key] = branches.map((branch: unknown, index) =>
+        isSchemaNode(branch)
+          ? localizeConfigSchema(branch, `${path}.${key}.${index}`, pick)
+          : branch
+      )
+    }
+  }
+
   return out
+}
+
+function isSchemaNode(value: unknown): value is ConfigSchema {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
 }

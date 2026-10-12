@@ -6,7 +6,7 @@
     "zh-CN": {
       "name": "弹弹play",
       "configSchema.properties.baseUrl.title": "基础地址",
-      "configSchema.properties.baseUrl.description": "弹弹play（或兼容）API 的根地址。默认为官方 https://api.dandanplay.net。指向代理或自建服务器即可覆盖。",
+      "configSchema.properties.baseUrl.description": "弹弹play 兼容 API 的根地址，例如代理或自建服务器。留空则使用官方 https://api.dandanplay.net，此时需要填写应用 ID 和应用密钥。",
       "configSchema.properties.appId.title": "应用 ID",
       "configSchema.properties.appId.description": "弹弹play 开放平台的 App ID。使用官方 API 时需填写；由代理在服务端签名时可留空。",
       "configSchema.properties.appSecret.title": "应用密钥",
@@ -17,19 +17,25 @@
       "configSchema.properties.auth.properties.headers.title": "请求头",
       "configSchema.properties.auth.properties.headers.items.properties.key.title": "请求头名称",
       "configSchema.properties.auth.properties.headers.items.properties.value.title": "值",
-      "configSchema.properties.chConvert.title": "中文转换",
-      "configSchema.properties.chConvert.description": "0 = 不转换，1 = 转为简体，2 = 转为繁体"
+      "configSchema.properties.chConvert.title": "简繁转换",
+      "configSchema.properties.chConvert.oneOf.0.title": "不转换",
+      "configSchema.properties.chConvert.oneOf.1.title": "转换成简体",
+      "configSchema.properties.chConvert.oneOf.2.title": "转换成繁体"
     }
   },
-  "version": "0.5.0",
+  "version": "0.6.0",
   "hosts": ["*"],
   "configSchema": {
     "type": "object",
+    "anyOf": [
+      { "required": ["baseUrl"] },
+      { "required": ["appId", "appSecret"] }
+    ],
     "properties": {
       "baseUrl": {
         "type": "string",
         "title": "Base URL",
-        "description": "Root of the DanDanPlay (or compatible) API. Defaults to the official https://api.dandanplay.net. Point this at a proxy or self-hosted server to override."
+        "description": "Root of a DanDanPlay-compatible API, such as a proxy or a self-hosted server. Leave empty to call the official https://api.dandanplay.net, which needs an App ID and App Secret."
       },
       "appId": {
         "type": "string",
@@ -68,9 +74,13 @@
       "chConvert": {
         "type": "integer",
         "enum": [0, 1, 2],
+        "oneOf": [
+          { "const": 0, "title": "No conversion" },
+          { "const": 1, "title": "Convert to simplified" },
+          { "const": 2, "title": "Convert to traditional" }
+        ],
         "default": 0,
-        "title": "Chinese conversion",
-        "description": "0 = no conversion, 1 = convert to simplified, 2 = convert to traditional"
+        "title": "Chinese conversion"
       }
     }
   },
