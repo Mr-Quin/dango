@@ -27,6 +27,11 @@ The engine version and the manifest `apiVersion` are tracked independently.
   stays alongside, so hosts that only read `enum` keep their select. The
   descriptions that spelled out the raw values are dropped. (dandanplay
   manifest `0.5.0` → `0.6.0`, bilibili `0.6.0` → `0.7.0`.)
+- `@mr-quin/dango-manifests`: the dandanplay `configSchema` declares that a
+  config needs a `baseUrl` or an `appId` + `appSecret` pair
+  (`anyOf: [{ required: [...] }]`), so a host form can refuse a config that
+  can reach no server. The `baseUrl` description now says what an empty value
+  means instead of reading as the default.
 
 ### Changed
 
