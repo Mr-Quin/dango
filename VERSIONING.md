@@ -37,7 +37,28 @@ not rejected. That makes the following additive and version-stable:
 
 A manifest authored for a future engine that adds an unknown top-level key still
 `safeParse`-succeeds on the current engine (the key is stripped), provided it does
-not raise `apiVersion`.
+not raise `apiVersion`. When the stripped key changes what the manifest does, the
+manifest declares `minEngineVersion` (below) so an older engine refuses it instead
+of running it wrong.
+
+### Minimum engine version
+
+A manifest may declare `minEngineVersion`, a `MAJOR.MINOR.PATCH` engine release.
+The engine exposes its own release as `ENGINE_VERSION` (equal to the package
+`version`; `bun run bump` keeps them together) and rejects the manifest in
+`zManifest` when it is older than the requirement. Set the field when a manifest
+starts using a field, helper or step type added in a later release than the oldest
+engine it should load on. A manifest without it loads on every engine that accepts
+its `apiVersion`.
+
+`catalog.json` copies the field into the manifest's entry, and
+`checkManifestCompatibility({ apiVersion, minEngineVersion })` applies the same
+rules as `zManifest`, so a host can skip an entry from the index without fetching
+the file. The result says which requirement failed (`api-version` or
+`engine-version`).
+
+Engines before `0.10.0` do not know the field: they strip it and load the manifest.
+Use `apiVersion` for a change those engines must not run.
 
 ### Incompatible changes DO bump `apiVersion`
 
@@ -79,7 +100,7 @@ they need, for the widest engine compatibility.
 semver or regex enforcement). It is registry/debug metadata only. The engine never
 reads it: `ManifestRunner` exposes `id` and `name` getters but no `version` getter,
 and nothing in the engine consumes `manifest.version`. It is not a compatibility
-signal; `apiVersion` is the only contract the engine enforces.
+signal; `apiVersion` and `minEngineVersion` are what the engine enforces.
 
 Each manifest's `version` is **independent and bumped per manifest**, only when
 that manifest's own content changes — it is not tied to the npm package version,
@@ -129,6 +150,8 @@ else as unstable.
 | `FetchLike`                                                            | type  | injected fetcher signature                            |
 | `Manifest`                                                             | type  | the parsed-manifest shape the host stores and passes  |
 | `zManifest`                                                            | value | the host's `safeParse` gate                           |
+| `checkManifestCompatibility`                                           | value | gate a catalog entry before fetching its manifest     |
+| `ENGINE_VERSION`                                                       | value | this engine's release, compared to `minEngineVersion` |
 | `zSearchRow`                                                           | value | schema for one `search` row                           |
 | `zSeasonRow`                                                           | value | schema for the `season` result (same shape as search) |
 | `zEpisodeRow`                                                          | value | schema for one `episodes` row                         |

@@ -1,5 +1,11 @@
 import { z } from 'zod'
 import { isPrivateHostPattern } from '../engine/host-policy.js'
+import { ENGINE_VERSION } from '../version.js'
+import {
+  ENGINE_VERSION_PATTERN,
+  isApiVersionSupported,
+  isEngineVersionSatisfied,
+} from './compatibility.js'
 
 /** A JSONata expression evaluated against the pipeline context. */
 const zExpr = z.string()
@@ -212,10 +218,6 @@ const zPipelineField = z
   .union([zPipeline, z.array(zVariantPipeline).min(1)])
   .transform((v): VariantPipeline[] => (Array.isArray(v) ? v : [v]))
 
-// API versions the engine understands. Bumps only on incompatible changes
-// (helper removal, step-type semantics). Additive changes don't bump.
-export const SUPPORTED_API_VERSIONS = new Set<number>([1])
-
 // `configSchema` follows JSON Schema (draft 2020-12 subset). The engine
 // validates structural fields it consumes, type, properties, default,
 // required, and passes the rest through for downstream consumers (form
@@ -268,13 +270,27 @@ export type ConfigSchema = z.infer<typeof zConfigSchema>
 
 export const zManifest = z.object({
   /** Engine API version; load fails if not in SUPPORTED_API_VERSIONS. */
-  apiVersion: z
-    .number()
-    .int()
-    .positive()
-    .refine((v) => SUPPORTED_API_VERSIONS.has(v), {
-      message: 'unsupported apiVersion',
-    }),
+  apiVersion: z.number().int().positive().refine(isApiVersionSupported, {
+    message: 'unsupported apiVersion',
+  }),
+  /**
+   * Lowest engine release this manifest runs on, as `MAJOR.MINOR.PATCH`. Set
+   * it when the manifest uses a field, helper or step type added after the
+   * oldest engine it should load on; additive features keep `apiVersion`, so
+   * without it an older engine would drop the unknown field and run the
+   * manifest wrong. Engines before 0.10.0 do not know this field and ignore it.
+   */
+  minEngineVersion: z
+    .string()
+    .regex(ENGINE_VERSION_PATTERN, {
+      message: 'minEngineVersion must be MAJOR.MINOR.PATCH',
+      abort: true,
+    })
+    .refine(isEngineVersionSatisfied, {
+      error: (issue) =>
+        `requires engine ${String(issue.input)} or newer, this engine is ${ENGINE_VERSION}`,
+    })
+    .optional(),
   /** Stable id, becomes the providerConfigId in stored records. */
   id: z.string().regex(/^[a-z][a-z0-9_:.-]*$/i),
   name: z.string(),

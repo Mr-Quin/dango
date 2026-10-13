@@ -40,6 +40,12 @@ export {
 } from './engine/url-match.js'
 export { helpers } from './helpers/registry.js'
 export {
+  checkManifestCompatibility,
+  type ManifestCompatibility,
+  type ManifestRequirements,
+  SUPPORTED_API_VERSIONS,
+} from './manifest/compatibility.js'
+export {
   getDisplayStrings,
   type ResolvedDisplayStrings,
 } from './manifest/localization.js'
@@ -63,9 +69,5 @@ export type {
   Step,
   VariantPipeline,
 } from './manifest/schema.js'
-export {
-  SUPPORTED_API_VERSIONS,
-  zManifest,
-  zRequestSpec,
-  zStep,
-} from './manifest/schema.js'
+export { zManifest, zRequestSpec, zStep } from './manifest/schema.js'
+export { ENGINE_VERSION } from './version.js'

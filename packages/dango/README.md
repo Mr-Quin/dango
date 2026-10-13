@@ -122,4 +122,9 @@ incompatible schema change. A manifest declaring an apiVersion this engine does
 not support fails `zManifest.parse`, so a host that gates on `safeParse` skips it:
 the source is unavailable until the engine (and the host bundling it) is updated.
 
+A manifest that relies on an additive feature declares `minEngineVersion`; an engine
+older than that (`ENGINE_VERSION`) rejects it the same way. A host reading
+`catalog.json` can apply both rules to an entry with `checkManifestCompatibility`
+before fetching the file.
+
 See [VERSIONING.md](../../VERSIONING.md) for the full policy.

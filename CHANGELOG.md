@@ -23,6 +23,16 @@ message text need updating, so this ships as `0.10.0`.
   `url`); the message is unchanged. A rejected `FetchLike`, or a response body
   that fails to arrive, throws `NetworkError` (`url`) with the host's error as
   `cause`. Hosts classify both with `instanceof`.
+- Manifest field `minEngineVersion` (`MAJOR.MINOR.PATCH`): the lowest engine
+  release a manifest runs on, for manifests that use an additive feature.
+  `zManifest` rejects the manifest on an older engine. `apiVersion` stays `1`
+  (engine accepts 1); manifests without the field load as before.
+- `ENGINE_VERSION` (engine): this engine's release, kept equal to the package
+  version by `bun run bump`.
+- `checkManifestCompatibility` (engine): applies the `apiVersion` and
+  `minEngineVersion` rules to a manifest or catalog entry and reports which one
+  failed, so a host can gate the catalog index before fetching files.
+- `catalog.json` entries carry `minEngineVersion` when the manifest declares it.
 
 ### Changed
 
