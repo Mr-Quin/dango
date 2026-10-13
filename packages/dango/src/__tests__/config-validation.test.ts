@@ -199,8 +199,16 @@ describe('validateConfig', () => {
     expect(codes(schema, 'a')).toEqual([])
   })
 
-  it('ignores a pattern that is not a valid regex', () => {
-    expect(codes({ type: 'string', pattern: '(' }, 'anything')).toEqual([])
+  it('falls back to a plain regex when the pattern needs it', () => {
+    const schema: ConfigSchema = { type: 'string', pattern: String.raw`^a\-b$` }
+    expect(codes(schema, 'a-b')).toEqual([])
+    expect(codes(schema, 'ab')).toEqual([['', 'pattern']])
+  })
+
+  it('reports a pattern that is not a regex at all', () => {
+    expect(codes({ type: 'string', pattern: '(' }, 'anything')).toEqual([
+      ['', 'badPattern'],
+    ])
   })
 
   it('checks number bounds', () => {

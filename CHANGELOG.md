@@ -50,7 +50,9 @@ updating, so this ships as `0.10.0`.
   `additionalProperties: false`, and string, number and array bounds. A value
   of `undefined`, `null` or `''` counts as not set, matching how the manifests
   read config. Keywords outside that list (`allOf`, `$ref`, other `format`s)
-  are ignored, and `pattern` is matched with the `u` flag.
+  are ignored. `pattern` is matched with the `u` flag, falling back to a
+  plain regex for patterns that need one, and a pattern that is not a regex
+  is reported as `badPattern`.
 
 ### Changed
 

@@ -10,6 +10,7 @@ export type ConfigIssueCode =
   | 'minLength'
   | 'maxLength'
   | 'pattern'
+  | 'badPattern'
   | 'format'
   | 'minimum'
   | 'maximum'
@@ -208,13 +209,19 @@ function validateBranches(
   }
 }
 
-// JSON Schema patterns are ECMA-262 regexes with Unicode semantics.
-function compilePattern(pattern: string): RegExp | undefined {
+function tryRegExp(pattern: string, flags: string): RegExp | undefined {
   try {
-    return new RegExp(pattern, 'u')
+    return new RegExp(pattern, flags)
   } catch {
     return undefined
   }
+}
+
+// JSON Schema patterns are ECMA-262 regexes with Unicode semantics, but
+// manifests written for plain JS regexes use escapes the u flag rejects, such
+// as `\-` outside a class.
+function compilePattern(pattern: string): RegExp | undefined {
+  return tryRegExp(pattern, 'u') ?? tryRegExp(pattern, '')
 }
 
 // URL.canParse is missing from browsers some hosts still support.
@@ -247,7 +254,11 @@ function validateString(
   const pattern = schema.pattern
   if (typeof pattern === 'string' && pattern.length > 0) {
     const regex = compilePattern(pattern)
-    if (regex && !regex.test(value)) {
+    if (!regex) {
+      out.add(path, 'badPattern', `The schema pattern ${pattern} is invalid`, {
+        pattern,
+      })
+    } else if (!regex.test(value)) {
       out.add(path, 'pattern', `Must match ${pattern}`, { pattern })
     }
   }
@@ -329,7 +340,8 @@ function validateObject(
  * manifests use: `type`, `enum`, labelled enums (`oneOf`/`anyOf` of `const`),
  * `required`, `anyOf` key alternatives, general `oneOf`/`anyOf` subschemas,
  * `properties`, `items`, `additionalProperties: false`, `minLength`,
- * `maxLength`, `pattern`, `format: 'uri' | 'url'`, `minimum`, `maximum`,
+ * `maxLength`, `pattern` (reported as `badPattern` when it is not a regex),
+ * `format: 'uri' | 'url'`, `minimum`, `maximum`,
  * `minItems` and `maxItems`. Any other keyword, such as `allOf`, `$ref` or
  * another `format`, is ignored rather than reported, so a schema that relies
  * on one accepts values it would otherwise reject. `undefined`, `null` and
