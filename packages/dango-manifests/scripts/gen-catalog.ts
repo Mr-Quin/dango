@@ -24,6 +24,7 @@ interface CatalogEntry {
   name: string
   version: string
   apiVersion: number
+  minEngineVersion?: string
   file: string
 }
 
@@ -37,6 +38,7 @@ interface ManifestShape {
   name: string
   version: string
   apiVersion: number
+  minEngineVersion?: string
 }
 
 function readPackageVersion(): string {
@@ -53,20 +55,28 @@ function readManifest(fileName: string): ManifestShape {
   return raw
 }
 
+function toCatalogEntry(
+  manifest: ManifestShape,
+  fileName: string
+): CatalogEntry {
+  const entry: CatalogEntry = {
+    id: manifest.id,
+    name: manifest.name,
+    version: manifest.version,
+    apiVersion: manifest.apiVersion,
+    file: `src/manifests/${fileName}`,
+  }
+  if (manifest.minEngineVersion !== undefined) {
+    entry.minEngineVersion = manifest.minEngineVersion
+  }
+  return entry
+}
+
 function generateCatalog(): Catalog {
   const fileNames = readdirSync(manifestsDir).filter((f) => f.endsWith('.json'))
 
   const manifests = fileNames
-    .map((fileName) => {
-      const manifest = readManifest(fileName)
-      return {
-        id: manifest.id,
-        name: manifest.name,
-        version: manifest.version,
-        apiVersion: manifest.apiVersion,
-        file: `src/manifests/${fileName}`,
-      }
-    })
+    .map((fileName) => toCatalogEntry(readManifest(fileName), fileName))
     .sort((a, b) => a.id.localeCompare(b.id))
 
   return {
@@ -106,5 +116,5 @@ if (import.meta.main) {
   main()
 }
 
-export { generateCatalog, serialize }
+export { generateCatalog, serialize, toCatalogEntry }
 export type { Catalog, CatalogEntry }

@@ -2,7 +2,12 @@ import { readdirSync, readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'bun:test'
-import { generateCatalog, serialize } from '../../scripts/gen-catalog.js'
+import { ENGINE_VERSION, zManifest } from '@mr-quin/dango'
+import {
+  generateCatalog,
+  serialize,
+  toCatalogEntry,
+} from '../../scripts/gen-catalog.js'
 import catalog from '../../catalog.json' with { type: 'json' }
 
 /**
@@ -20,6 +25,7 @@ interface ManifestShape {
   name: string
   version: string
   apiVersion: number
+  minEngineVersion?: string
 }
 
 function readManifest(fileName: string): ManifestShape {
@@ -59,6 +65,32 @@ describe('catalog.json', () => {
       expect(entry.name).toBe(manifest.name)
       expect(entry.version).toBe(manifest.version)
       expect(entry.apiVersion).toBe(manifest.apiVersion)
+    }
+  })
+
+  it('carries minEngineVersion only for a manifest that declares it', () => {
+    const manifest = { id: 'src', name: 'Src', version: '1.0.0', apiVersion: 1 }
+    const plain = toCatalogEntry(manifest, 'src.json')
+    expect(plain).toEqual({ ...manifest, file: 'src/manifests/src.json' })
+    expect(plain).not.toHaveProperty('minEngineVersion')
+    expect(
+      toCatalogEntry({ ...manifest, minEngineVersion: '0.10.0' }, 'src.json')
+    ).toEqual({
+      ...manifest,
+      minEngineVersion: '0.10.0',
+      file: 'src/manifests/src.json',
+    })
+  })
+
+  it('lists only manifests the engine in this checkout can load', () => {
+    for (const entry of generateCatalog().manifests) {
+      const manifest = readManifest(entry.file.replace('src/manifests/', ''))
+      const result = zManifest.safeParse(manifest)
+      expect(
+        result.success,
+        `${entry.id} does not load on engine ${ENGINE_VERSION}`
+      ).toBe(true)
+      expect(entry.minEngineVersion).toBe(manifest.minEngineVersion)
     }
   })
 })
