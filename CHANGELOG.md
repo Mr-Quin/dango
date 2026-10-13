@@ -33,6 +33,13 @@ message text need updating, so this ships as `0.10.0`.
   `minEngineVersion` rules to a manifest or catalog entry and reports which one
   failed, so a host can gate the catalog index before fetching files.
 - `catalog.json` entries carry `minEngineVersion` when the manifest declares it.
+- `loadManifest` (engine): parses a manifest and returns `ok`, `incompatible`
+  (with the failed requirement) or `malformed` (with the issues), so a host can
+  tell "needs a newer engine" from "broken".
+- `ENGINE_FEATURES` and `requiredMinEngineVersion` (engine): the surface added
+  since 0.10.0 with the release that ships it, and the `minEngineVersion` a
+  manifest using it must declare. The manifests tests check every manifest
+  declares exactly that value.
 
 ### Changed
 

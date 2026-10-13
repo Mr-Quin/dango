@@ -16,18 +16,41 @@ function parseVersion(version: string): VersionTriple | null {
   return [Number(match[1]), Number(match[2]), Number(match[3])]
 }
 
-// A prerelease engine (`1.2.0-rc.1`) counts as its release, so a build of the
-// release candidate runs the manifests written for that release.
-function parseEngineVersion(): VersionTriple {
-  const [release] = ENGINE_VERSION.split('-')
-  const parsed = parseVersion(release)
-  if (parsed === null) {
-    throw new Error(`ENGINE_VERSION is not semver: ${ENGINE_VERSION}`)
+function compareTriples(a: VersionTriple, b: VersionTriple): number {
+  for (let i = 0; i < a.length; i++) {
+    if (a[i] !== b[i]) {
+      return a[i] - b[i]
+    }
   }
-  return parsed
+  return 0
 }
 
-const engine = parseEngineVersion()
+/**
+ * The release an engine version belongs to. A prerelease (`0.10.0-dev`)
+ * counts as its release: main carries the next release's `-dev` version, so
+ * manifests written against main declare the release that ships their
+ * features.
+ */
+export function engineRelease(version: string): string {
+  const [release] = version.split('-')
+  return release
+}
+
+const engine = parseVersion(engineRelease(ENGINE_VERSION))
+if (engine === null) {
+  throw new Error(`ENGINE_VERSION is not semver: ${ENGINE_VERSION}`)
+}
+const engineTriple: VersionTriple = engine
+
+/** Orders two `MAJOR.MINOR.PATCH` versions; throws on a malformed one. */
+export function compareEngineVersions(a: string, b: string): number {
+  const left = parseVersion(a)
+  const right = parseVersion(b)
+  if (left === null || right === null) {
+    throw new Error(`not a MAJOR.MINOR.PATCH version: ${a}, ${b}`)
+  }
+  return compareTriples(left, right)
+}
 
 export function isApiVersionSupported(apiVersion: number): boolean {
   return SUPPORTED_API_VERSIONS.has(apiVersion)
@@ -39,12 +62,7 @@ export function isEngineVersionSatisfied(minEngineVersion: string): boolean {
   if (required === null) {
     return false
   }
-  for (let i = 0; i < required.length; i++) {
-    if (engine[i] !== required[i]) {
-      return engine[i] > required[i]
-    }
-  }
-  return true
+  return compareTriples(engineTriple, required) >= 0
 }
 
 /** The fields of a manifest, or of its catalog entry, that decide compatibility. */
@@ -53,10 +71,13 @@ export interface ManifestRequirements {
   minEngineVersion?: string
 }
 
+export type ManifestIncompatibility =
+  | { reason: 'api-version'; apiVersion: number }
+  | { reason: 'engine-version'; minEngineVersion: string }
+
 export type ManifestCompatibility =
   | { compatible: true }
-  | { compatible: false; reason: 'api-version'; apiVersion: number }
-  | { compatible: false; reason: 'engine-version'; minEngineVersion: string }
+  | ({ compatible: false } & ManifestIncompatibility)
 
 /**
  * Whether this engine can run a manifest with these requirements. Applies the

@@ -2,7 +2,11 @@ import { readdirSync, readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'bun:test'
-import { ENGINE_VERSION, zManifest } from '@mr-quin/dango'
+import {
+  ENGINE_VERSION,
+  requiredMinEngineVersion,
+  zManifest,
+} from '@mr-quin/dango'
 import {
   generateCatalog,
   serialize,
@@ -80,6 +84,15 @@ describe('catalog.json', () => {
       minEngineVersion: '0.10.0',
       file: 'src/manifests/src.json',
     })
+  })
+
+  it('declares exactly the minEngineVersion each manifest needs', () => {
+    for (const entry of generateCatalog().manifests) {
+      const manifest = readManifest(entry.file.replace('src/manifests/', ''))
+      expect(manifest.minEngineVersion, entry.id).toBe(
+        requiredMinEngineVersion(manifest)
+      )
+    }
   })
 
   it('lists only manifests the engine in this checkout can load', () => {

@@ -35,21 +35,37 @@ not rejected. That makes the following additive and version-stable:
 - New `configSchema` JSON Schema keywords. `zConfigSchema` is `.passthrough()`,
   so unknown keywords already flow through to downstream consumers.
 
-A manifest authored for a future engine that adds an unknown top-level key still
-`safeParse`-succeeds on the current engine (the key is stripped), provided it does
-not raise `apiVersion`. When the stripped key changes what the manifest does, the
-manifest declares `minEngineVersion` (below) so an older engine refuses it instead
-of running it wrong.
+Additive means old manifests keep working on a new engine. The other direction,
+a new manifest on an older engine, depends on the kind of addition:
+
+- A new step type, or a new value for an enum such as `format` or `decompress`,
+  fails `zManifest` on the older engine. The manifest is rejected as malformed.
+- A new helper is unknown to the older engine's JSONata, so the expression that
+  calls it throws when the pipeline runs.
+- A new optional field is stripped by the older engine's schema, and the manifest
+  runs without it. Nothing fails; the output is just wrong. This is the case
+  `minEngineVersion` exists for.
 
 ### Minimum engine version
 
 A manifest may declare `minEngineVersion`, a `MAJOR.MINOR.PATCH` engine release.
 The engine exposes its own release as `ENGINE_VERSION` (equal to the package
 `version`; `bun run bump` keeps them together) and rejects the manifest in
-`zManifest` when it is older than the requirement. Set the field when a manifest
-starts using a field, helper or step type added in a later release than the oldest
-engine it should load on. A manifest without it loads on every engine that accepts
-its `apiVersion`.
+`zManifest` when it is older than the requirement. A manifest without it loads on
+every engine that accepts its `apiVersion`. `loadManifest(raw)` returns `ok`,
+`incompatible` (with the failed requirement) or `malformed` (with the issues), and
+checks compatibility first, so a manifest written for a newer engine reads as
+incompatible even when this engine cannot parse it.
+
+Which value to declare is computed, not chosen. `ENGINE_FEATURES`
+(`packages/dango/src/manifest/features.ts`) lists every field, step type and
+helper added since the field itself (0.10.0), with the release that ships it, and
+`requiredMinEngineVersion(manifest)` returns the newest release among the ones the
+manifest uses. The manifests test fails unless each manifest declares exactly that
+value, and an engine test fails when the schema or helper registry gains surface
+that has no `ENGINE_FEATURES` entry. Between releases, main carries the next
+release as a `-dev` prerelease (`0.10.1-dev`), which counts as that release, so a
+feature added on main is dated with the release it will ship in.
 
 `catalog.json` copies the field into the manifest's entry, and
 `checkManifestCompatibility({ apiVersion, minEngineVersion })` applies the same
@@ -182,12 +198,15 @@ single `vX.Y.Z` tag. Per-manifest `version` fields are not part of this (see
 above).
 
 1. `bun run bump <version>` — sets the npm `version` of both `package.json`s and
-   regenerates `catalog.json`.
+   `ENGINE_VERSION` in `packages/dango/src/version.ts`, and regenerates
+   `catalog.json`.
 2. Move the `CHANGELOG.md` `[Unreleased]` entries into a dated `[X.Y.Z]` section.
 3. `bun run check` — confirm the tree is green.
 4. `git commit -am "chore: release vX.Y.Z"` (via a PR, or direct to `main` if
    unprotected).
 5. Tag the release commit and push: `git tag -a vX.Y.Z -m vX.Y.Z && git push --follow-tags`.
+6. Start the next release on main: `bun run bump X.Y.(Z+1)-dev` and commit it as
+   `chore: start vX.Y.(Z+1) development`. Never tag a `-dev` version.
 
 Pushing the tag triggers `.github/workflows/release.yml`, which first fails if
 the tag does not match both `package.json` versions, then publishes both packages

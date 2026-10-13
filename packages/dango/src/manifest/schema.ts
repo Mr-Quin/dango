@@ -184,7 +184,7 @@ export const zStep = z.discriminatedUnion('type', [
 ])
 export type Step = z.infer<typeof zStep>
 
-const zPipeline = z.object({
+export const zPipeline = z.object({
   /** Per-call input names the engine validates at run time. */
   inputs: z.array(z.string()).default([]),
   steps: z.array(zStep).min(1),

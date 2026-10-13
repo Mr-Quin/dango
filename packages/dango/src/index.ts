@@ -42,9 +42,21 @@ export { helpers } from './helpers/registry.js'
 export {
   checkManifestCompatibility,
   type ManifestCompatibility,
+  type ManifestIncompatibility,
   type ManifestRequirements,
   SUPPORTED_API_VERSIONS,
 } from './manifest/compatibility.js'
+export {
+  ENGINE_FEATURES,
+  type EngineFeature,
+  MIN_ENGINE_VERSION_SINCE,
+  requiredMinEngineVersion,
+} from './manifest/features.js'
+export {
+  loadManifest,
+  type ManifestIssue,
+  type ManifestLoadResult,
+} from './manifest/load.js'
 export {
   getDisplayStrings,
   type ResolvedDisplayStrings,

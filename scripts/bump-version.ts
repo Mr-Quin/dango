@@ -63,6 +63,18 @@ function main(): void {
 
   execFileSync('bun', ['run', 'catalog'], { cwd: repoRoot, stdio: 'inherit' })
 
+  if (version.includes('-')) {
+    console.log(
+      [
+        '',
+        `Bumped both packages to ${version}. Commit it as:`,
+        `  git commit -am "chore: start v${version.split('-')[0]} development"`,
+        '',
+      ].join('\n')
+    )
+    return
+  }
+
   console.log(
     [
       '',
