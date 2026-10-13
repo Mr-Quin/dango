@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'bun:test'
-import { engineRelease } from '../manifest/compatibility.js'
+import {
+  compareEngineVersions,
+  engineRelease,
+} from '../manifest/compatibility.js'
 import {
   ENGINE_FEATURES,
   engineSurface,
@@ -7,17 +10,17 @@ import {
   requiredMinEngineVersion,
   surfaceUsedBy,
 } from '../manifest/features.js'
-import { compareEngineVersions } from '../manifest/compatibility.js'
 import { ENGINE_VERSION } from '../version.js'
 
 /**
- * Pins the manifest surface so a new field, step type or helper cannot ship
- * without an ENGINE_FEATURES entry, and covers how a manifest's required
- * minEngineVersion is computed from the surface it uses.
+ * Pins the manifest surface, down to nested fields and enum values, so new
+ * surface cannot ship without an ENGINE_FEATURES entry, and covers how a
+ * manifest's lowest minEngineVersion is computed from the surface it uses.
  */
 
-// The surface every engine that reads minEngineVersion understands. Do not
-// add to this list: add an ENGINE_FEATURES entry instead.
+// The surface of 0.10.0, the first engine that reads minEngineVersion. While
+// main is 0.10.0-dev, surface added for that release goes here; after it,
+// new surface goes into ENGINE_FEATURES.
 const BASELINE_SURFACE = [
   'helper.$aesCbcDecrypt',
   'helper.$aesCbcEncrypt',
@@ -43,6 +46,8 @@ const BASELINE_SURFACE = [
   'manifest.apiVersion',
   'manifest.configSchema',
   'manifest.cookieSet',
+  'manifest.cookieSet.title',
+  'manifest.cookieSet.url',
   'manifest.danmaku',
   'manifest.episodes',
   'manifest.hosts',
@@ -56,19 +61,35 @@ const BASELINE_SURFACE = [
   'manifest.search',
   'manifest.season',
   'manifest.urlMatch',
+  'manifest.urlMatch[].host',
+  'manifest.urlMatch[].path',
   'manifest.version',
+  'pipeline',
   'pipeline.inputs',
   'pipeline.map',
   'pipeline.output',
   'pipeline.steps',
   'pipeline.when',
+  'request',
   'request.acceptStatus',
   'request.body',
   'request.credentials',
+  'request.credentials=include',
+  'request.credentials=omit',
   'request.decompress',
+  'request.decompress=deflate',
+  'request.decompress=deflate-raw',
+  'request.decompress=gzip',
   'request.format',
+  'request.format=json',
+  'request.format=jsonp',
+  'request.format=proto',
+  'request.format=text',
+  'request.format=xml',
   'request.headers',
   'request.method',
+  'request.method=GET',
+  'request.method=POST',
   'request.protoMessage',
   'request.protoSchema',
   'request.query',
@@ -90,6 +111,8 @@ const BASELINE_SURFACE = [
   'step.forEach.throttleMs',
   'step.http',
   'step.http.cache',
+  'step.http.cache.key',
+  'step.http.cache.ttlSeconds',
   'step.http.extract',
   'step.http.extractHeaders',
   'step.http.id',
@@ -131,7 +154,7 @@ describe('engine surface', () => {
     ).toEqual([])
   })
 
-  it('dates every feature after the first engine that reads minEngineVersion and no later than this one', () => {
+  it('dates every feature after the baseline release and no later than this one', () => {
     for (const feature of ENGINE_FEATURES) {
       expect(
         compareEngineVersions(feature.since, MIN_ENGINE_VERSION_SINCE)
@@ -141,22 +164,45 @@ describe('engine surface', () => {
       ).toBeLessThanOrEqual(0)
     }
   })
+
+  it('names nested fields and enum values', () => {
+    const surface = engineSurface()
+    for (const name of [
+      'manifest.cookieSet.title',
+      'manifest.urlMatch[].host',
+      'step.http.cache.ttlSeconds',
+      'step.forEach.collect',
+      'pipeline.when',
+      'request.decompress=gzip',
+    ]) {
+      expect(surface).toContain(name)
+    }
+  })
 })
 
 describe('surfaceUsedBy', () => {
-  it('names the fields, steps, request options and helpers a manifest uses', () => {
-    const used = surfaceUsedBy({ ...base, search })
+  it('names the fields, enum values, steps and helpers a manifest uses', () => {
+    const used = surfaceUsedBy({
+      ...base,
+      urlMatch: [{ host: 'example.com', path: '/' }],
+      cookieSet: { url: 'https://example.com', title: 'Log in' },
+      search,
+    })
     for (const name of [
       'manifest.search',
+      'manifest.urlMatch[].host',
+      'manifest.cookieSet.title',
       'pipeline.map',
       'step.http',
-      'step.http.cache',
+      'step.http.cache.ttlSeconds',
       'request.decompress',
+      'request.decompress=gzip',
       'helper.$md5',
     ]) {
       expect(used.has(name)).toBe(true)
     }
     expect(used.has('step.forEach')).toBe(false)
+    expect(used.has('request.decompress=deflate')).toBe(false)
   })
 
   it('reads every variant of a pipeline', () => {
@@ -170,12 +216,34 @@ describe('surfaceUsedBy', () => {
     expect(used.has('pipeline.when')).toBe(true)
     expect(used.has('step.assign.values')).toBe(true)
   })
+
+  it('names fields, enum values and step types this engine does not know', () => {
+    const used = surfaceUsedBy({
+      ...base,
+      search: {
+        steps: [
+          { type: 'http', request: { url: "'u'", decompress: 'br' } },
+          { type: 'graphql', query: '{}' },
+        ],
+        output: '[]',
+        paginate: true,
+      },
+    })
+    for (const name of [
+      'request.decompress=br',
+      'step.graphql',
+      'step.graphql.query',
+      'pipeline.paginate',
+    ]) {
+      expect(used.has(name)).toBe(true)
+    }
+  })
 })
 
 describe('requiredMinEngineVersion', () => {
   const features = [
     { surface: 'pipeline.map', since: '0.11.0' },
-    { surface: 'request.decompress', since: '0.12.2' },
+    { surface: 'request.decompress=gzip', since: '0.12.2' },
     { surface: 'step.forEach', since: '0.13.0' },
     { surface: 'helper.$md5', since: MIN_ENGINE_VERSION_SINCE },
   ]

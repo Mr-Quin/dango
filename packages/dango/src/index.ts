@@ -41,6 +41,7 @@ export {
 export { helpers } from './helpers/registry.js'
 export {
   checkManifestCompatibility,
+  compareEngineVersions,
   type ManifestCompatibility,
   type ManifestIncompatibility,
   type ManifestRequirements,

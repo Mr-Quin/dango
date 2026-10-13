@@ -57,15 +57,21 @@ every engine that accepts its `apiVersion`. `loadManifest(raw)` returns `ok`,
 checks compatibility first, so a manifest written for a newer engine reads as
 incompatible even when this engine cannot parse it.
 
-Which value to declare is computed, not chosen. `ENGINE_FEATURES`
-(`packages/dango/src/manifest/features.ts`) lists every field, step type and
-helper added since the field itself (0.10.0), with the release that ships it, and
-`requiredMinEngineVersion(manifest)` returns the newest release among the ones the
-manifest uses. The manifests test fails unless each manifest declares exactly that
-value, and an engine test fails when the schema or helper registry gains surface
-that has no `ENGINE_FEATURES` entry. Between releases, main carries the next
-release as a `-dev` prerelease (`0.10.1-dev`), which counts as that release, so a
-feature added on main is dated with the release it will ship in.
+The lowest value to declare is computed, not chosen. `ENGINE_FEATURES`
+(`packages/dango/src/manifest/features.ts`) lists the surface added after the
+field itself shipped (0.10.0): fields at any depth, enum values, step types and
+helpers, each with the release that ships it. `requiredMinEngineVersion(manifest)`
+returns the newest release among the ones the manifest uses. The manifests test
+fails when a manifest declares less than that; it may declare more, for example
+to require a release that fixed behaviour it relies on. An engine test walks the
+schema and the helper registry and fails when they gain surface that is neither
+in the 0.10.0 baseline nor in `ENGINE_FEATURES`.
+
+Between releases, main carries the next minor release as a `-dev` prerelease
+(`0.11.0-dev`), which counts as that release, so a feature added on main is dated
+with the release it will ship in. It is the next minor, not the next patch: new
+surface is a minor change, and a patch release cut from the release branch must
+never satisfy a requirement for surface it does not have.
 
 `catalog.json` copies the field into the manifest's entry, and
 `checkManifestCompatibility({ apiVersion, minEngineVersion })` applies the same
@@ -205,8 +211,9 @@ above).
 4. `git commit -am "chore: release vX.Y.Z"` (via a PR, or direct to `main` if
    unprotected).
 5. Tag the release commit and push: `git tag -a vX.Y.Z -m vX.Y.Z && git push --follow-tags`.
-6. Start the next release on main: `bun run bump X.Y.(Z+1)-dev` and commit it as
-   `chore: start vX.Y.(Z+1) development`. Never tag a `-dev` version.
+6. Start the next release on main: `bun run bump X.(Y+1).0-dev` and commit it as
+   `chore: start vX.(Y+1).0 development`. Never tag a `-dev` version; the release
+   workflow rejects any tag with a prerelease suffix.
 
 Pushing the tag triggers `.github/workflows/release.yml`, which first fails if
 the tag does not match both `package.json` versions, then publishes both packages

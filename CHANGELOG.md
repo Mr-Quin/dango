@@ -39,7 +39,7 @@ message text need updating, so this ships as `0.10.0`.
 - `ENGINE_FEATURES` and `requiredMinEngineVersion` (engine): the surface added
   since 0.10.0 with the release that ships it, and the `minEngineVersion` a
   manifest using it must declare. The manifests tests check every manifest
-  declares exactly that value.
+  declares at least that value.
 
 ### Changed
 

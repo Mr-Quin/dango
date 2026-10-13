@@ -3,6 +3,7 @@ import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'bun:test'
 import {
+  compareEngineVersions,
   ENGINE_VERSION,
   requiredMinEngineVersion,
   zManifest,
@@ -86,12 +87,18 @@ describe('catalog.json', () => {
     })
   })
 
-  it('declares exactly the minEngineVersion each manifest needs', () => {
+  it('declares at least the minEngineVersion each manifest needs', () => {
     for (const entry of generateCatalog().manifests) {
       const manifest = readManifest(entry.file.replace('src/manifests/', ''))
-      expect(manifest.minEngineVersion, entry.id).toBe(
-        requiredMinEngineVersion(manifest)
-      )
+      const required = requiredMinEngineVersion(manifest)
+      if (required === undefined) {
+        continue
+      }
+      expect(manifest.minEngineVersion, entry.id).toBeDefined()
+      expect(
+        compareEngineVersions(manifest.minEngineVersion ?? '0.0.0', required),
+        `${entry.id} needs minEngineVersion ${required}`
+      ).toBeGreaterThanOrEqual(0)
     }
   })
 

@@ -206,7 +206,7 @@ export type Pipeline = z.infer<typeof zPipeline>
 // Variants let a single logical pipeline pick between branches based on a
 // `when` predicate against the initial inputs (e.g. Bilibili XML vs protobuf
 // danmaku). Provider identity stays the same across variants.
-const zVariantPipeline = zPipeline.extend({
+export const zVariantPipeline = zPipeline.extend({
   /** Truthy `when` selects the variant; first match wins. Omit for default. */
   when: zExpr.optional(),
 })
