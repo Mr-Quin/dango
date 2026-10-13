@@ -4,7 +4,9 @@ export {
   type FetchLike,
   HostNotAllowedError,
   type HostRejectionCode,
+  HttpStatusError,
   MAX_BODY_BYTES,
+  NetworkError,
 } from './engine/http.js'
 export { isPrivateHost, isPrivateHostPattern } from './engine/host-policy.js'
 export { Base64DecodeError } from './helpers/errors.js'

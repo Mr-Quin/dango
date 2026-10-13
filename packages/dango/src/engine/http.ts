@@ -86,6 +86,38 @@ export class HostNotAllowedError extends Error {
   }
 }
 
+/**
+ * The upstream answered with a status outside 2xx and the step's
+ * `acceptStatus` list.
+ */
+export class HttpStatusError extends Error {
+  readonly code = 'http-status'
+  readonly status: number
+  /** The resolved request URL. */
+  readonly url: string
+  constructor(status: number, url: string) {
+    super(`HTTP ${status} for ${url}`)
+    this.name = 'HttpStatusError'
+    this.status = status
+    this.url = url
+  }
+}
+
+/**
+ * The host's `FetchLike` rejected before producing a response (offline, DNS,
+ * TLS, CORS, connection reset). The host's own error is kept as `cause`.
+ */
+export class NetworkError extends Error {
+  readonly code = 'network'
+  /** The resolved request URL. */
+  readonly url: string
+  constructor(url: string, options?: { cause?: unknown }) {
+    super(`network request failed for ${url}`, options)
+    this.name = 'NetworkError'
+    this.url = url
+  }
+}
+
 function allowlistMatches(host: string, allowed: string[]): boolean {
   return allowed.some((pattern) => {
     if (pattern === '*') return true
@@ -283,8 +315,7 @@ export async function executeRequest(
   const headers = await buildHeaders(spec, context)
   const rewriteHeaders = await buildRewriteHeaders(spec, context)
   const body = await buildBody(spec, context)
-  const fetcher = options.fetcher ?? defaultFetcher
-  const res = await fetcher(url, {
+  const res = await sendRequest(url, options, {
     method: spec.method,
     headers,
     body,
@@ -295,7 +326,7 @@ export async function executeRequest(
   const isOk = res.status >= 200 && res.status < 300
   const isAccepted = spec.acceptStatus.includes(res.status)
   if (!isOk && !isAccepted) {
-    throw new Error(`HTTP ${res.status} for ${url}`)
+    throw new HttpStatusError(res.status, url)
   }
   const responseHeaders: Record<string, string> = {}
   res.headers.forEach((v, k) => {
@@ -303,6 +334,24 @@ export async function executeRequest(
   })
   const parsedBody = await parseBody(spec, res, options)
   return { body: parsedBody, headers: responseHeaders, status: res.status }
+}
+
+async function sendRequest(
+  url: string,
+  options: HttpRunOptions,
+  init: Parameters<FetchLike>[1]
+): Promise<HttpResponse> {
+  const fetcher = options.fetcher ?? defaultFetcher
+  try {
+    return await fetcher(url, init)
+  } catch (err) {
+    // Hosts reject an aborted fetch with whatever their platform throws
+    // (a DOMException in browsers), so the signal decides, not the error.
+    if (err instanceof AbortedError || options.signal?.aborted) {
+      throw new AbortedError()
+    }
+    throw new NetworkError(url, { cause: err })
+  }
 }
 
 // UTF-16 length is a cheap lower bound on byte size, so a string whose code-unit

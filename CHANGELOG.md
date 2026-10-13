@@ -15,7 +15,19 @@ The engine version and the manifest `apiVersion` are tracked independently.
 
 ### Added
 
+- `@mr-quin/dango`: typed request failures, exported from the package root.
+  A non-2xx status outside `acceptStatus` throws `HttpStatusError` (`code:
+'http-status'`, `status`, `url`) instead of a plain `Error`; the message is
+  unchanged. A rejection from the host's `FetchLike` throws `NetworkError`
+  (`code: 'network'`, `url`) with the host's error as `cause`. Hosts can
+  classify both with `instanceof` instead of matching message text.
+
 ### Changed
+
+- `@mr-quin/dango`: a `FetchLike` rejection while the run's signal is aborted
+  surfaces as `AbortedError`, whatever the host's fetch threw. Under
+  `continueOnError`, an aborted request now propagates instead of being skipped
+  as a failed iteration.
 
 ### Deprecated
 
