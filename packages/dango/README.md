@@ -6,7 +6,7 @@ A dango is a stack of items on a skewer. Each source is a stack of pipeline step
 
 ## What it is
 
-- **Schema** ([`src/manifest/schema.ts`](src/manifest/schema.ts)), zod definitions for manifests. A manifest has `apiVersion`, `id`, `name`, `hosts`, optional `configSchema`/`urlMatch`/`protoDescriptors`, and three pipelines: `search`, `episodes`, `danmaku`.
+- **Schema** ([`src/manifest/schema.ts`](src/manifest/schema.ts)), zod definitions for manifests. A manifest has `apiVersion`, `id`, `name`, `hosts`, optional `configSchema`/`urlMatch`/`protoDescriptors`, and three pipelines: `search`, `episodes`, `danmaku`. `validateConfig` ([`src/manifest/configValidation.ts`](src/manifest/configValidation.ts)) checks a config against a manifest's `configSchema`.
 - **Pipelines**: a list of named steps + a final JSONata `output` expression. Three step types:
   - `http`: one request, with optional response extraction
   - `assign`: pure transform over the current context
