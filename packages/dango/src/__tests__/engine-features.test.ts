@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+import { z } from 'zod'
 import {
   compareEngineVersions,
   engineRelease,
@@ -8,6 +9,8 @@ import {
   engineSurface,
   MIN_ENGINE_VERSION_SINCE,
   requiredMinEngineVersion,
+  schemaSurface,
+  schemaSurfaceUsedBy,
   surfaceUsedBy,
 } from '../manifest/features.js'
 import { ENGINE_VERSION } from '../version.js'
@@ -177,6 +180,26 @@ describe('engine surface', () => {
     ]) {
       expect(surface).toContain(name)
     }
+  })
+})
+
+describe('schemaSurface', () => {
+  it('fails on a schema type it does not know how to walk', () => {
+    expect(() => schemaSurface(z.object({ at: z.date() }), 'x')).toThrow(
+      'cannot enumerate date at x.at'
+    )
+  })
+
+  it('reads a value against every object option of a union', () => {
+    const schema = z.union([
+      z.object({ kind: z.enum(['a', 'c']) }),
+      z.object({ mode: z.enum(['b', 'd']) }),
+    ])
+
+    const used = schemaSurfaceUsedBy(schema, { kind: 'a', mode: 'b' }, 'x')
+
+    expect(used.has('x.kind=a')).toBe(true)
+    expect(used.has('x.mode=b')).toBe(true)
   })
 })
 

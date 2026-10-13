@@ -63,6 +63,20 @@ function unwrap(schema: z.core.$ZodType): z.core.$ZodType {
   return schema
 }
 
+// Values with no surface below them. A record's keys and a lazy schema's
+// contents (configSchema) are data, not manifest surface.
+function isLeaf(schema: z.core.$ZodType): boolean {
+  return (
+    schema instanceof z.core.$ZodString ||
+    schema instanceof z.ZodNumber ||
+    schema instanceof z.ZodBoolean ||
+    schema instanceof z.ZodLiteral ||
+    schema instanceof z.ZodUnknown ||
+    schema instanceof z.ZodRecord ||
+    schema instanceof z.ZodLazy
+  )
+}
+
 function enumerate(
   schema: z.core.$ZodType,
   at: string,
@@ -97,13 +111,26 @@ function enumerate(
     for (const option of schema.options) {
       out.add(`${path}=${String(option)}`)
     }
+  } else if (!isLeaf(schema)) {
+    throw new Error(
+      `cannot enumerate ${schema._zod.def.type} at ${path}; teach features.ts about it`
+    )
   }
+}
+
+/** Every surface name a schema defines, rooted at `root`. */
+export function schemaSurface(
+  schema: z.core.$ZodType,
+  root: string
+): Set<SurfaceName> {
+  const names = new Set<SurfaceName>()
+  enumerate(schema, root, names)
+  return names
 }
 
 /** Every surface name this engine's schema and helper registry define. */
 export function engineSurface(): SurfaceName[] {
-  const names = new Set<SurfaceName>()
-  enumerate(zManifest, 'manifest', names)
+  const names = schemaSurface(zManifest, 'manifest')
   for (const name of Object.keys(helpers)) {
     names.add(`helper.$${name}`)
   }
@@ -119,7 +146,7 @@ function matchesOption(option: z.core.$ZodType, value: unknown): boolean {
   if (inner instanceof z.ZodArray) {
     return Array.isArray(value)
   }
-  if (inner instanceof z.ZodObject) {
+  if (inner instanceof z.ZodObject || inner instanceof z.ZodRecord) {
     return isRecord(value)
   }
   return !Array.isArray(value) && !isRecord(value)
@@ -189,14 +216,28 @@ function detect(
       }
     }
   } else if (schema instanceof z.ZodUnion) {
+    // Every option the value could be: names are paths, so walking more than
+    // one adds nothing wrong, and picking one could miss an enum value.
     const options: readonly z.core.$ZodType[] = schema.options
-    const option = options.find((candidate) => matchesOption(candidate, value))
-    if (option) {
-      detect(option, value, path, out)
+    for (const option of options) {
+      if (matchesOption(option, value)) {
+        detect(option, value, path, out)
+      }
     }
   } else if (schema instanceof z.ZodEnum && typeof value === 'string') {
     out.add(`${path}=${value}`)
   }
+}
+
+/** The surface names of `schema`, rooted at `root`, that `raw` uses. */
+export function schemaSurfaceUsedBy(
+  schema: z.core.$ZodType,
+  raw: unknown,
+  root: string
+): Set<SurfaceName> {
+  const used = new Set<SurfaceName>()
+  detect(schema, raw, root, used)
+  return used
 }
 
 function collectStrings(value: unknown, out: string[]): void {
@@ -223,8 +264,7 @@ function collectStrings(value: unknown, out: string[]): void {
  * know.
  */
 export function surfaceUsedBy(raw: unknown): Set<SurfaceName> {
-  const used = new Set<SurfaceName>()
-  detect(zManifest, raw, 'manifest', used)
+  const used = schemaSurfaceUsedBy(zManifest, raw, 'manifest')
   const strings: string[] = []
   collectStrings(raw, strings)
   for (const text of strings) {
