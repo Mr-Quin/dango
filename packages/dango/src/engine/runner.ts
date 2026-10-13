@@ -148,9 +148,9 @@ async function runWithConcurrency<T, R>(
   // Linked to the caller's signal: a failure can cancel the siblings, and a
   // parent abort still cancels everything.
   const controller = new AbortController()
-  const onParentAbort = () => controller.abort()
+  const onParentAbort = () => controller.abort(signal?.reason)
   if (signal) {
-    if (signal.aborted) controller.abort()
+    if (signal.aborted) controller.abort(signal.reason)
     else signal.addEventListener('abort', onParentAbort, { once: true })
   }
   const childSignal = controller.signal

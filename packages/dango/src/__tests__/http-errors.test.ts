@@ -191,8 +191,8 @@ describe('body read failures', () => {
   })
 })
 
-describe('forEach with continueOnError', () => {
-  function loopManifest() {
+describe('forEach failures', () => {
+  function loopManifest(forEach: Record<string, unknown> = {}) {
     return zManifest.parse({
       apiVersion: 1,
       id: 'loop',
@@ -211,6 +211,7 @@ describe('forEach with continueOnError', () => {
               method: 'GET',
               url: "'https://api.example.com/x?i=' & $string(i)",
             },
+            ...forEach,
           },
         ],
         output: 'loop',
@@ -231,6 +232,30 @@ describe('forEach with continueOnError', () => {
       { fetcher, continueOnError: true }
     )
     expect(out).toHaveLength(2)
+  })
+
+  it('keeps the timeout reason when a concurrent loop is aborted', async () => {
+    const m = loopManifest({ concurrency: 3 })
+    const controller = new AbortController()
+    const reason = new DOMException('signal timed out', 'TimeoutError')
+    const fetcher: FetchLike = (_url, init) =>
+      new Promise((_resolve, reject) => {
+        const fail = () => reject(new DOMException('aborted', 'AbortError'))
+        if (init?.signal?.aborted) {
+          fail()
+          return
+        }
+        init?.signal?.addEventListener('abort', fail, { once: true })
+        controller.abort(reason)
+      })
+    const err = await runPipeline(
+      m,
+      m.search!,
+      {},
+      { fetcher, signal: controller.signal }
+    ).catch((e: unknown) => e)
+    expect(err).toBeInstanceOf(AbortedError)
+    expect((err as AbortedError).cause).toBe(reason)
   })
 
   it('propagates an abort that lands during a body read', async () => {
