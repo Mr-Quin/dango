@@ -13,21 +13,30 @@ The engine version and the manifest `apiVersion` are tracked independently.
 
 ## [Unreleased]
 
+Typed request failures. Hosts that matched fetch failures by error name or
+message text need updating, so this ships as `0.10.0`.
+
 ### Added
 
 - `@mr-quin/dango`: typed request failures, exported from the package root.
-  A non-2xx status outside `acceptStatus` throws `HttpStatusError` (`code:
-'http-status'`, `status`, `url`) instead of a plain `Error`; the message is
-  unchanged. A rejection from the host's `FetchLike` throws `NetworkError`
-  (`code: 'network'`, `url`) with the host's error as `cause`. Hosts can
-  classify both with `instanceof` instead of matching message text.
+  A non-2xx status outside `acceptStatus` throws `HttpStatusError` (`status`,
+  `url`); the message is unchanged. A rejected `FetchLike`, or a response body
+  that fails to arrive, throws `NetworkError` (`url`) with the host's error as
+  `cause`. Hosts classify both with `instanceof`.
 
 ### Changed
 
-- `@mr-quin/dango`: a `FetchLike` rejection while the run's signal is aborted
-  surfaces as `AbortedError`, whatever the host's fetch threw. Under
-  `continueOnError`, an aborted request now propagates instead of being skipped
-  as a failed iteration.
+- **BREAKING:** `@mr-quin/dango`: a failed fetch or body read no longer
+  surfaces the host's own error (a `TypeError` or `DOMException`). It is
+  wrapped in `NetworkError`, or becomes `AbortedError` when the run's signal
+  is aborted, whatever the host threw. `AbortedError` carries the signal's
+  reason as `cause`.
+- `@mr-quin/dango`: under `continueOnError`, a request aborted during the fetch
+  or the body read now propagates instead of being skipped as a failed
+  iteration.
+- `@mr-quin/dango-manifests`: the health probe classifies failures with
+  `instanceof HttpStatusError` and `NetworkError` instead of matching message
+  text, so a blocked host is reported as blocked rather than broken.
 
 ### Deprecated
 

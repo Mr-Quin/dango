@@ -125,11 +125,11 @@ function makeThrottle(
       }, delay)
       const onAbort = () => {
         clearTimeout(timer)
-        reject(new AbortedError())
+        reject(new AbortedError({ cause: signal?.reason }))
       }
       if (signal?.aborted) {
         clearTimeout(timer)
-        reject(new AbortedError())
+        reject(new AbortedError({ cause: signal?.reason }))
         return
       }
       signal?.addEventListener('abort', onAbort, { once: true })

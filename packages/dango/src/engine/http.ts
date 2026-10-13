@@ -91,7 +91,6 @@ export class HostNotAllowedError extends Error {
  * `acceptStatus` list.
  */
 export class HttpStatusError extends Error {
-  readonly code = 'http-status'
   readonly status: number
   /** The resolved request URL. */
   readonly url: string
@@ -104,11 +103,11 @@ export class HttpStatusError extends Error {
 }
 
 /**
- * The host's `FetchLike` rejected before producing a response (offline, DNS,
- * TLS, CORS, connection reset). The host's own error is kept as `cause`.
+ * The host's `FetchLike` rejected, or the response body failed to arrive
+ * (offline, DNS, TLS, CORS, connection reset). The host's own error is kept
+ * as `cause`.
  */
 export class NetworkError extends Error {
-  readonly code = 'network'
   /** The resolved request URL. */
   readonly url: string
   constructor(url: string, options?: { cause?: unknown }) {
@@ -332,25 +331,44 @@ export async function executeRequest(
   res.headers.forEach((v, k) => {
     responseHeaders[k.toLowerCase()] = v
   })
-  const parsedBody = await parseBody(spec, res, options)
+  const parsedBody = await parseBody(spec, res, url, options)
   return { body: parsedBody, headers: responseHeaders, status: res.status }
 }
 
-async function sendRequest(
+function sendRequest(
   url: string,
   options: HttpRunOptions,
   init: Parameters<FetchLike>[1]
 ): Promise<HttpResponse> {
   const fetcher = options.fetcher ?? defaultFetcher
+  return withTransportErrors(() => fetcher(url, init), url, options.signal)
+}
+
+// Hosts reject an aborted fetch or body read with whatever their platform
+// throws (a DOMException in browsers), so the signal decides, not the error.
+function classifyTransportError(
+  err: unknown,
+  url: string,
+  signal: AbortSignal | undefined
+): Error {
+  if (err instanceof AbortedError) {
+    return err
+  }
+  if (signal?.aborted) {
+    return new AbortedError({ cause: signal.reason })
+  }
+  return new NetworkError(url, { cause: err })
+}
+
+async function withTransportErrors<T>(
+  read: () => Promise<T>,
+  url: string,
+  signal: AbortSignal | undefined
+): Promise<T> {
   try {
-    return await fetcher(url, init)
+    return await read()
   } catch (err) {
-    // Hosts reject an aborted fetch with whatever their platform throws
-    // (a DOMException in browsers), so the signal decides, not the error.
-    if (err instanceof AbortedError || options.signal?.aborted) {
-      throw new AbortedError()
-    }
-    throw new NetworkError(url, { cause: err })
+    throw classifyTransportError(err, url, signal)
   }
 }
 
@@ -376,9 +394,13 @@ async function decompressBytes(
 async function parseBody(
   spec: RequestSpec,
   res: HttpResponse,
+  url: string,
   options: HttpRunOptions
 ): Promise<unknown> {
   const cap = resolveBodyCap(options.maxBodyBytes)
+  const bytes = () =>
+    withTransportErrors(() => res.bytes(), url, options.signal)
+  const text = () => withTransportErrors(() => res.text(), url, options.signal)
   if (spec.format === 'proto') {
     if (options.protoRegistry === undefined) {
       throw new Error(
@@ -390,24 +412,24 @@ async function parseBody(
         `format: 'proto' requires protoSchema and protoMessage fields`
       )
     }
-    const bytes = await res.bytes()
-    assertWithinCap(bytes, cap)
+    const body = await bytes()
+    assertWithinCap(body, cap)
     return options.protoRegistry.decode(
       spec.protoSchema,
       spec.protoMessage,
-      bytes
+      body
     )
   }
   if (spec.decompress) {
-    const bytes = await res.bytes()
-    assertWithinCap(bytes, cap)
-    const text = await decompressBytes(bytes, spec.decompress)
-    assertWithinCap(text, cap)
-    return parseTextBody(spec.format, text)
+    const compressed = await bytes()
+    assertWithinCap(compressed, cap)
+    const decoded = await decompressBytes(compressed, spec.decompress)
+    assertWithinCap(decoded, cap)
+    return parseTextBody(spec.format, decoded)
   }
-  const text = await res.text()
-  assertWithinCap(text, cap)
-  return parseTextBody(spec.format, text)
+  const raw = await text()
+  assertWithinCap(raw, cap)
+  return parseTextBody(spec.format, raw)
 }
 
 const defaultFetcher: FetchLike = async (input, init) => {
@@ -423,14 +445,14 @@ const defaultFetcher: FetchLike = async (input, init) => {
 }
 
 export class AbortedError extends Error {
-  constructor() {
-    super('aborted')
+  constructor(options?: { cause?: unknown }) {
+    super('aborted', options)
     this.name = 'AbortedError'
   }
 }
 
 export function throwIfAborted(signal: AbortSignal | undefined): void {
   if (signal?.aborted) {
-    throw new AbortedError()
+    throw new AbortedError({ cause: signal.reason })
   }
 }
