@@ -181,6 +181,24 @@ describe('validateConfig', () => {
     ).toEqual([])
   })
 
+  it('matches a pattern with Unicode semantics', () => {
+    const schema: ConfigSchema = {
+      type: 'string',
+      pattern: String.raw`^\p{Script=Han}+$`,
+    }
+    expect(codes(schema, '弹幕')).toEqual([])
+    expect(codes(schema, 'abc')).toEqual([['', 'pattern']])
+  })
+
+  it('ignores keywords outside the supported subset', () => {
+    const schema: ConfigSchema = {
+      type: 'string',
+      allOf: [{ minLength: 10 }],
+      format: 'hostname',
+    }
+    expect(codes(schema, 'a')).toEqual([])
+  })
+
   it('ignores a pattern that is not a valid regex', () => {
     expect(codes({ type: 'string', pattern: '(' }, 'anything')).toEqual([])
   })

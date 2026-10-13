@@ -208,11 +208,21 @@ function validateBranches(
   }
 }
 
+// JSON Schema patterns are ECMA-262 regexes with Unicode semantics.
 function compilePattern(pattern: string): RegExp | undefined {
   try {
-    return new RegExp(pattern)
+    return new RegExp(pattern, 'u')
   } catch {
     return undefined
+  }
+}
+
+// URL.canParse is missing from browsers some hosts still support.
+function isUrl(value: string): boolean {
+  try {
+    return new URL(value).href.length > 0
+  } catch {
+    return false
   }
 }
 
@@ -241,10 +251,7 @@ function validateString(
       out.add(path, 'pattern', `Must match ${pattern}`, { pattern })
     }
   }
-  if (
-    (schema.format === 'uri' || schema.format === 'url') &&
-    !URL.canParse(value)
-  ) {
+  if ((schema.format === 'uri' || schema.format === 'url') && !isUrl(value)) {
     out.add(path, 'format', 'Not a valid URL', { format: schema.format })
   }
 }
@@ -321,9 +328,13 @@ function validateObject(
  * Checks a config against a manifest's `configSchema`. Supports the subset the
  * manifests use: `type`, `enum`, labelled enums (`oneOf`/`anyOf` of `const`),
  * `required`, `anyOf` key alternatives, general `oneOf`/`anyOf` subschemas,
- * `properties`, `items`, `additionalProperties: false`, and the string, number
- * and array bounds. `undefined`, `null` and `''` count as not set. An empty
- * list means the config is valid; without a schema every config is.
+ * `properties`, `items`, `additionalProperties: false`, `minLength`,
+ * `maxLength`, `pattern`, `format: 'uri' | 'url'`, `minimum`, `maximum`,
+ * `minItems` and `maxItems`. Any other keyword, such as `allOf`, `$ref` or
+ * another `format`, is ignored rather than reported, so a schema that relies
+ * on one accepts values it would otherwise reject. `undefined`, `null` and
+ * `''` count as not set. An empty list means the config is valid; without a
+ * schema every config is.
  */
 export function validateConfig(
   schema: ConfigSchema | undefined,

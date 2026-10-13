@@ -49,7 +49,8 @@ updating, so this ships as `0.10.0`.
   alternatives, general `oneOf`/`anyOf`, nested `properties`/`items`,
   `additionalProperties: false`, and string, number and array bounds. A value
   of `undefined`, `null` or `''` counts as not set, matching how the manifests
-  read config.
+  read config. Keywords outside that list (`allOf`, `$ref`, other `format`s)
+  are ignored, and `pattern` is matched with the `u` flag.
 
 ### Changed
 
