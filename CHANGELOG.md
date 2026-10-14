@@ -13,9 +13,23 @@ The engine version and the manifest `apiVersion` are tracked independently.
 
 ## [Unreleased]
 
-Typed request failures, and manifests that declare the engine they need.
-Hosts that matched fetch failures by error name or message text need
-updating, so this ships as `0.10.0`.
+### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [0.10.0] - 2026-10-13
+
+Typed request failures, manifests that declare the engine they need, and a
+validator hosts can use for manifest config. Hosts that matched fetch failures
+by error name or message text need updating, so this is a minor release.
 
 ### Added
 
@@ -67,14 +81,6 @@ updating, so this ships as `0.10.0`.
 - `@mr-quin/dango-manifests`: the health probe classifies failures with
   `instanceof HttpStatusError` and `NetworkError` instead of matching message
   text, so a blocked host is reported as blocked rather than broken.
-
-### Deprecated
-
-### Removed
-
-### Fixed
-
-### Security
 
 ## [0.9.1] - 2026-10-12
 
