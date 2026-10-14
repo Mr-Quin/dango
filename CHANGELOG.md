@@ -13,8 +13,9 @@ The engine version and the manifest `apiVersion` are tracked independently.
 
 ## [Unreleased]
 
-Typed request failures. Hosts that matched fetch failures by error name or
-message text need updating, so this ships as `0.10.0`.
+Typed request failures, and manifests that declare the engine they need.
+Hosts that matched fetch failures by error name or message text need
+updating, so this ships as `0.10.0`.
 
 ### Added
 
