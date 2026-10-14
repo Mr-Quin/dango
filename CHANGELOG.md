@@ -13,8 +13,9 @@ The engine version and the manifest `apiVersion` are tracked independently.
 
 ## [Unreleased]
 
-Typed request failures. Hosts that matched fetch failures by error name or
-message text need updating, so this ships as `0.10.0`.
+Typed request failures, and manifests that declare the engine they need.
+Hosts that matched fetch failures by error name or message text need
+updating, so this ships as `0.10.0`.
 
 ### Added
 
@@ -23,6 +24,23 @@ message text need updating, so this ships as `0.10.0`.
   `url`); the message is unchanged. A rejected `FetchLike`, or a response body
   that fails to arrive, throws `NetworkError` (`url`) with the host's error as
   `cause`. Hosts classify both with `instanceof`.
+- Manifest field `minEngineVersion` (`MAJOR.MINOR.PATCH`): the lowest engine
+  release a manifest runs on, for manifests that use an additive feature.
+  `zManifest` rejects the manifest on an older engine. `apiVersion` stays `1`
+  (engine accepts 1); manifests without the field load as before.
+- `ENGINE_VERSION` (engine): this engine's release, kept equal to the package
+  version by `bun run bump`.
+- `checkManifestCompatibility` (engine): applies the `apiVersion` and
+  `minEngineVersion` rules to a manifest or catalog entry and reports which one
+  failed, so a host can gate the catalog index before fetching files.
+- `catalog.json` entries carry `minEngineVersion` when the manifest declares it.
+- `loadManifest` (engine): parses a manifest and returns `ok`, `incompatible`
+  (with the failed requirement) or `malformed` (with the issues), so a host can
+  tell "needs a newer engine" from "broken".
+- `ENGINE_FEATURES` and `requiredMinEngineVersion` (engine): the surface added
+  since 0.10.0 with the release that ships it, and the `minEngineVersion` a
+  manifest using it must declare. The manifests tests check every manifest
+  declares at least that value.
 
 ### Changed
 

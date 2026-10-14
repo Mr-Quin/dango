@@ -117,7 +117,9 @@ Sohu TV (`*.sohu.com`). Search filters to `site=1` albums and strips `<<<>>>` ma
 
 ## CI and the engine
 
-`dango-manifests` depends on `@mr-quin/dango` through `workspace:*`, which `bun install` symlinks to `packages/dango`, and the engine's `exports` point at `dist`. `.github/workflows/ci.yml` runs `bun run build` before `bun test`, so the manifests tests run against the engine built from the same checkout. The release workflow does the same on the tag, so every manifest in tag X is tested against engine X. A host that bundles engine X can rely on that and refuse a catalog whose `packageVersion` is newer than its engine.
+`dango-manifests` depends on `@mr-quin/dango` through `workspace:*`, which `bun install` symlinks to `packages/dango`, and the engine's `exports` point at `dist`. `.github/workflows/ci.yml` runs `bun run build` before `bun test`, so the manifests tests run against the engine built from the same checkout. The release workflow does the same on the tag, so every manifest in tag X is tested against engine X. `catalog.test.ts` also parses every manifest with that engine's `zManifest`, so no manifest in tag X declares a `minEngineVersion` above X. A host gates each catalog entry with `checkManifestCompatibility` rather than the whole catalog on `packageVersion`: a release also ships manifest fixes that older engines run fine.
+
+When a manifest starts using an engine feature added after the oldest engine it should load on, set its `minEngineVersion` to the release that added the feature.
 
 ## Localization
 

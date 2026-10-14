@@ -93,6 +93,8 @@ https://cdn.jsdelivr.net/npm/@mr-quin/dango-manifests@<version>/<file>
 }
 ```
 
+An entry also carries `minEngineVersion` when its manifest declares one. Gate entries with the engine's `checkManifestCompatibility` before fetching, so a host never installs a manifest its engine cannot run.
+
 Each `file` is the in-package path to fetch, e.g.:
 
 ```
