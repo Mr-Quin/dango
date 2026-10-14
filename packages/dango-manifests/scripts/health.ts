@@ -15,14 +15,8 @@
 import { readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import {
-  AbortedError,
-  HostNotAllowedError,
-  JsonataTimeoutError,
-  type Manifest,
-  ManifestRunner,
-  zManifest,
-} from '@mr-quin/dango'
+import { type Manifest, ManifestRunner, zManifest } from '@mr-quin/dango'
+import { classifyThrow, type Diagnostics } from './classifyThrow.js'
 import { realFetcher } from './realFetcher.js'
 
 const here = dirname(fileURLToPath(import.meta.url))
@@ -36,10 +30,6 @@ const TIMEOUT_MS = Number(process.env.HEALTH_TIMEOUT_MS ?? 20000)
 const DANMAKU_TIMEOUT_MS = Number(
   process.env.HEALTH_DANMAKU_TIMEOUT_MS ?? 90000
 )
-
-const BLOCKED_STATUSES = new Set([403, 451])
-const BLOCKED_MESSAGE_PATTERN =
-  /geo.?block|region.?block|not available in your (region|country)|network( is)? unreachable|enetunreach|econnrefused|econnreset|eai_again/i
 
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms))
@@ -112,118 +102,6 @@ function notAttempted(capable: boolean, note = ''): StageResult {
     note,
     value: undefined,
   }
-}
-
-interface Diagnostics {
-  name: string
-  message: string
-  stack?: string[]
-  code?: string
-  url?: string
-  cause?: Diagnostics
-}
-
-function safeStringify(value: unknown): string {
-  try {
-    return JSON.stringify(value) ?? String(value)
-  } catch {
-    return String(value)
-  }
-}
-
-function truncate(str: string, max: number): string {
-  return str.length > max ? `${str.slice(0, max)}…` : str
-}
-
-/** `depth` guards against a pathological (e.g. circular) `cause` chain. */
-function buildDiagnostics(err: unknown, depth = 0): Diagnostics {
-  if (!(err instanceof Error)) {
-    return { name: typeof err, message: safeStringify(err) }
-  }
-  const extras = err as Error & {
-    code?: unknown
-    url?: unknown
-    cause?: unknown
-  }
-  const diagnostics: Diagnostics = { name: err.name, message: err.message }
-  if (err.stack) {
-    diagnostics.stack = err.stack
-      .split('\n')
-      .slice(0, 5)
-      .map((line) => line.trim())
-  }
-  if (extras.code !== undefined) {
-    diagnostics.code = String(extras.code)
-  }
-  if (extras.url !== undefined) {
-    diagnostics.url = String(extras.url)
-  }
-  if (extras.cause !== undefined && depth < 5) {
-    diagnostics.cause = buildDiagnostics(extras.cause, depth + 1)
-  }
-  return diagnostics
-}
-
-interface ThrowClassification {
-  verdict: 'broken' | 'blocked'
-  note: string
-  diagnostics: Diagnostics
-}
-
-function classifyThrow(err: unknown): ThrowClassification {
-  const diagnostics = buildDiagnostics(err)
-  if (err instanceof HostNotAllowedError) {
-    return {
-      verdict: 'broken',
-      note: `${err.code} for ${err.url}`,
-      diagnostics,
-    }
-  }
-  if (err instanceof JsonataTimeoutError) {
-    return {
-      verdict: 'broken',
-      note: 'jsonata evaluation timeout',
-      diagnostics,
-    }
-  }
-  const name = err instanceof Error ? err.name : ''
-  if (
-    err instanceof AbortedError ||
-    name === 'AbortError' ||
-    name === 'TimeoutError'
-  ) {
-    return {
-      verdict: 'broken',
-      note: 'request timed out',
-      diagnostics,
-    }
-  }
-  if (!(err instanceof Error)) {
-    return {
-      verdict: 'broken',
-      note: `${diagnostics.name}: ${truncate(diagnostics.message, 120)}`,
-      diagnostics,
-    }
-  }
-  const message = err.message
-  const httpMatch = message.match(/^HTTP (\d+) for (.+)$/)
-  if (httpMatch) {
-    const status = Number(httpMatch[1])
-    const url = httpMatch[2]
-    if (BLOCKED_STATUSES.has(status)) {
-      return {
-        verdict: 'blocked',
-        note: `HTTP ${status} for ${url}`,
-        diagnostics,
-      }
-    }
-    return { verdict: 'broken', note: `HTTP ${status} for ${url}`, diagnostics }
-  }
-  if (BLOCKED_MESSAGE_PATTERN.test(message)) {
-    return { verdict: 'blocked', note: message, diagnostics }
-  }
-  const errorClass = err.constructor.name
-  return { verdict: 'broken', note: `${errorClass}: ${message}`, diagnostics }
 }
 
 async function runStage(
