@@ -41,6 +41,18 @@ updating, so this ships as `0.10.0`.
   since 0.10.0 with the release that ships it, and the `minEngineVersion` a
   manifest using it must declare. The manifests tests check every manifest
   declares at least that value.
+- `validateConfig(configSchema, config)` (engine) checks a config against a
+  manifest's `configSchema` and returns `ConfigIssue`s with a path, a `code`
+  and an English message, so a host can validate stored and edited configs
+  with the same rules instead of interpreting the schema itself. It covers
+  types (integer vs number), `enum` and labelled enums, `required`, `anyOf` key
+  alternatives, general `oneOf`/`anyOf`, nested `properties`/`items`,
+  `additionalProperties: false`, and string, number and array bounds. A value
+  of `undefined`, `null` or `''` counts as not set, matching how the manifests
+  read config. Keywords outside that list (`allOf`, `$ref`, other `format`s)
+  are ignored. `pattern` is matched with the `u` flag, falling back to a
+  plain regex for patterns that need one, and a pattern that is not a regex
+  is reported as `badPattern`.
 
 ### Changed
 

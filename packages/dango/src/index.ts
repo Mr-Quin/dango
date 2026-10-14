@@ -48,6 +48,11 @@ export {
   SUPPORTED_API_VERSIONS,
 } from './manifest/compatibility.js'
 export {
+  type ConfigIssue,
+  type ConfigIssueCode,
+  validateConfig,
+} from './manifest/configValidation.js'
+export {
   ENGINE_FEATURES,
   type EngineFeature,
   MIN_ENGINE_VERSION_SINCE,
